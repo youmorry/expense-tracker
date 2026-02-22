@@ -39,6 +39,16 @@
 
 ユーザー登録・パスワード管理の複雑さを排除するため、Google認証のみサポートする。
 
+### ビルドツール
+
+| 技術 | 用途 |
+|------|------|
+| Gradle (Kotlin DSL) | ビルド・依存関係管理 |
+
+Maven と比較してビルドが速く（インクリメンタルビルド・キャッシュ）、設定の記述量も少ない。
+Spring Boot の新規プロジェクトで採用が増えており、Spring Initializr のデフォルトでもある。
+スクリプトは Kotlin DSL（`build.gradle.kts`）を使用し、IDE の補完を活用する。
+
 ### データベース・マイグレーション
 
 | 技術 | 用途 |
@@ -183,6 +193,9 @@ main マージ → Render: 自動デプロイ（CD）
 
 ### バックエンド: Spring Boot 4.0 + Java 25 (LTS)
 既存のJava経験を活かしつつ、最新LTSであるJava 25と最新のSpring Boot 4.0を採用する。
+
+### ビルドツール: Gradle (Kotlin DSL)
+Mavenと比較してビルドが速く、設定の記述量も少ない。Spring Boot の新規プロジェクトで採用が増えており、Kotlin DSL により IDE の補完が効いて書きやすい。
 
 ### フロントエンド: React 19 + TypeScript
 React 19は2024年12月に正式リリースされた安定版。Actions API・Server Components（フレームワーク経由）・フォーム処理の改善など実用的な機能が追加されている。TypeScriptにより型安全性を確保し、保守性を高める。

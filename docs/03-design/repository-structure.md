@@ -25,7 +25,7 @@ expense-tracker/
 │   │   │       ├── application.yml
 │   │   │       └── db/migration/   # Flyway マイグレーションファイル
 │   │   └── test/
-│   ├── build.gradle
+│   ├── build.gradle.kts
 │   └── Dockerfile                  # 本番デプロイ用（Render）
 │
 ├── frontend/                       # React アプリケーション
