@@ -19,6 +19,7 @@ classDiagram
         String googleId
         String email
         String displayName
+        String currencyCode
         Instant createdAt
     }
 
@@ -75,11 +76,14 @@ Google OAuth2 で認証されたユーザーを表す。
 | googleId | String | ○ | Google アカウントの識別子（sub クレーム） |
 | email | String | ○ | メールアドレス |
 | displayName | String | ○ | 表示名 |
+| currencyCode | String | ○ | 使用通貨（ISO 4217 コード。例: `JPY`, `USD`） |
 | createdAt | Instant | ○ | 登録日時 |
 
 **ルール**
 - googleId はシステム内で一意
 - 初回ログイン時に自動作成される（明示的なユーザー登録画面は持たない）
+- currencyCode は初回ログイン時に通貨選択画面で設定する（デフォルト値なし・選択必須）
+- currencyCode は後から変更可能。変更は表示記号・フォーマットの切り替えのみで、既存データの換算は行わない
 
 ---
 
@@ -93,9 +97,9 @@ Google OAuth2 で認証されたユーザーを表す。
 | userId | UserId | ○ | 所有ユーザー |
 | date | LocalDate | ○ | 支出日 |
 | amount | Money | ○ | 金額 |
-| categoryId | CategoryId | ○ | カテゴリ（デフォルト: 未分類） |
+| categoryId | CategoryId | ○ | カテゴリ（デフォルト: Uncategorized） |
 | needWantType | NeedWantType | ○ | need / want 分類（デフォルト: UNSET） |
-| title | String | - | 内容（例：「ランチ」「電車代」） |
+| title | String | - | 内容（例：「Lunch」「Train fare」） |
 | memo | String | - | メモ |
 | createdAt | Instant | ○ | 作成日時 |
 | updatedAt | Instant | ○ | 更新日時 |
@@ -103,7 +107,7 @@ Google OAuth2 で認証されたユーザーを表す。
 **ルール**
 - 金額は 1 以上の正の値
 - 日付は未来日を許容する（立替や前払いなどのケースを考慮）
-- カテゴリ未選択時は「未分類」カテゴリが設定される
+- カテゴリ未選択時は「Uncategorized」カテゴリが設定される
 - need/want 未選択時は UNSET が設定される
 - 支出記録は所有ユーザーのみが閲覧・編集・削除できる
 
@@ -123,21 +127,21 @@ Google OAuth2 で認証されたユーザーを表す。
 
 | 表示順 | 名前 | 想定される用途 |
 |-------|------|--------------|
-| 1 | 食費 | 食料品・外食 |
-| 2 | 交通費 | 電車・バス・タクシー |
-| 3 | 住居費 | 家賃・光熱費・通信費 |
-| 4 | 日用品 | 消耗品・生活雑貨 |
-| 5 | 医療費 | 病院・薬 |
-| 6 | 娯楽 | 趣味・レジャー・サブスク |
-| 7 | 衣服 | 衣料品・クリーニング |
-| 8 | 教育 | 書籍・セミナー・資格 |
-| 9 | 交際費 | 飲み会・プレゼント |
-| 10 | その他 | 上記に該当しないもの |
-| 11 | 未分類 | カテゴリ未選択時のデフォルト |
+| 1 | Food | Groceries, dining out |
+| 2 | Transport | Train, bus, taxi |
+| 3 | Housing | Rent, utilities, internet |
+| 4 | Daily Goods | Consumables, household items |
+| 5 | Medical | Hospital, medicine |
+| 6 | Entertainment | Hobbies, leisure, subscriptions |
+| 7 | Clothing | Apparel, dry cleaning |
+| 8 | Education | Books, seminars, certifications |
+| 9 | Social | Dining with friends, gifts |
+| 10 | Other | Anything not listed above |
+| 11 | Uncategorized | Default when no category is selected |
 
 **ルール**
 - カテゴリはシステム共通（全ユーザーで同じプリセットを使用）
-- 「未分類」は常に存在し、削除できない
+- 「Uncategorized」は常に存在し、削除できない
 - 将来、ユーザー独自のカテゴリ作成を可能にする拡張を想定
 
 ---
@@ -154,12 +158,13 @@ Google OAuth2 で認証されたユーザーを表す。
 
 **ルール**
 - 0 より大きい正の値であること
-- MVP では日本円を前提とし、整数のみ許容する
-- 通貨の概念は MVP では持たない
+- 通貨ごとの小数桁数は ISO 4217 に準拠する（例: JPY → 0桁、USD → 2桁）
+- バリデーション時はユーザーの currencyCode に基づいて許容する小数桁数を判定する
 
 **設計判断**
 - `BigDecimal` を使い浮動小数点の誤差を回避する
-- 将来のグローバル化に備え、`Money(value, currency)` へ拡張可能な構造にしておく。具体的には金額を Money 値オブジェクトとして分離しているため、Currency フィールドの追加やバリデーションルールの通貨別切り替えが局所的な変更で済む
+- 通貨情報は User.currencyCode で管理し、Money は純粋な金額値として保つ。これにより Transaction ごとに通貨を持つ必要がなく、モデルがシンプルになる
+- 将来、Transaction 単位で通貨を持つ必要が生じた場合は `Money(value, currency)` へ拡張可能
 
 ---
 
@@ -208,7 +213,7 @@ Transaction
 
 | フィールド | 未選択の表現 | 理由 |
 |-----------|------------|------|
-| categoryId | 「未分類」カテゴリ（ID参照） | FK 制約が効く。集計クエリで null ハンドリングが不要になり、GROUP BY がシンプルになる |
+| categoryId | 「Uncategorized」カテゴリ（ID参照） | FK 制約が効く。集計クエリで null ハンドリングが不要になり、GROUP BY がシンプルになる |
 | needWantType | UNSET（Enum値） | NOT NULL 制約が使える。分析画面で「未設定 ○件」と表示し、分類の振り返りを促せる |
 | title | null | 任意の自由入力。空文字ではなく null で「未入力」を表現 |
 | memo | null | 同上 |
@@ -242,3 +247,11 @@ public record CategoryId(Long value) {}
 
 予算管理は支出記録の習慣化が定着した後のステップと位置づけ、MVP のスコープ外とした。
 将来フェーズでの追加を想定し、Transaction に budget 関連のフィールドは含めていない。
+
+### 通貨を User に持たせる理由
+
+通貨情報を Transaction ではなく User に持たせることで、以下のメリットがある。
+
+- Transaction のモデルがシンプルに保てる（全レコードに通貨カラムが不要）
+- 「このユーザーの支出はすべて同じ通貨」という前提により、集計処理がシンプルになる
+- 通貨変更は表示フォーマットの切り替えのみという要件と整合する
