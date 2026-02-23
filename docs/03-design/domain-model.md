@@ -41,7 +41,7 @@ classDiagram
         <<Entity / AggregateRoot>>
         CategoryId id
         String name
-        DisplayOrder displayOrder
+        Integer displayOrder
     }
 
     class Money {
