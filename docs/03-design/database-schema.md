@@ -81,6 +81,19 @@ Google OAuth2 で認証されたユーザーを管理する。
 
 ## 外部キー制約と ON DELETE
 
+### ON DELETE とは
+
+ON DELETE は「親テーブルのレコードが削除されたとき、それを参照している子テーブルのレコードをどう扱うか」を定義するルールである。
+
+たとえば `transactions.user_id` は `users.id` を参照している。ここで users からあるユーザーを削除しようとすると、そのユーザーの支出記録が transactions に残っている場合、参照先が消えてデータの整合性が崩れる。ON DELETE はこの挙動を制御する。
+
+| ルール | 挙動 |
+|--------|------|
+| CASCADE（連鎖削除） | 親を削除すると、子も自動的に削除される |
+| RESTRICT（削除拒否） | 子が存在する限り、親の削除を拒否する |
+
+### 本プロジェクトの設定
+
 | カラム | 参照先 | ON DELETE | 理由 |
 |--------|--------|-----------|------|
 | transactions.user_id | users.id | CASCADE | ユーザー削除時に関連する支出記録もすべて削除する。孤立データを防ぐ |
@@ -109,12 +122,19 @@ Google OAuth2 で認証されたユーザーを管理する。
 | テーブル | インデックス名 | カラム | 用途 |
 |---------|--------------|--------|------|
 | transactions | idx_transactions_user_id_date | (user_id, date DESC) | 支出一覧の表示（ユーザーごとに日付の新しい順で取得） |
-| transactions | idx_transactions_user_id_category_id | (user_id, category_id) | カテゴリ別の集計・フィルタリング |
+| transactions | idx_transactions_user_id_date_category | (user_id, date DESC, category_id) | カテゴリ別の集計・フィルタリング（期間指定 + カテゴリ） |
 
 **設計判断**
+
 - `idx_transactions_user_id_date`: 支出一覧画面のメインクエリ（ユーザーの支出を日付順で取得）を高速化する。ほぼすべてのクエリで user_id が条件に含まれるため、複合インデックスの先頭に配置
-- `idx_transactions_user_id_category_id`: 分析画面のカテゴリ別集計（GROUP BY category_id）とカテゴリフィルタリングを高速化する
+- `idx_transactions_user_id_date_category`: 分析画面のカテゴリ別集計を高速化する。分析画面は月/年の期間指定で使うケースが主であるため、date を category_id の前に配置し、期間絞り込み + カテゴリ集計を効率的に処理できるようにした
 - need_want_type のインデックスは見送り: カーディナリティが3値と低く、user_id との複合インデックスの選択性向上効果が限定的。データ量が増えてパフォーマンス問題が発生した場合に再検討する
+
+**期間指定なし（「すべて」表示）の場合**
+
+`(user_id, date DESC, category_id)` のインデックスで期間指定なしのカテゴリ別集計（`WHERE user_id = ? GROUP BY category_id`）を行う場合、date を飛び越えて category_id を活用することはできない。そのユーザーの全レコードを読んでからグループ化する動きになる。
+
+ただし、本アプリは個人利用で1ユーザーのデータ量は年間数千件程度を想定している。user_id で絞り込んだ時点で対象レコードは十分に少ないため、期間指定なしのケースでも実用上のパフォーマンス問題にはならない。月/年の期間指定が主な利用パターンであることを優先し、この構成を採用した。
 
 ---
 
@@ -185,8 +205,8 @@ CREATE TABLE transactions (
 CREATE INDEX idx_transactions_user_id_date
     ON transactions (user_id, date DESC);
 
-CREATE INDEX idx_transactions_user_id_category_id
-    ON transactions (user_id, category_id);
+CREATE INDEX idx_transactions_user_id_date_category
+    ON transactions (user_id, date DESC, category_id);
 ```
 
 ### V4__insert_preset_categories.sql
@@ -231,3 +251,18 @@ PostgreSQL の ENUM 型ではなく VARCHAR + CHECK 制約を採用した理由:
 - ENUM 型は値の追加に `ALTER TYPE ... ADD VALUE` が必要で、トランザクション内で実行できないなどの制約がある
 - VARCHAR + CHECK 制約は Flyway のマイグレーションで値の追加・変更が容易
 - ER図で決定した方針を踏襲（er-diagram.md 参照）
+
+### 論理削除を採用しない理由
+
+論理削除（`deleted_at` カラムを追加し、DELETE ではなくフラグで「削除済み」とする方式）は不採用とし、物理削除（DELETE 文による実削除）を採用する。
+
+- 個人利用のアプリで、データの所有者と操作者が同一人物。「誰かが勝手に消した」というケースがない
+- 支出記録の削除は本人の意思による操作であり、復元ニーズは UX レベル（取り消し確認ダイアログ等）で対応する方が自然
+- 全クエリに `WHERE deleted_at IS NULL` の条件を入れる運用コストが、個人アプリの規模に見合わない
+
+### 監査カラム（created_by / updated_by）を持たない理由
+
+「誰が操作したか」を記録する監査カラムは、複数ユーザーが同じデータを操作するシステムで有効だが、本アプリでは不採用とする。
+
+- 支出記録の所有者（user_id）と操作者が常に同一であり、追加の価値がない
+- `created_at` / `updated_at` は定義済みで、「いつ記録・更新したか」の時系列は追跡可能
