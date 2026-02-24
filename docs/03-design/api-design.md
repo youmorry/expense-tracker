@@ -168,7 +168,7 @@ PATCH /api/v1/users/me/currency
 }
 ```
 
-**レスポンス 400 Bad Request**
+**レスポンス 422 Unprocessable Content**
 
 無効な通貨コードの場合。
 
@@ -261,7 +261,7 @@ POST /api/v1/transactions
 }
 ```
 
-**レスポンス 400 Bad Request**
+**レスポンス 422 Unprocessable Content**
 
 バリデーションエラーの場合。
 
@@ -546,35 +546,92 @@ GET /api/v1/analytics/need-want
 ### エラーレスポンス
 
 RFC 9457 Problem Details for HTTP APIs に準拠した形式で返す。
+エラーレスポンスの Content-Type は `application/problem+json` を使用する。
 
-```json
+**バリデーションエラーの例（422）**
+
+```
+HTTP/1.1 422 Unprocessable Content
+Content-Type: application/problem+json
+
 {
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Validation failed",
+  "type": "/errors/validation-error",
+  "title": "Your request is not valid.",
+  "status": 422,
+  "detail": "One or more fields have validation errors.",
   "instance": "/api/v1/transactions",
   "errors": [
     {
-      "field": "amount",
-      "message": "Must be greater than 0"
+      "detail": "must be greater than 0",
+      "pointer": "#/amount"
     },
     {
-      "field": "date",
-      "message": "Must be a valid date in ISO 8601 format"
+      "detail": "must be a valid date in ISO 8601 format",
+      "pointer": "#/date"
     }
   ]
 }
 ```
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| type | string | エラーの種別を示す URI。デフォルトは `about:blank` |
-| title | string | HTTP ステータスの説明 |
-| status | number | HTTP ステータスコード |
-| detail | string | エラーの詳細メッセージ |
-| instance | string | エラーが発生したリクエストのパス |
-| errors | array | バリデーションエラーの詳細（400 の場合のみ） |
+**認証エラーの例（401）**
+
+```
+HTTP/1.1 401 Unauthorized
+Content-Type: application/problem+json
+
+{
+  "type": "/errors/unauthorized",
+  "title": "Authentication required.",
+  "status": 401,
+  "detail": "The access token is missing or invalid."
+}
+```
+
+**リソース不在の例（404）**
+
+```
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+
+{
+  "type": "about:blank",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "The requested transaction was not found.",
+  "instance": "/api/v1/transactions/999"
+}
+```
+
+**標準メンバー（RFC 9457 Section 3.1）**
+
+| メンバー | 型 | 説明 |
+|---------|-----|------|
+| type | string | 問題種別を識別する URI 参照。追加のセマンティクスがない場合は `about:blank`（Section 4.2.1） |
+| title | string | 問題種別の短い要約。同じ type では原則同じ値を返す（Section 3.1.3） |
+| status | number | HTTP ステータスコード。実際のレスポンスステータスと一致させる（Section 3.1.2） |
+| detail | string | この発生に固有の人間向け説明。クライアントによる問題修正を助ける内容にする（Section 3.1.4） |
+| instance | string | この問題発生を識別する URI 参照（Section 3.1.5） |
+
+**拡張メンバー（RFC 9457 Section 3.2）**
+
+| メンバー | 型 | 説明 |
+|---------|-----|------|
+| errors | array | バリデーションエラーの詳細（422 の場合のみ）。RFC のバリデーション例に準拠 |
+| errors[].detail | string | 個別フィールドのエラーメッセージ |
+| errors[].pointer | string | エラー箇所を示す JSON Pointer（RFC 6901）。`#/` プレフィックス付き |
+
+**type URI の方針**
+
+| type 値 | 用途 |
+|--------|------|
+| `about:blank` | HTTP ステータスコード以上の追加情報がない場合（404, 500 など） |
+| `/errors/validation-error` | バリデーションエラー（422） |
+| `/errors/unauthorized` | 認証エラー（401） |
+| `/errors/forbidden` | 認可エラー（403） |
+
+- type URI はアプリのベース URL からの相対パスとする（例: `https://expense-tracker.example.com/errors/validation-error`）
+- RFC Section 3.1.1 の推奨に従い、将来的に type URI を解決して人間向けドキュメントを返せるようにすることを想定する
+- MVP ではドキュメントページの用意は不要。URI は識別子として使用する
 
 ### HTTP ステータスコード一覧
 
@@ -583,10 +640,11 @@ RFC 9457 Problem Details for HTTP APIs に準拠した形式で返す。
 | 200 OK | 成功 | 取得・更新成功 |
 | 201 Created | 作成成功 | 支出登録成功 |
 | 204 No Content | 成功（ボディなし） | 削除成功 |
-| 400 Bad Request | リクエスト不正 | バリデーションエラー、不正なパラメータ |
+| 400 Bad Request | リクエスト不正 | JSON パースエラー、不正なクエリパラメータ |
 | 401 Unauthorized | 認証エラー | JWT なし・期限切れ・不正 |
 | 403 Forbidden | 認可エラー | 他ユーザーのリソースへのアクセス（通常は 404 で隠す） |
 | 404 Not Found | リソース不在 | 存在しない ID、他ユーザーの ID 指定 |
+| 422 Unprocessable Content | バリデーションエラー | フィールドの値が不正（金額が負、無効な通貨コード等） |
 | 500 Internal Server Error | サーバーエラー | 予期しないエラー |
 
 ---
