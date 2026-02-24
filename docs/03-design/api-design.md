@@ -2,7 +2,7 @@
 
 ## 概要
 
-Expense Tracker の REST API 仕様を定義する。
+Expense Tracker の REST API 仕様を定義する。（[Web API設計ガイドライン](https://future-architect.github.io/arch-guidelines/documents/forWebAPI/web_api_guidelines.html)に準拠する）
 バックエンド（Spring Boot）が提供する API エンドポイントの一覧、リクエスト/レスポンス形式、
 エラーレスポンス形式を記述する。
 
@@ -21,7 +21,8 @@ Expense Tracker の REST API 仕様を定義する。
 | 金額形式 | 文字列（`"1200.00"`）。浮動小数点の精度損失を回避するため |
 | バージョニング | v1 プレフィックス（`/api/v1/...`） |
 | エラー形式 | RFC 9457 Problem Details 準拠 |
-| 命名規則 | URL: ケバブケース不使用・リソース名は複数形、JSON: camelCase |
+| 命名規則 | URL: ケバブケース不使用・リソース名は複数形、JSON / クエリパラメータ: snake_case |
+| null の扱い | 値が存在しない場合はキー自体を含めない（undefined）。null は使用しない |
 
 ---
 
@@ -77,34 +78,33 @@ POST /api/v1/auth/google
 
 ```json
 {
-  "idToken": "eyJhbGciOiJSUzI1NiIs..."
+  "id_token": "eyJhbGciOiJSUzI1NiIs..."
 }
 ```
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|-----|------|------|
-| idToken | string | ○ | Google の ID トークン |
+| id_token | string | ○ | Google の ID トークン |
 
 **レスポンス 200 OK**
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJSUzI1NiIs...",
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
   "user": {
     "id": 1,
     "email": "user@gmail.com",
-    "displayName": "Yuto",
-    "currencyCode": null,
-    "createdAt": "2026-02-23T10:30:00Z"
+    "display_name": "Yuto",
+    "created_at": "2026-02-23T10:30:00Z"
   }
 }
 ```
 
 | フィールド | 型 | 説明 |
 |-----------|-----|------|
-| accessToken | string | JWT アクセストークン |
+| access_token | string | JWT アクセストークン |
 | user | object | ユーザー情報 |
-| user.currencyCode | string \| null | null の場合は通貨未設定（初回ログイン）。FE は通貨選択画面へ遷移する |
+| user.currency_code | string | 未設定の場合はキーごと省略。FE はキーの有無で通貨選択画面への遷移を判断する |
 
 **レスポンス 401 Unauthorized**
 
@@ -127,9 +127,9 @@ GET /api/v1/users/me
 {
   "id": 1,
   "email": "user@gmail.com",
-  "displayName": "Yuto",
-  "currencyCode": "JPY",
-  "createdAt": "2026-02-23T10:30:00Z"
+  "display_name": "Yuto",
+  "currency_code": "JPY",
+  "created_at": "2026-02-23T10:30:00Z"
 }
 ```
 
@@ -148,13 +148,13 @@ PATCH /api/v1/users/me/currency
 
 ```json
 {
-  "currencyCode": "JPY"
+  "currency_code": "JPY"
 }
 ```
 
 | フィールド | 型 | 必須 | バリデーション |
 |-----------|-----|------|--------------|
-| currencyCode | string | ○ | ISO 4217 の有効な3文字コード |
+| currency_code | string | ○ | ISO 4217 の有効な3文字コード |
 
 **レスポンス 200 OK**
 
@@ -162,9 +162,9 @@ PATCH /api/v1/users/me/currency
 {
   "id": 1,
   "email": "user@gmail.com",
-  "displayName": "Yuto",
-  "currencyCode": "JPY",
-  "createdAt": "2026-02-23T10:30:00Z"
+  "display_name": "Yuto",
+  "currency_code": "JPY",
+  "created_at": "2026-02-23T10:30:00Z"
 }
 ```
 
@@ -201,12 +201,14 @@ GET /api/v1/categories
 **レスポンス 200 OK**
 
 ```json
-[
-  { "id": 1, "name": "Food", "displayOrder": 1 },
-  { "id": 2, "name": "Transport", "displayOrder": 2 },
-  { "id": 3, "name": "Housing", "displayOrder": 3 },
-  { "id": 11, "name": "Uncategorized", "displayOrder": 11 }
-]
+{
+  "items": [
+    { "id": 1, "name": "Food", "display_order": 1 },
+    { "id": 2, "name": "Transport", "display_order": 2 },
+    { "id": 3, "name": "Housing", "display_order": 3 },
+    { "id": 11, "name": "Uncategorized", "display_order": 11 }
+  ]
+}
 ```
 
 > カテゴリは変更頻度が極めて低いため、FE 側で TanStack Query の `staleTime` を長めに設定してキャッシュする。
@@ -228,10 +230,9 @@ POST /api/v1/transactions
 {
   "date": "2026-02-23",
   "amount": "1200",
-  "categoryId": 1,
-  "needWantType": "NEED",
-  "title": "Lunch",
-  "memo": null
+  "category_id": 1,
+  "need_want_type": "NEED",
+  "title": "Lunch"
 }
 ```
 
@@ -239,10 +240,10 @@ POST /api/v1/transactions
 |-----------|-----|------|-----------|--------------|
 | date | string | ○ | - | ISO 8601 日付形式 |
 | amount | string | ○ | - | 正の数値。通貨に応じた小数桁数 |
-| categoryId | number | - | Uncategorized の ID | 存在するカテゴリ ID |
-| needWantType | string | - | `"UNSET"` | `NEED` \| `WANT` \| `UNSET` |
-| title | string | - | null | 最大200文字 |
-| memo | string | - | null | 最大2000文字 |
+| category_id | number | - | Uncategorized の ID | 存在するカテゴリ ID |
+| need_want_type | string | - | `"UNSET"` | `NEED` \| `WANT` \| `UNSET` |
+| title | string | - | 省略 | 最大200文字 |
+| memo | string | - | 省略 | 最大2000文字 |
 
 **レスポンス 201 Created**
 
@@ -251,13 +252,12 @@ POST /api/v1/transactions
   "id": 42,
   "date": "2026-02-23",
   "amount": "1200",
-  "categoryId": 1,
-  "categoryName": "Food",
-  "needWantType": "NEED",
+  "category_id": 1,
+  "category_name": "Food",
+  "need_want_type": "NEED",
   "title": "Lunch",
-  "memo": null,
-  "createdAt": "2026-02-23T10:30:00Z",
-  "updatedAt": "2026-02-23T10:30:00Z"
+  "created_at": "2026-02-23T10:30:00Z",
+  "updated_at": "2026-02-23T10:30:00Z"
 }
 ```
 
@@ -282,8 +282,8 @@ GET /api/v1/transactions
 |-----------|-----|------|-----------|------|
 | from | string | - | - | 取得開始日（ISO 8601 日付形式、例: `2026-02-01`）。この日付を含む |
 | to | string | - | - | 取得終了日（ISO 8601 日付形式、例: `2026-02-28`）。この日付を含む |
-| categoryId | number | - | - | カテゴリでフィルタ（複数指定: `categoryId=1&categoryId=3`） |
-| needWantType | string | - | - | `NEED` \| `WANT` \| `UNSET` で絞り込み |
+| category_id | number | - | - | カテゴリでフィルタ（複数指定: `category_id=1&category_id=3`） |
+| need_want_type | string | - | - | `NEED` \| `WANT` \| `UNSET` で絞り込み |
 | keyword | string | - | - | title, memo の部分一致検索 |
 
 **期間パラメータの組み合わせ**
@@ -304,21 +304,24 @@ GET /api/v1/transactions
 **レスポンス 200 OK**
 
 ```json
-[
-  {
-    "id": 42,
-    "date": "2026-02-23",
-    "amount": "1200",
-    "categoryId": 1,
-    "categoryName": "Food",
-    "needWantType": "NEED",
-    "title": "Lunch",
-    "memo": null,
-    "createdAt": "2026-02-23T10:30:00Z",
-    "updatedAt": "2026-02-23T10:30:00Z"
-  }
-]
+{
+  "items": [
+    {
+      "id": 42,
+      "date": "2026-02-23",
+      "amount": "1200",
+      "category_id": 1,
+      "category_name": "Food",
+      "need_want_type": "NEED",
+      "title": "Lunch",
+      "created_at": "2026-02-23T10:30:00Z",
+      "updated_at": "2026-02-23T10:30:00Z"
+    }
+  ]
+}
 ```
+
+> 将来ページネーション導入時に `total_count` 等のメタデータを追加可能な構造としている。
 
 **ソート順**
 - `date DESC, created_at DESC`（日付の新しい順。同日内は登録の新しい順）
@@ -354,13 +357,13 @@ GET /api/v1/transactions/{id}
   "id": 42,
   "date": "2026-02-23",
   "amount": "1200",
-  "categoryId": 1,
-  "categoryName": "Food",
-  "needWantType": "NEED",
+  "category_id": 1,
+  "category_name": "Food",
+  "need_want_type": "NEED",
   "title": "Lunch",
   "memo": "Company cafeteria",
-  "createdAt": "2026-02-23T10:30:00Z",
-  "updatedAt": "2026-02-23T10:30:00Z"
+  "created_at": "2026-02-23T10:30:00Z",
+  "updated_at": "2026-02-23T10:30:00Z"
 }
 ```
 
@@ -388,10 +391,9 @@ PUT /api/v1/transactions/{id}
 {
   "date": "2026-02-23",
   "amount": "1500",
-  "categoryId": 1,
-  "needWantType": "NEED",
-  "title": "Lunch (updated)",
-  "memo": null
+  "category_id": 1,
+  "need_want_type": "NEED",
+  "title": "Lunch (updated)"
 }
 ```
 
@@ -448,21 +450,21 @@ GET /api/v1/analytics/category
 
 ```json
 {
-  "totalAmount": "130000",
+  "total_amount": "130000",
   "categories": [
     {
-      "categoryId": 1,
-      "categoryName": "Food",
+      "category_id": 1,
+      "category_name": "Food",
       "amount": "45000",
       "percentage": 34.6,
-      "transactionCount": 28
+      "transaction_count": 28
     },
     {
-      "categoryId": 3,
-      "categoryName": "Housing",
+      "category_id": 3,
+      "category_name": "Housing",
       "amount": "30000",
       "percentage": 23.1,
-      "transactionCount": 2
+      "transaction_count": 2
     }
   ]
 }
@@ -470,13 +472,13 @@ GET /api/v1/analytics/category
 
 | フィールド | 型 | 説明 |
 |-----------|-----|------|
-| totalAmount | string | 期間内の合計金額 |
+| total_amount | string | 期間内の合計金額 |
 | categories | array | カテゴリ別の集計。金額降順 |
-| categories[].categoryId | number | カテゴリ ID |
-| categories[].categoryName | string | カテゴリ名 |
+| categories[].category_id | number | カテゴリ ID |
+| categories[].category_name | string | カテゴリ名 |
 | categories[].amount | string | カテゴリ合計金額 |
 | categories[].percentage | number | 全体に占める割合（%、小数1桁） |
-| categories[].transactionCount | number | 該当する支出の件数 |
+| categories[].transaction_count | number | 該当する支出の件数 |
 
 **ルール**
 - 金額 0 のカテゴリは含めない（screen-flow.md の仕様に準拠）
@@ -502,25 +504,25 @@ GET /api/v1/analytics/need-want
 
 ```json
 {
-  "totalAmount": "130000",
+  "total_amount": "130000",
   "breakdown": [
     {
       "type": "NEED",
       "amount": "80000",
       "percentage": 61.5,
-      "transactionCount": 45
+      "transaction_count": 45
     },
     {
       "type": "WANT",
       "amount": "35000",
       "percentage": 26.9,
-      "transactionCount": 12
+      "transaction_count": 12
     },
     {
       "type": "UNSET",
       "amount": "15000",
       "percentage": 11.5,
-      "transactionCount": 3
+      "transaction_count": 3
     }
   ]
 }
@@ -528,16 +530,16 @@ GET /api/v1/analytics/need-want
 
 | フィールド | 型 | 説明 |
 |-----------|-----|------|
-| totalAmount | string | 期間内の合計金額 |
+| total_amount | string | 期間内の合計金額 |
 | breakdown | array | NEED / WANT / UNSET の集計 |
 | breakdown[].type | string | `NEED` \| `WANT` \| `UNSET` |
 | breakdown[].amount | string | 合計金額 |
 | breakdown[].percentage | number | 全体に占める割合（%、小数1桁） |
-| breakdown[].transactionCount | number | 該当する支出の件数 |
+| breakdown[].transaction_count | number | 該当する支出の件数 |
 
 **ルール**
-- 3つの type は該当データが 0 件でもレスポンスに含める（amount: "0", percentage: 0.0, transactionCount: 0）
-- UNSET の transactionCount は画面の「⚠ N transactions unset」表示に使用する
+- 3つの type は該当データが 0 件でもレスポンスに含める（amount: "0", percentage: 0.0, transaction_count: 0）
+- UNSET の transaction_count は画面の「⚠ N transactions unset」表示に使用する
 
 ---
 
@@ -657,9 +659,9 @@ Content-Type: application/problem+json
 interface User {
   id: number;
   email: string;
-  displayName: string;
-  currencyCode: string | null;
-  createdAt: string; // ISO 8601
+  display_name: string;
+  currency_code?: string;  // 未設定時はキー省略
+  created_at: string;      // ISO 8601
 }
 ```
 
@@ -668,15 +670,15 @@ interface User {
 ```typescript
 interface Transaction {
   id: number;
-  date: string;           // "2026-02-23"
-  amount: string;         // "1200" (文字列で精度を保持)
-  categoryId: number;
-  categoryName: string;
-  needWantType: "NEED" | "WANT" | "UNSET";
-  title: string | null;
-  memo: string | null;
-  createdAt: string;      // ISO 8601
-  updatedAt: string;      // ISO 8601
+  date: string;              // "2026-02-23"
+  amount: string;            // "1200" (文字列で精度を保持)
+  category_id: number;
+  category_name: string;
+  need_want_type: "NEED" | "WANT" | "UNSET";
+  title?: string;            // 未入力時はキー省略
+  memo?: string;             // 未入力時はキー省略
+  created_at: string;        // ISO 8601
+  updated_at: string;        // ISO 8601
 }
 ```
 
@@ -686,10 +688,10 @@ interface Transaction {
 interface TransactionRequest {
   date: string;
   amount: string;
-  categoryId?: number;
-  needWantType?: "NEED" | "WANT" | "UNSET";
-  title?: string | null;
-  memo?: string | null;
+  category_id?: number;
+  need_want_type?: "NEED" | "WANT" | "UNSET";
+  title?: string;
+  memo?: string;
 }
 ```
 
@@ -699,7 +701,7 @@ interface TransactionRequest {
 interface Category {
   id: number;
   name: string;
-  displayOrder: number;
+  display_order: number;
 }
 ```
 
@@ -707,13 +709,13 @@ interface Category {
 
 ```typescript
 interface CategoryAnalytics {
-  totalAmount: string;
+  total_amount: string;
   categories: {
-    categoryId: number;
-    categoryName: string;
+    category_id: number;
+    category_name: string;
     amount: string;
     percentage: number;
-    transactionCount: number;
+    transaction_count: number;
   }[];
 }
 ```
@@ -722,12 +724,12 @@ interface CategoryAnalytics {
 
 ```typescript
 interface NeedWantAnalytics {
-  totalAmount: string;
+  total_amount: string;
   breakdown: {
     type: "NEED" | "WANT" | "UNSET";
     amount: string;
     percentage: number;
-    transactionCount: number;
+    transaction_count: number;
   }[];
 }
 ```
@@ -772,9 +774,9 @@ Java 側では `BigDecimal`、TypeScript 側ではパース時に適切な処理
 - 将来、分析種別が増えた場合にエンドポイントを追加するだけで拡張できる
 - 集計クエリが異なるため、バックエンドの実装もシンプルに保てる
 
-### レスポンスに categoryName を含める理由
+### レスポンスに category_name を含める理由
 
-Transaction のレスポンスに `categoryId` だけでなく `categoryName` も含めている理由:
+Transaction のレスポンスに `category_id` だけでなく `category_name` も含めている理由:
 
 - FE がカテゴリ一覧を別途取得して突き合わせる手間を省く
 - 一覧画面の表示で即座にカテゴリ名を使えるため、FE の実装がシンプルになる
