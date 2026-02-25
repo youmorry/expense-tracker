@@ -26,7 +26,7 @@ Google OAuth2 で認証されたユーザーを管理する。
 - google_id: Google の sub クレームは最大255文字の文字列
 - email: RFC 5321 の実用的な上限として255文字を設定
 - display_name: Google アカウントの表示名。100文字で実用上十分
-- currency_code: ISO 4217 は3文字固定のため CHAR(3)
+- currency_code: ISO 4217 は3文字固定のため CHAR(3)。新規ユーザー作成時に Google ID トークンの locale から自動設定する
 
 ---
 

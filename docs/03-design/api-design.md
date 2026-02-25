@@ -95,6 +95,7 @@ POST /api/v1/auth/google
     "id": 1,
     "email": "user@gmail.com",
     "display_name": "Yuto",
+    "currency_code": "JPY",
     "created_at": "2026-02-23T10:30:00Z"
   }
 }
@@ -104,7 +105,7 @@ POST /api/v1/auth/google
 |-----------|-----|------|
 | access_token | string | JWT アクセストークン |
 | user | object | ユーザー情報 |
-| user.currency_code | string | 未設定の場合はキーごと省略。FE はキーの有無で通貨選択画面への遷移を判断する |
+| user.currency_code | string | 通貨コード。新規ユーザーの場合は Google ID トークンの locale から自動設定 |
 
 **レスポンス 401 Unauthorized**
 
@@ -660,7 +661,7 @@ interface User {
   id: number;
   email: string;
   display_name: string;
-  currency_code?: string;  // 未設定時はキー省略
+  currency_code: string;   // 常に設定済み（新規ユーザーは locale から自動設定）
   created_at: string;      // ISO 8601
 }
 ```
