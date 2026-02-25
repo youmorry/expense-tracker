@@ -45,7 +45,7 @@ npm run build                            # ビルド
 - コミットメッセージ: `<type>: <subject>`（日本語可、例: `feat: 支出登録APIを実装`）
 - ドキュメント: 日本語、コード: 英語
 - DB カラム / JSON キー: snake_case、Java / TypeScript: camelCase
-- Java コーディング規約: @docs/java-coding-standards.md
+- Java コーディング規約: Google Java Style Guide 準拠（詳細は @docs/java-coding-standards.md）
 
 ## Design Documents
 
