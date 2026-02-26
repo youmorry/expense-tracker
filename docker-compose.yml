@@ -10,6 +10,14 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  mock-server:
+    image: stoplight/prism:4
+    ports:
+      - "4010:4010"
+    volumes:
+      - ./backend/openapi.yaml:/tmp/openapi.yaml
+    command: mock -h 0.0.0.0 /tmp/openapi.yaml
+
   swagger-ui:
     image: swaggerapi/swagger-ui
     ports:
