@@ -112,6 +112,7 @@ docker compose up -d
 | Service | Description | Port |
 |---------|-------------|------|
 | db | PostgreSQL 18 | `localhost:5432` |
+| mock-server | Prism（OpenAPI モックサーバー） | `localhost:4010` |
 | swagger-ui | Swagger UI（OpenAPI ビューア） | `localhost:8081` |
 
 **DB 接続情報**
