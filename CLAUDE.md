@@ -42,6 +42,7 @@ npm run build                            # ビルド
 
 ## Conventions
 
+- ブランチ戦略: GitHub Flow（`main` から feature ブランチを切り、PR でマージ）
 - コミットメッセージ: `<type>: <subject>`（日本語可、例: `feat: 支出登録APIを実装`）
 - ドキュメント: 日本語、コード: 英語
 - DB カラム / JSON キー: snake_case、Java / TypeScript: camelCase
