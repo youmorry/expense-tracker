@@ -29,6 +29,7 @@
 
 ```
 expense-tracker/
+├── .devcontainer/    # Dev Container 設定
 ├── backend/          # Spring Boot API (DDD + Layered Architecture)
 ├── frontend/         # React SPA (Feature-Sliced Design)
 ├── docs/             # 設計ドキュメント
@@ -65,13 +66,30 @@ src/
 
 ## Getting Started
 
-### Prerequisites
+### Dev Container（推奨）
+
+VS Code / GitHub Codespaces の [Dev Containers](https://containers.dev/) に対応しています。Java 25・Node.js 22・Claude Code が事前構成済みのため、環境構築なしですぐに開発を始められます。
+
+1. VS Code で **Dev Containers** 拡張機能をインストール
+2. コマンドパレットから **Dev Containers: Reopen in Container** を実行
+
+プリインストールされる VS Code 拡張機能:
+
+- Java Extension Pack / Spring Boot Extension
+- ESLint / Prettier / Tailwind CSS IntelliSense
+- Claude Code
+
+### ローカル環境
+
+Dev Container を使わない場合は、以下を手動でセットアップしてください。
+
+#### Prerequisites
 
 - Java 25
 - Node.js
 - Docker
 
-### Setup
+#### Setup
 
 ```bash
 # ローカル DB 起動
