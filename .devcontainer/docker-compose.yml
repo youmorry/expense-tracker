@@ -6,5 +6,3 @@ services:
     volumes:
       - ..:/workspaces/expense-tracker:cached
     command: sleep infinity
-    depends_on:
-      - db
