@@ -17,7 +17,8 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "bradlc.vscode-tailwindcss",
-        "editorconfig.editorconfig"
+        "editorconfig.editorconfig",
+        "anthropic.claude-code"
       ],
       "settings": {
         "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",

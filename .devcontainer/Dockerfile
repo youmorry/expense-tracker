@@ -1,1 +1,1 @@
-FROM mcr.microsoft.com/devcontainers/java:1-25
+FROM mcr.microsoft.com/devcontainers/java:3-25
