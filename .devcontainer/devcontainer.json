@@ -1,6 +1,6 @@
 {
   "name": "Expense Tracker",
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "features": {
