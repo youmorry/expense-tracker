@@ -25,10 +25,6 @@ com.example.expensetracker/
 - **Spring Data JDBC over JPA**: 暗黙の挙動（遅延ロード・ダーティチェック）を排除し SQL を透明に
 - **HS256 (symmetric JWT)**: 単一サーバー構成のためシンプルな対称鍵で十分
 
-## API 仕様
-
-API エンドポイントの詳細は `docs/03-design/api-design.md` を参照。
-
 ## API Conventions
 
 - `/api/v1/` prefix、URL リソース名は複数形
@@ -44,6 +40,16 @@ API エンドポイントの詳細は `docs/03-design/api-design.md` を参照�
 - DB カラム / JSON キー: snake_case
 - Java: camelCase
 
-## コーディング規約
+## 参照ドキュメント
 
-@docs/java-coding-standards.md を参照。
+常時参照（コンテキストに自動ロード）:
+
+- @docs/java-coding-standards.md
+
+必要時に参照:
+
+- `docs/03-design/domain-model.md` — Entity / VO / Aggregate 設計
+- `docs/03-design/error-handling.md` — 例外階層・RFC 9457 レスポンス
+- `docs/03-design/database-schema.md` — DDL・インデックス・Flyway
+- `docs/03-design/api-design.md` — API エンドポイント仕様
+- `docs/03-design/auth-design.md` — 認証フロー・JWT・セキュリティ
