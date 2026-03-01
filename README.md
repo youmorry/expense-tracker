@@ -17,7 +17,7 @@
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | Spring Boot 4.0 / Java 25 / Gradle (Kotlin DSL) |
+| Backend | Spring Boot 4.0.3 / Java 25 / Gradle (Kotlin DSL) |
 | Frontend | React 19 / TypeScript 5 / Vite / Tailwind CSS |
 | Data Access | Spring Data JDBC |
 | State Management | TanStack Query v5 |
@@ -44,7 +44,7 @@ expense-tracker/
 DDD + レイヤードアーキテクチャ。Spring Data JDBC の Aggregate / Repository を DDD にそのまま対応させる設計。
 
 ```
-com.example.expensetracker/
+com.youmorry.expensetracker/
 ├── domain/           # Entity, ValueObject, Repository interface
 ├── application/      # Service（ユースケース）
 ├── infrastructure/   # Spring Data JDBC 実装, 外部 API
@@ -160,7 +160,10 @@ docker compose down -v
 | [Database Schema](docs/03-design/database-schema.md) | DDL・インデックス・Flyway |
 | [Domain Model](docs/03-design/domain-model.md) | Entity / ValueObject / Aggregate 設計 |
 | [Error Handling](docs/03-design/error-handling.md) | 例外階層・RFC 9457 レスポンス |
+| [ER Diagram](docs/03-design/er-diagram.md) | ER 図・テーブル構成 |
+| [Repository Structure](docs/03-design/repository-structure.md) | モノレポ構成・ディレクトリ設計 |
 | [Screen Flow](docs/03-design/screen-flow.md) | UI 画面遷移・インタラクション |
+| [Java Coding Standards](docs/java-coding-standards.md) | Java コーディング規約（Google Style） |
 
 ## License
 
