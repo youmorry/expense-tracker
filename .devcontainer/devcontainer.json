@@ -4,6 +4,11 @@
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "none",
+      "installGradle": "true",
+      "gradleVersion": "9.3.1"
+    },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "22"
     },
