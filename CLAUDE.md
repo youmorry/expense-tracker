@@ -27,5 +27,6 @@ npm run build                            # ビルド
 ## Conventions
 
 - ブランチ戦略: GitHub Flow（`main` から feature ブランチを切り、PR でマージ）
+- ブランチ命名: `feature/<説明>`（例: `feature/add-expense-api`）
 - コミットメッセージ: `<type>: <subject>`（日本語可、例: `feat: 支出登録APIを実装`）
 - ドキュメント: 日本語、コード: 英語
