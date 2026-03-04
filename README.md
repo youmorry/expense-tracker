@@ -149,6 +149,18 @@ docker compose up -d
 docker compose down -v
 ```
 
+**ブランチ切り替え時の DB リセット**
+
+Flyway マイグレーションはバージョン番号で管理されるため、ブランチ間でマイグレーションが異なると起動時にエラーになることがあります。ブランチを切り替えた際は DB をリセットし、`bootRun` でマイグレーションを再適用してください。
+
+```bash
+# 1. DB をボリュームごと削除して再作成
+docker compose down -v && docker compose up -d
+
+# 2. マイグレーションを適用（bootRun 起動時に Flyway が自動実行）
+cd backend && ./gradlew bootRun
+```
+
 ## Design Documents
 
 設計の詳細は [docs/](docs/) を参照してください。
