@@ -7,6 +7,15 @@
 - コマンドは `&&`、`;`、`|` で連結せず、必ず1つずつ個別に実行すること
 - 複雑な入力はまず一時ファイルに書き出し、そのファイルを引数で渡すこと
 
+## コミットルール
+
+- 1コミット = 1つの論理的変更。機能変更とリファクタリングは混ぜない
+- すべてのコミットでビルド・テストが通る状態を維持する
+- 一括コミットせず、論理的なまとまりごとに都度コミットする
+- Conventional Commits（日本語）に従う: feat / fix / refactor / test / docs / chore
+
+詳細は `docs/commit-guidelines.md` を参照すること。
+
 ## Commands
 
 ```bash
@@ -27,5 +36,4 @@ npm run build                            # ビルド
 
 - ブランチ戦略: GitHub Flow（`main` から feature ブランチを切り、PR でマージ）
 - ブランチ命名: `feature/<説明>`（例: `feature/add-expense-api`）
-- コミットメッセージ: `<type>: <subject>`（日本語可、例: `feat: 支出登録APIを実装`）
 - ドキュメント: 日本語、コード: 英語
