@@ -24,6 +24,7 @@ replay_pid*
 # ==================== Gradle ====================
 .gradle
 build/
+bin/
 !src/**/build/
 
 # Gradle GUI config
