@@ -42,6 +42,10 @@ npm test                                 # テスト
 npm run build                            # ビルド
 ```
 
+## Claude による作業の明示
+
+ユーザーに代わって行うすべての対外的なアクションに、Claude が実行したことを明示すること。
+
 ## Conventions
 
 - ブランチ戦略: GitHub Flow（`main` から feature ブランチを切り、PR でマージ）
