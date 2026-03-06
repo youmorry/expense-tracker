@@ -10,7 +10,7 @@ paths:
 
 ```
 com.example.expensetracker/
-├── domain/           # Entity, ValueObject, Repository interface（フレームワーク非依存）
+├── domain/           # Entity, ValueObject, Repository interface
 ├── application/      # Service（ユースケース実装）
 ├── infrastructure/   # Spring Data JDBC Repository 実装, 外部 API
 └── presentation/     # REST Controller, DTO
@@ -18,7 +18,7 @@ com.example.expensetracker/
 
 - `domain` と `application` を明示的に分離し、ドメインロジックを `domain` に集約
 - Spring Data JDBC の Aggregate/Repository 概念を DDD にそのまま対応させる
-- `domain` 層は Spring 等のフレームワークに依存しない
+- `domain` 層はフレームワークのロジックに依存しない（`@Table`, `@Id` 等のマッピング用アノテーションは許容）
 
 ## 設計判断
 
