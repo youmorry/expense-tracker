@@ -44,75 +44,32 @@ RuntimeException
 | `UnauthorizedException` | 401 Unauthorized | JWT なし・期限切れ・不正 |
 | `ForbiddenException` | 403 Forbidden | 認可エラー（通常は使用せず 404 で代替） |
 
-```java
-public abstract class AppException extends RuntimeException {
-    private final String type;
-    private final String title;
-    private final int status;
+#### AppException の規約
 
-    protected AppException(String type, String title, int status, String detail) {
-        super(detail);
-        this.type = type;
-        this.title = title;
-        this.status = status;
-    }
-    // getter 省略
-}
-```
-
-```java
-public class ResourceNotFoundException extends AppException {
-    public ResourceNotFoundException(String detail) {
-        super("about:blank", "Not Found", 404, detail);
-    }
-}
-```
-
-```java
-public class ValidationException extends AppException {
-    private final List<FieldError> errors;
-
-    public ValidationException(String detail, List<FieldError> errors) {
-        super("/errors/validation-error", "Your request is not valid.", 422, detail);
-        this.errors = errors;
-    }
-
-    public record FieldError(String detail, String pointer) {}
-}
-```
+- `RuntimeException` を継承する抽象クラス
+- 各サブクラスのコンストラクタは `detail`（エラーメッセージ）のみを受け取り、`type` / `title` / `status` はクラス内で固定する
+- `ValidationException` は追加で `List<FieldError>` を保持する。`FieldError` は `detail`（エラーメッセージ）と `pointer`（JSON Pointer 形式のフィールドパス）を持つ record とする
 
 ### グローバル例外ハンドラ
 
 `@RestControllerAdvice` でアプリケーション全体の例外を捕捉し、RFC 9457 形式に変換する。
+Spring Framework 7.0 が提供する `ProblemDetail` クラスを利用してレスポンスを生成する。
 
-```java
-@RestControllerAdvice
-public class GlobalExceptionHandler {
+#### 処理対象の例外と規約
 
-    // アプリケーション例外 → Problem Details
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<ProblemDetail> handleAppException(AppException ex, HttpServletRequest request);
+| 例外 | 処理内容 |
+|------|---------|
+| `AppException` | `type` / `title` / `status` / `detail` / `instance` を設定。`ValidationException` の場合は `errors` 配列も追加 |
+| `MethodArgumentNotValidException` | Bean Validation エラー。422 で応答し、フィールドエラーを `errors` 配列に変換 |
+| `HttpMessageNotReadableException` | JSON パースエラー。400 で応答 |
+| `MethodArgumentTypeMismatchException` | クエリパラメータの型不正。400 で応答 |
+| `Exception` | その他の予期しないエラー。500 で応答 |
 
-    // Bean Validation (入力値の形式チェック)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request);
+#### ProblemDetail の共通規約
 
-    // JSON パースエラー
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ProblemDetail> handleMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request);
-
-    // クエリパラメータの型不正
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ProblemDetail> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request);
-
-    // その他の予期しないエラー
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleUnexpected(Exception ex, HttpServletRequest request);
-}
-```
-
-> Spring Boot 4.0 / Spring Framework 7.0 は `ProblemDetail` クラスを標準提供しており、
-> RFC 9457 対応のレスポンス生成に利用する。
+- すべてのハンドラで `instance` にリクエスト URI を設定する
+- Content-Type は `application/problem+json` を明示する
+- 500 エラーではスタックトレースやエラーの技術的詳細をレスポンスに含めない（ログにのみ出力）
 
 ### エラー種別ごとの処理
 
@@ -120,31 +77,6 @@ public class GlobalExceptionHandler {
 
 Controller の `@Valid` によるリクエストボディのバリデーション違反。
 `MethodArgumentNotValidException` を捕捉し、フィールドエラーを `errors` 配列に変換する。
-
-```java
-@ExceptionHandler(MethodArgumentNotValidException.class)
-public ResponseEntity<ProblemDetail> handleValidation(
-        MethodArgumentNotValidException ex, HttpServletRequest request) {
-
-    ProblemDetail problem = ProblemDetail.forStatus(422);
-    problem.setType(URI.create("/errors/validation-error"));
-    problem.setTitle("Your request is not valid.");
-    problem.setDetail("One or more fields have validation errors.");
-    problem.setInstance(URI.create(request.getRequestURI()));
-
-    List<Map<String, String>> errors = ex.getBindingResult().getFieldErrors().stream()
-            .map(fe -> Map.of(
-                    "detail", fe.getDefaultMessage(),
-                    "pointer", "#/" + toSnakeCase(fe.getField())
-            ))
-            .toList();
-    problem.setProperty("errors", errors);
-
-    return ResponseEntity.status(422)
-            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .body(problem);
-}
-```
 
 **pointer のフィールド名変換**: Java のキャメルケース（`categoryId`）を API のスネークケース（`category_id`）に変換して返す。
 
@@ -163,25 +95,6 @@ Bean Validation では検証できないビジネスルール違反。Service �
 Spring Security のフィルターチェーンで JWT 検証に失敗した場合。
 `AuthenticationEntryPoint` をカスタマイズし、RFC 9457 形式で応答する。
 
-```java
-@Component
-public class ProblemDetailAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
-        response.setStatus(401);
-        response.setContentType("application/problem+json");
-
-        ProblemDetail problem = ProblemDetail.forStatus(401);
-        problem.setType(URI.create("/errors/unauthorized"));
-        problem.setTitle("Authentication required.");
-        problem.setDetail("The access token is missing or invalid.");
-
-        objectMapper.writeValue(response.getOutputStream(), problem);
-    }
-}
-```
-
 #### リソース不在（404）
 
 指定された ID のリソースが存在しない、または他ユーザーのリソースにアクセスした場合。
@@ -189,68 +102,17 @@ Service 層で `ResourceNotFoundException` をスローする。
 
 **他ユーザーのリソースアクセスも 404 を返す**理由は [API 設計](./api-design.md) の設計メモを参照。
 
-```java
-public TransactionResponse findById(Long userId, Long transactionId) {
-    Transaction transaction = transactionRepository.findById(transactionId)
-            .orElseThrow(() -> new ResourceNotFoundException(
-                    "The requested transaction was not found."));
-
-    if (!transaction.getUserId().equals(userId)) {
-        throw new ResourceNotFoundException(
-                "The requested transaction was not found.");
-    }
-    // ...
-}
-```
-
 #### JSON パースエラー（400）
 
 不正な JSON がリクエストボディとして送信された場合。
-
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Failed to parse request body."
-}
-```
 
 #### クエリパラメータの型不正（400）
 
 クエリパラメータの型変換に失敗した場合（例: `category_id=abc`）。
 
-```json
-{
-  "type": "about:blank",
-  "title": "Bad Request",
-  "status": 400,
-  "detail": "Invalid value for parameter 'category_id'."
-}
-```
-
 #### 予期しないエラー（500）
 
 上記のいずれにも該当しない例外。
-
-```java
-@ExceptionHandler(Exception.class)
-public ResponseEntity<ProblemDetail> handleUnexpected(
-        Exception ex, HttpServletRequest request) {
-
-    log.error("Unexpected error: URI={}", request.getRequestURI(), ex);
-
-    ProblemDetail problem = ProblemDetail.forStatus(500);
-    problem.setType(URI.create("about:blank"));
-    problem.setTitle("Internal Server Error");
-    problem.setDetail("An unexpected error occurred.");
-    problem.setInstance(URI.create(request.getRequestURI()));
-
-    return ResponseEntity.status(500)
-            .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-            .body(problem);
-}
-```
 
 - スタックトレースをレスポンスに含めない（ログにのみ出力）
 - `detail` にエラーの技術的詳細を含めない
@@ -267,8 +129,8 @@ public ResponseEntity<ProblemDetail> handleUnexpected(
 | 500 | ERROR | あり | サーバー内部エラー（調査が必要） |
 
 ログには以下の情報を含める:
-- リクエスト URI
 - HTTP メソッド
+- リクエスト URI
 - ステータスコード
 - エラーメッセージ
 - ユーザー ID（認証済みの場合）
@@ -281,123 +143,23 @@ public ResponseEntity<ProblemDetail> handleUnexpected(
 
 API クライアント（fetch ラッパー）でレスポンスステータスを検査し、エラー時は構造化された例外をスローする。
 
-```typescript
-interface ApiError {
-  type: string;
-  title: string;
-  status: number;
-  detail: string;
-  instance?: string;
-  errors?: { detail: string; pointer: string }[];
-}
+#### 規約
 
-class ApiException extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly problemDetail: ApiError,
-  ) {
-    super(problemDetail.detail);
-  }
-}
-
-async function apiClient<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options?.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const problemDetail: ApiError = await response.json();
-    throw new ApiException(response.status, problemDetail);
-  }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return response.json();
-}
-```
-
-### ネットワークエラーの処理
-
-`fetch` が `TypeError` をスローするケース（ネットワーク切断、DNS 解決失敗、CORS エラーなど）を
-API クライアント層で捕捉し、統一的なエラーオブジェクトに変換する。
-
-```typescript
-class NetworkException extends Error {
-  constructor() {
-    super("Network error. Please check your connection.");
-  }
-}
-
-async function apiClient<T>(path: string, options?: RequestInit): Promise<T> {
-  let response: Response;
-  try {
-    response = await fetch(`${API_BASE_URL}${path}`, { /* ... */ });
-  } catch {
-    throw new NetworkException();
-  }
-  // ...
-}
-```
+- レスポンスが `!response.ok` の場合、ボディを RFC 9457 の `ApiError` としてパースし、`ApiException` をスローする
+- `fetch` が `TypeError` をスローするケース（ネットワーク切断、DNS 解決失敗、CORS エラーなど）は `NetworkException` に変換する
+- 401 レスポンスを受信した場合、JWT をクリアしてログイン画面にリダイレクトする（グローバル処理）
 
 ### TanStack Query でのエラーハンドリング
 
-#### グローバル設定
+#### リトライ方針
 
-`QueryClient` のデフォルト設定で共通のエラーハンドリングを行う。
+- Query: 認証エラー・バリデーションエラー（401, 403, 404, 422）はリトライしない。その他は最大 3 回リトライ
+- Mutation: リトライしない
 
-```typescript
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: (failureCount, error) => {
-        // 認証エラー・バリデーションエラーはリトライしない
-        if (error instanceof ApiException) {
-          if ([401, 403, 404, 422].includes(error.status)) {
-            return false;
-          }
-        }
-        return failureCount < 3;
-      },
-    },
-    mutations: {
-      retry: false,
-    },
-  },
-});
-```
+#### Mutation のエラー処理
 
-#### Mutation のエラーハンドリング
-
-各 Mutation の `onError` コールバックでエラー種別に応じた処理を行う。
-
-```typescript
-const createTransaction = useMutation({
-  mutationFn: (data: TransactionRequest) =>
-    apiClient<Transaction>("/api/v1/transactions", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    toast.success("Transaction saved");
-  },
-  onError: (error) => {
-    if (error instanceof ApiException && error.status === 422) {
-      // バリデーションエラー → フォームにエラーメッセージを表示
-      return;
-    }
-    // その他 → トースト通知
-    toast.error("Something went wrong. Please try again.");
-  },
-});
-```
+- 422（バリデーションエラー）→ フォームの該当フィールドにインラインエラーを表示
+- その他 → トースト通知
 
 ### エラー種別ごとの UI 表示
 
@@ -409,46 +171,9 @@ const createTransaction = useMutation({
 | 500 | サーバーエラー | トースト通知（「Something went wrong. Please try again.」） |
 | - | ネットワークエラー | トースト通知（「Network error. Please check your connection.」） |
 
-#### 認証エラー（401）のグローバル処理
+### バリデーションエラー（422）のフォーム連携
 
-API クライアントのインターセプターで 401 を検知し、ログイン画面にリダイレクトする。
-個別の Query / Mutation で 401 を意識する必要をなくす。
-
-```typescript
-async function apiClient<T>(path: string, options?: RequestInit): Promise<T> {
-  // ...
-  if (!response.ok) {
-    const problemDetail: ApiError = await response.json();
-
-    if (response.status === 401) {
-      clearAuthToken();
-      window.location.href = "/login";
-      throw new ApiException(401, problemDetail);
-    }
-
-    throw new ApiException(response.status, problemDetail);
-  }
-  // ...
-}
-```
-
-#### バリデーションエラー（422）のフォーム連携
-
-`errors` 配列の `pointer` からフィールド名を取得し、フォームの対応するフィールドにエラーメッセージを表示する。
-
-```typescript
-function mapApiErrorsToFormErrors(
-  apiErrors: { detail: string; pointer: string }[],
-): Record<string, string> {
-  const formErrors: Record<string, string> = {};
-  for (const error of apiErrors) {
-    // "#/amount" → "amount"
-    const field = error.pointer.replace("#/", "");
-    formErrors[field] = error.detail;
-  }
-  return formErrors;
-}
-```
+`errors` 配列の `pointer` からフィールド名を取得し（`#/amount` → `amount`）、フォームの対応するフィールドにエラーメッセージを表示する。
 
 **pointer → フィールド名のマッピング**:
 
@@ -462,7 +187,7 @@ function mapApiErrorsToFormErrors(
 | `#/memo` | memo |
 | `#/currency_code` | currency_code |
 
-#### トースト通知
+### トースト通知
 
 [画面フロー](./screen-flow.md) で定義したトースト通知の仕様に従う。
 
