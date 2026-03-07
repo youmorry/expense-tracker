@@ -112,6 +112,7 @@ public class GlobalExceptionHandler {
     problem.setType(URI.create("about:blank"));
     problem.setTitle("Internal Server Error");
     problem.setDetail("An unexpected error occurred.");
+    problem.setInstance(URI.create(request.getRequestURI()));
 
     return ResponseEntity.status(500).contentType(PROBLEM_JSON).body(problem);
   }

@@ -244,6 +244,7 @@ public ResponseEntity<ProblemDetail> handleUnexpected(
     problem.setType(URI.create("about:blank"));
     problem.setTitle("Internal Server Error");
     problem.setDetail("An unexpected error occurred.");
+    problem.setInstance(URI.create(request.getRequestURI()));
 
     return ResponseEntity.status(500)
             .contentType(MediaType.APPLICATION_PROBLEM_JSON)
