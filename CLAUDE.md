@@ -23,6 +23,12 @@ npm test                                 # テスト
 npm run build                            # ビルド
 ```
 
+## Tech Stack
+
+- Backend: Java 25, Spring Boot 4.0, Spring Data JDBC, Flyway, PostgreSQL
+- Frontend: React, TypeScript, Vite, TanStack Query
+- Infra: Docker Compose（ローカル開発）
+
 ## Architecture
 
 アーキテクチャ・設計判断の詳細は `.claude/rules/` を参照（該当コード編集時に自動ロード）:

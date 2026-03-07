@@ -33,6 +33,59 @@ com.youmorry.expensetracker/
 - Controller にビジネスロジックを書かない
 - Entity のコンストラクタで不変条件を検証せずにインスタンスを作らない
 
+### コード例
+
+#### 良い例: Entity でバリデーション付きコンストラクタ
+
+```java
+public record Money(@Column("amount") BigDecimal value) {
+
+  public Money {
+    Objects.requireNonNull(value, "value must not be null");
+    if (value.compareTo(BigDecimal.ZERO) <= 0) {
+      throw new IllegalArgumentException(
+          "Money value must be positive, but was: " + value);
+    }
+  }
+}
+```
+
+#### 悪い例: バリデーションなしの Entity
+
+```java
+// NG: 不変条件を検証していない。不正な状態のオブジェクトが生成される
+public record Money(@Column("amount") BigDecimal value) {}
+```
+
+#### 良い例: Controller → Service の呼び出し
+
+```java
+// Controller: 薄く保ち、ビジネスロジックを書かない
+@PostMapping
+public ResponseEntity<TransactionResponse> create(
+    @Valid @RequestBody CreateTransactionRequest request,
+    @AuthenticationPrincipal UserId userId) {
+  var transaction = transactionService.create(request.toCommand(userId));
+  return ResponseEntity.status(HttpStatus.CREATED)
+      .body(TransactionResponse.from(transaction));
+}
+```
+
+#### 悪い例: Controller にビジネスロジック
+
+```java
+// NG: Controller 内でドメインロジックを実行している
+@PostMapping
+public ResponseEntity<TransactionResponse> create(
+    @Valid @RequestBody CreateTransactionRequest request,
+    @AuthenticationPrincipal UserId userId) {
+  var category = categoryRepository.findById(request.categoryId())
+      .orElseThrow(() -> new ValidationException(...));
+  var money = new Money(new BigDecimal(request.amount()));
+  // ... 本来 Service に属するロジック
+}
+```
+
 ## 設計判断
 
 - **Spring Data JDBC over JPA**: 暗黙の挙動（遅延ロード・ダーティチェック）を排除し SQL を透明に
@@ -53,12 +106,28 @@ com.youmorry.expensetracker/
 - DB カラム / JSON キー: snake_case
 - Java: camelCase
 
+## エラーハンドリング
+
+- ドメイン例外は `shared/exception/` に定義し、`AppException` を継承する
+- Controller で個別キャッチせず `@RestControllerAdvice`（`GlobalExceptionHandler`）で一元処理
+- ドメイン層・アプリケーション層では `AppException` のサブクラスのみスローする（生の `RuntimeException` は禁止）
+- 他ユーザーのリソースアクセスは `ResourceNotFoundException`（404）で存在を秘匿する
+- 詳細は @docs/03-design/error-handling.md
+
 ## テスト方針
 
 - domain: 純粋な単体テスト（Spring 不要）
 - application: `@SpringBootTest` またはモック使用
 - presentation: `@WebMvcTest` + MockMvc
 - テストクラス名: `<対象クラス>Test`
+
+### テストの書き方
+
+- テストメソッド名は振る舞いを説明する英語（例: `createTransaction_withValidInput_returnsCreated`）
+- Arrange-Act-Assert パターンで構造化し、各セクションを空行で区切る
+- モックは外部依存（Repository、外部 API）のみに使い、ドメインオブジェクトのテストでは実オブジェクトを使う
+- 1テストメソッドにつき1つの振る舞いを検証する（複数の assert は同一の振る舞いに関するもののみ）
+- テストデータはテストメソッド内でローカルに生成し、テスト間で共有しない
 
 ## 参照ドキュメント
 
