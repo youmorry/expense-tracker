@@ -109,7 +109,9 @@ class GlobalExceptionHandlerTest {
         .andExpect(jsonPath("$.title").value("Your request is not valid."))
         .andExpect(jsonPath("$.status").value(422)).andExpect(jsonPath("$.errors").isArray())
         .andExpect(jsonPath("$.errors[0].detail").value("must be greater than 0"))
-        .andExpect(jsonPath("$.errors[0].pointer").value("#/amount"));
+        .andExpect(jsonPath("$.errors[0].pointer").value("#/amount"))
+        .andExpect(jsonPath("$.errors[1].detail").value("must not be null"))
+        .andExpect(jsonPath("$.errors[1].pointer").value("#/date"));
   }
 
   @Test
@@ -128,7 +130,9 @@ class GlobalExceptionHandlerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/forbidden"))
         .andExpect(jsonPath("$.title").value("Forbidden."))
-        .andExpect(jsonPath("$.status").value(403));
+        .andExpect(jsonPath("$.status").value(403))
+        .andExpect(
+            jsonPath("$.detail").value("You do not have permission to access this resource."));
   }
 
   @Test
