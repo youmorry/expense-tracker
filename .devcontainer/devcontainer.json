@@ -28,7 +28,10 @@
         "bradlc.vscode-tailwindcss",
         "editorconfig.editorconfig",
         "anthropic.claude-code",
-        "bierner.markdown-mermaid"
+        "bierner.markdown-mermaid",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "github.copilot-chat"
       ],
       "settings": {
         "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
