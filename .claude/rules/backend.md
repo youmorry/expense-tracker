@@ -9,16 +9,29 @@ paths:
 ## アーキテクチャ: DDD + Layered
 
 ```
-com.example.expensetracker/
+com.youmorry.expensetracker/
 ├── domain/           # Entity, ValueObject, Repository interface
 ├── application/      # Service（ユースケース実装）
 ├── infrastructure/   # Spring Data JDBC Repository 実装, 外部 API
-└── presentation/     # REST Controller, DTO
+├── presentation/     # REST Controller, DTO
+└── shared/           # 横断的関心事（例外クラス等）
 ```
 
 - `domain` と `application` を明示的に分離し、ドメインロジックを `domain` に集約
 - Spring Data JDBC の Aggregate/Repository 概念を DDD にそのまま対応させる
 - `domain` 層はフレームワークのロジックに依存しない（`@Table`, `@Id` 等のマッピング用アノテーションは許容）
+
+### 層間の依存ルール
+
+- 依存方向: presentation → application → domain ← infrastructure
+- domain 層は他の層に依存しない（依存性逆転）
+- Controller から Repository を直接呼ばない（必ず application 層を経由）
+
+### 禁止事項
+
+- domain 層で Spring 固有のサービス（`@Service`, `@Transactional` 等）を使わない
+- Controller にビジネスロジックを書かない
+- Entity のコンストラクタで不変条件を検証せずにインスタンスを作らない
 
 ## 設計判断
 
@@ -40,16 +53,21 @@ com.example.expensetracker/
 - DB カラム / JSON キー: snake_case
 - Java: camelCase
 
+## テスト方針
+
+- domain: 純粋な単体テスト（Spring 不要）
+- application: `@SpringBootTest` またはモック使用
+- presentation: `@WebMvcTest` + MockMvc
+- テストクラス名: `<対象クラス>Test`
+
 ## 参照ドキュメント
 
 常時参照（コンテキストに自動ロード）:
 
 - @docs/java-coding-standards.md
 
-必要時に参照:
+必要時に参照（CLAUDE.md の参照ドキュメントも併せて確認）:
 
 - `docs/03-design/domain-model.md` — Entity / VO / Aggregate 設計
 - `docs/03-design/error-handling.md` — 例外階層・RFC 9457 レスポンス
 - `docs/03-design/database-schema.md` — DDL・インデックス・Flyway
-- `docs/03-design/api-design.md` — API エンドポイント仕様
-- `docs/03-design/auth-design.md` — 認証フロー・JWT・セキュリティ
