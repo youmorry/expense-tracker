@@ -29,6 +29,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("com.auth0:java-jwt:4.5.0")
+    implementation("com.google.guava:guava:33.4.0-jre")
     implementation("com.google.api-client:google-api-client:2.7.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")

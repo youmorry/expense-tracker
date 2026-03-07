@@ -74,6 +74,13 @@ class GlobalExceptionHandlerTest {
 
     record BeanValidationRequest(@NotNull String name) {
     }
+
+    @PostMapping("/test/snake-case-conversion")
+    public void snakeCaseConversion(@Valid @RequestBody SnakeCaseRequest request) {}
+
+    record SnakeCaseRequest(@NotNull String userName, @NotNull String userId,
+        @NotNull String createdAt, @NotNull String isActive) {
+    }
   }
 
   @BeforeEach
@@ -169,5 +176,17 @@ class GlobalExceptionHandlerTest {
         .andExpect(jsonPath("$.title").value("Your request is not valid."))
         .andExpect(jsonPath("$.status").value(422)).andExpect(jsonPath("$.errors").isArray())
         .andExpect(jsonPath("$.errors[0].pointer").value("#/name"));
+  }
+
+  @Test
+  void handleMethodArgumentNotValid_convertsFieldNamesToSnakeCase() throws Exception {
+    mockMvc
+        .perform(post("/test/snake-case-conversion").contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isUnprocessableContent())
+        .andExpect(jsonPath("$.errors[?(@.pointer == '#/user_name')]").exists())
+        .andExpect(jsonPath("$.errors[?(@.pointer == '#/user_id')]").exists())
+        .andExpect(jsonPath("$.errors[?(@.pointer == '#/created_at')]").exists())
+        .andExpect(jsonPath("$.errors[?(@.pointer == '#/is_active')]").exists());
   }
 }

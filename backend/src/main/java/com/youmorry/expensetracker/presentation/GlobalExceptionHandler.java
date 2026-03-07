@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import com.google.common.base.CaseFormat;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +133,6 @@ public class GlobalExceptionHandler {
   }
 
   private String toSnakeCase(String camelCase) {
-    return camelCase.replaceAll("([A-Z])", "_$1").toLowerCase();
+    return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, camelCase);
   }
 }
