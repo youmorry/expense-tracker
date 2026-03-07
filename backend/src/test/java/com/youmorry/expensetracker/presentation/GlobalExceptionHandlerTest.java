@@ -63,7 +63,8 @@ class GlobalExceptionHandlerTest {
     @PostMapping("/test/invalid-json")
     public void invalidJson(@RequestBody InvalidJsonRequest body) {}
 
-    record InvalidJsonRequest(String data) {}
+    record InvalidJsonRequest(String data) {
+    }
 
     @GetMapping("/test/type-mismatch")
     public void typeMismatch(@RequestParam Integer id) {}
@@ -79,8 +80,7 @@ class GlobalExceptionHandlerTest {
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(new TestController())
         .setControllerAdvice(new GlobalExceptionHandler())
-        .setValidator(new LocalValidatorFactoryBean())
-        .build();
+        .setValidator(new LocalValidatorFactoryBean()).build();
   }
 
   @Test
@@ -96,7 +96,7 @@ class GlobalExceptionHandlerTest {
 
   @Test
   void handleValidationException_returns422WithErrors() throws Exception {
-    mockMvc.perform(get("/test/validation")).andExpect(status().isUnprocessableEntity())
+    mockMvc.perform(get("/test/validation")).andExpect(status().isUnprocessableContent())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/validation-error"))
         .andExpect(jsonPath("$.title").value("Your request is not valid."))
@@ -163,7 +163,7 @@ class GlobalExceptionHandlerTest {
     mockMvc
         .perform(
             post("/test/bean-validation").contentType(MediaType.APPLICATION_JSON).content("{}"))
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/validation-error"))
         .andExpect(jsonPath("$.title").value("Your request is not valid."))
