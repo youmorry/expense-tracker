@@ -42,7 +42,7 @@ dependencies {
 checkstyle {
     toolVersion = "13.3.0"
     configFile = file("config/checkstyle/checkstyle.xml")
-    isIgnoreFailures = true
+    isIgnoreFailures = false
 }
 
 spotless {

@@ -7,6 +7,7 @@ package com.youmorry.expensetracker.shared.exception;
  */
 public class ForbiddenException extends AppException {
 
+  /** 指定されたエラー詳細でインスタンスを生成する。 */
   public ForbiddenException(String detail) {
     super("/errors/forbidden", "Forbidden.", 403, detail);
   }

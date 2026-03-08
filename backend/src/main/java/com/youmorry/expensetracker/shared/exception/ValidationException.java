@@ -11,6 +11,7 @@ public class ValidationException extends AppException {
 
   private final List<FieldError> errors;
 
+  /** 指定されたエラー詳細でインスタンスを生成する。 */
   public ValidationException(String detail, List<FieldError> errors) {
     super("/errors/validation-error", "Your request is not valid.", 422, detail);
     this.errors = errors;
@@ -20,6 +21,6 @@ public class ValidationException extends AppException {
     return errors;
   }
 
-  public record FieldError(String detail, String pointer) {
-  }
+  /** フィールド単位のバリデーションエラー。 */
+  public record FieldError(String detail, String pointer) {}
 }

@@ -7,6 +7,7 @@ import org.springframework.data.relational.core.mapping.Column;
 /** 金額を表す値オブジェクト。0 より大きい正の値のみ許容する。 */
 public record Money(@Column("amount") BigDecimal value) {
 
+  /** 金額が正の値であることを検証する。 */
   public Money {
     Objects.requireNonNull(value, "value must not be null");
     if (value.compareTo(BigDecimal.ZERO) <= 0) {

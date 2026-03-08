@@ -1,11 +1,18 @@
 package com.youmorry.expensetracker.presentation;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.youmorry.expensetracker.shared.exception.ForbiddenException;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -17,14 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class GlobalExceptionHandlerTest {
 
@@ -40,8 +39,10 @@ class GlobalExceptionHandlerTest {
 
     @GetMapping("/test/validation")
     public void validation() {
-      throw new ValidationException("One or more fields have validation errors.",
-          List.of(new ValidationException.FieldError("must be greater than 0", "#/amount"),
+      throw new ValidationException(
+          "One or more fields have validation errors.",
+          List.of(
+              new ValidationException.FieldError("must be greater than 0", "#/amount"),
               new ValidationException.FieldError("must not be null", "#/date")));
     }
 
@@ -63,8 +64,7 @@ class GlobalExceptionHandlerTest {
     @PostMapping("/test/invalid-json")
     public void invalidJson(@RequestBody InvalidJsonRequest body) {}
 
-    record InvalidJsonRequest(String data) {
-    }
+    record InvalidJsonRequest(String data) {}
 
     @GetMapping("/test/type-mismatch")
     public void typeMismatch(@RequestParam Integer id) {}
@@ -72,27 +72,32 @@ class GlobalExceptionHandlerTest {
     @PostMapping("/test/bean-validation")
     public void beanValidation(@Valid @RequestBody BeanValidationRequest request) {}
 
-    record BeanValidationRequest(@NotNull String name) {
-    }
+    record BeanValidationRequest(@NotNull String name) {}
 
     @PostMapping("/test/snake-case-conversion")
     public void snakeCaseConversion(@Valid @RequestBody SnakeCaseRequest request) {}
 
-    record SnakeCaseRequest(@NotNull String userName, @NotNull String userId,
-        @NotNull String createdAt, @NotNull String isActive) {
-    }
+    record SnakeCaseRequest(
+        @NotNull String userName,
+        @NotNull String userId,
+        @NotNull String createdAt,
+        @NotNull String isActive) {}
   }
 
   @BeforeEach
   void setUp() {
-    mockMvc = MockMvcBuilders.standaloneSetup(new TestController())
-        .setControllerAdvice(new GlobalExceptionHandler())
-        .setValidator(new LocalValidatorFactoryBean()).build();
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(new TestController())
+            .setControllerAdvice(new GlobalExceptionHandler())
+            .setValidator(new LocalValidatorFactoryBean())
+            .build();
   }
 
   @Test
   void handleResourceNotFoundException_returns404WithProblemJson() throws Exception {
-    mockMvc.perform(get("/test/not-found")).andExpect(status().isNotFound())
+    mockMvc
+        .perform(get("/test/not-found"))
+        .andExpect(status().isNotFound())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("about:blank"))
         .andExpect(jsonPath("$.title").value("Not Found"))
@@ -103,11 +108,14 @@ class GlobalExceptionHandlerTest {
 
   @Test
   void handleValidationException_returns422WithErrors() throws Exception {
-    mockMvc.perform(get("/test/validation")).andExpect(status().isUnprocessableContent())
+    mockMvc
+        .perform(get("/test/validation"))
+        .andExpect(status().isUnprocessableContent())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/validation-error"))
         .andExpect(jsonPath("$.title").value("Your request is not valid."))
-        .andExpect(jsonPath("$.status").value(422)).andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.status").value(422))
+        .andExpect(jsonPath("$.errors").isArray())
         .andExpect(jsonPath("$.errors[0].detail").value("must be greater than 0"))
         .andExpect(jsonPath("$.errors[0].pointer").value("#/amount"))
         .andExpect(jsonPath("$.errors[1].detail").value("must not be null"))
@@ -116,7 +124,9 @@ class GlobalExceptionHandlerTest {
 
   @Test
   void handleUnauthorizedException_returns401() throws Exception {
-    mockMvc.perform(get("/test/unauthorized")).andExpect(status().isUnauthorized())
+    mockMvc
+        .perform(get("/test/unauthorized"))
+        .andExpect(status().isUnauthorized())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/unauthorized"))
         .andExpect(jsonPath("$.title").value("Authentication required."))
@@ -126,7 +136,9 @@ class GlobalExceptionHandlerTest {
 
   @Test
   void handleForbiddenException_returns403() throws Exception {
-    mockMvc.perform(get("/test/forbidden")).andExpect(status().isForbidden())
+    mockMvc
+        .perform(get("/test/forbidden"))
+        .andExpect(status().isForbidden())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/forbidden"))
         .andExpect(jsonPath("$.title").value("Forbidden."))
@@ -137,7 +149,9 @@ class GlobalExceptionHandlerTest {
 
   @Test
   void handleUnexpectedException_returns500() throws Exception {
-    mockMvc.perform(get("/test/unexpected")).andExpect(status().isInternalServerError())
+    mockMvc
+        .perform(get("/test/unexpected"))
+        .andExpect(status().isInternalServerError())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("about:blank"))
         .andExpect(jsonPath("$.title").value("Internal Server Error"))
@@ -148,8 +162,10 @@ class GlobalExceptionHandlerTest {
   @Test
   void handleHttpMessageNotReadable_returns400() throws Exception {
     mockMvc
-        .perform(post("/test/invalid-json").contentType(MediaType.APPLICATION_JSON)
-            .content("{ invalid json }"))
+        .perform(
+            post("/test/invalid-json")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ invalid json }"))
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("about:blank"))
@@ -160,7 +176,8 @@ class GlobalExceptionHandlerTest {
 
   @Test
   void handleMethodArgumentTypeMismatch_returns400() throws Exception {
-    mockMvc.perform(get("/test/type-mismatch").param("id", "abc"))
+    mockMvc
+        .perform(get("/test/type-mismatch").param("id", "abc"))
         .andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("about:blank"))
@@ -178,15 +195,18 @@ class GlobalExceptionHandlerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
         .andExpect(jsonPath("$.type").value("/errors/validation-error"))
         .andExpect(jsonPath("$.title").value("Your request is not valid."))
-        .andExpect(jsonPath("$.status").value(422)).andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.status").value(422))
+        .andExpect(jsonPath("$.errors").isArray())
         .andExpect(jsonPath("$.errors[0].pointer").value("#/name"));
   }
 
   @Test
   void handleMethodArgumentNotValid_convertsFieldNamesToSnakeCase() throws Exception {
     mockMvc
-        .perform(post("/test/snake-case-conversion").contentType(MediaType.APPLICATION_JSON)
-            .content("{}"))
+        .perform(
+            post("/test/snake-case-conversion")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
         .andExpect(status().isUnprocessableContent())
         .andExpect(jsonPath("$.errors[?(@.pointer == '#/user_name')]").exists())
         .andExpect(jsonPath("$.errors[?(@.pointer == '#/user_id')]").exists())
