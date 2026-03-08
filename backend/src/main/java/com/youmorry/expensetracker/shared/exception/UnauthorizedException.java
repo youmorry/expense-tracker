@@ -7,6 +7,7 @@ package com.youmorry.expensetracker.shared.exception;
  */
 public class UnauthorizedException extends AppException {
 
+  /** 指定されたエラー詳細でインスタンスを生成する。 */
   public UnauthorizedException(String detail) {
     super("/errors/unauthorized", "Authentication required.", 401, detail);
   }

@@ -1,8 +1,12 @@
 package com.youmorry.expensetracker.presentation;
 
+import com.google.common.base.CaseFormat;
 import com.youmorry.expensetracker.shared.exception.AppException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -14,15 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import com.google.common.base.CaseFormat;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
-/**
- * アプリケーション全体の例外を捕捉し、RFC 9457 Problem Details 形式のレスポンスに変換するグローバル例外ハンドラ。
- */
+/** アプリケーション全体の例外を捕捉し、RFC 9457 Problem Details 形式のレスポンスに変換するグローバル例外ハンドラ。 */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -31,8 +27,8 @@ public class GlobalExceptionHandler {
 
   /** アプリケーション固有の例外を Problem Details に変換する。 */
   @ExceptionHandler(AppException.class)
-  public ResponseEntity<ProblemDetail> handleAppException(AppException ex,
-      HttpServletRequest request) {
+  public ResponseEntity<ProblemDetail> handleAppException(
+      AppException ex, HttpServletRequest request) {
     int status = ex.getStatus();
     logByStatus(status, ex, request);
 
@@ -43,8 +39,10 @@ public class GlobalExceptionHandler {
     problem.setInstance(URI.create(request.getRequestURI()));
 
     if (ex instanceof ValidationException validationEx) {
-      List<Map<String, String>> errors = validationEx.getErrors().stream()
-          .map(e -> Map.of("detail", e.detail(), "pointer", e.pointer())).toList();
+      List<Map<String, String>> errors =
+          validationEx.getErrors().stream()
+              .map(e -> Map.of("detail", e.detail(), "pointer", e.pointer()))
+              .toList();
       problem.setProperty("errors", errors);
     }
 
@@ -53,8 +51,8 @@ public class GlobalExceptionHandler {
 
   /** Bean Validation（{@code @Valid}）によるバリデーションエラーを処理する。 */
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex,
-      HttpServletRequest request) {
+  public ResponseEntity<ProblemDetail> handleValidation(
+      MethodArgumentNotValidException ex, HttpServletRequest request) {
     log.warn("Validation error: method={}, URI={}", request.getMethod(), request.getRequestURI());
 
     ProblemDetail problem = ProblemDetail.forStatus(422);
@@ -63,11 +61,16 @@ public class GlobalExceptionHandler {
     problem.setDetail("One or more fields have validation errors.");
     problem.setInstance(URI.create(request.getRequestURI()));
 
-    List<Map<String, String>> errors = ex.getBindingResult().getFieldErrors().stream()
-        .map(fe -> Map.of("detail",
-            fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "invalid value", "pointer",
-            "#/" + toSnakeCase(fe.getField())))
-        .toList();
+    List<Map<String, String>> errors =
+        ex.getBindingResult().getFieldErrors().stream()
+            .map(
+                fe ->
+                    Map.of(
+                        "detail",
+                        fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "invalid value",
+                        "pointer",
+                        "#/" + toSnakeCase(fe.getField())))
+            .toList();
     problem.setProperty("errors", errors);
 
     return ResponseEntity.status(422).contentType(PROBLEM_JSON).body(problem);
@@ -75,8 +78,8 @@ public class GlobalExceptionHandler {
 
   /** JSON パースエラーを処理する。 */
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ProblemDetail> handleMessageNotReadable(HttpMessageNotReadableException ex,
-      HttpServletRequest request) {
+  public ResponseEntity<ProblemDetail> handleMessageNotReadable(
+      HttpMessageNotReadableException ex, HttpServletRequest request) {
     log.warn("JSON parse error: method={}, URI={}", request.getMethod(), request.getRequestURI());
 
     ProblemDetail problem = ProblemDetail.forStatus(400);
@@ -90,10 +93,13 @@ public class GlobalExceptionHandler {
 
   /** クエリパラメータの型変換エラーを処理する。 */
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<ProblemDetail> handleTypeMismatch(MethodArgumentTypeMismatchException ex,
-      HttpServletRequest request) {
-    log.warn("Type mismatch: method={}, URI={}, param={}", request.getMethod(),
-        request.getRequestURI(), ex.getName());
+  public ResponseEntity<ProblemDetail> handleTypeMismatch(
+      MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+    log.warn(
+        "Type mismatch: method={}, URI={}, param={}",
+        request.getMethod(),
+        request.getRequestURI(),
+        ex.getName());
 
     ProblemDetail problem = ProblemDetail.forStatus(400);
     problem.setType(URI.create("about:blank"));
@@ -107,8 +113,8 @@ public class GlobalExceptionHandler {
   /** 予期しない例外を処理する。クライアントには固定メッセージを返し、詳細はログにのみ記録する。 */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ProblemDetail> handleUnexpected(Exception ex, HttpServletRequest request) {
-    log.error("Unexpected error: method={}, URI={}", request.getMethod(), request.getRequestURI(),
-        ex);
+    log.error(
+        "Unexpected error: method={}, URI={}", request.getMethod(), request.getRequestURI(), ex);
 
     ProblemDetail problem = ProblemDetail.forStatus(500);
     problem.setType(URI.create("about:blank"));
@@ -121,14 +127,25 @@ public class GlobalExceptionHandler {
 
   private void logByStatus(int status, AppException ex, HttpServletRequest request) {
     if (status == 404) {
-      log.debug("Resource not found: method={}, URI={}, detail={}", request.getMethod(),
-          request.getRequestURI(), ex.getDetail());
+      log.debug(
+          "Resource not found: method={}, URI={}, detail={}",
+          request.getMethod(),
+          request.getRequestURI(),
+          ex.getDetail());
     } else if (status >= 500) {
-      log.error("Server error: method={}, URI={}, detail={}", request.getMethod(),
-          request.getRequestURI(), ex.getDetail(), ex);
+      log.error(
+          "Server error: method={}, URI={}, detail={}",
+          request.getMethod(),
+          request.getRequestURI(),
+          ex.getDetail(),
+          ex);
     } else {
-      log.warn("Client error: method={}, URI={}, status={}, detail={}", request.getMethod(),
-          request.getRequestURI(), status, ex.getDetail());
+      log.warn(
+          "Client error: method={}, URI={}, status={}, detail={}",
+          request.getMethod(),
+          request.getRequestURI(),
+          status,
+          ex.getDetail());
     }
   }
 

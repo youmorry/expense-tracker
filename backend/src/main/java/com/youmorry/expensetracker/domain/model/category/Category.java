@@ -5,7 +5,4 @@ import org.springframework.data.relational.core.mapping.Table;
 
 /** 支出を分類するカテゴリのエンティティ。 */
 @Table("categories")
-public record Category(
-    @Id CategoryId id,
-    String name,
-    Integer displayOrder) {}
+public record Category(@Id CategoryId id, String name, Integer displayOrder) {}

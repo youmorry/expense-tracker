@@ -3,9 +3,9 @@ package com.youmorry.expensetracker.shared.exception;
 /**
  * アプリケーション固有の例外の基底クラス。
  *
- * <p>RFC 9457 Problem Details の {@code type}, {@code title}, {@code status} を保持し、
- * {@link com.youmorry.expensetracker.presentation.GlobalExceptionHandler} で
- * {@code application/problem+json} レスポンスに変換される。
+ * <p>RFC 9457 Problem Details の {@code type}, {@code title}, {@code status} を保持し、 {@link
+ * com.youmorry.expensetracker.presentation.GlobalExceptionHandler} で {@code
+ * application/problem+json} レスポンスに変換される。
  */
 public abstract class AppException extends RuntimeException {
 
