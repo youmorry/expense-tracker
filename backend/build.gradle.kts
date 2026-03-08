@@ -1,7 +1,9 @@
 plugins {
     java
+    checkstyle
     id("org.springframework.boot") version "4.0.3"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.diffplug.spotless") version "8.3.0"
 }
 
 group = "com.youmorry"
@@ -35,6 +37,20 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+checkstyle {
+    toolVersion = "13.3.0"
+    configFile = file("config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = true
+}
+
+spotless {
+    java {
+        googleJavaFormat("1.35.0")
+        removeUnusedImports()
+        formatAnnotations()
+    }
 }
 
 tasks.withType<Test> {
