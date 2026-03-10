@@ -17,18 +17,18 @@ sequenceDiagram
     participant Google as Google OAuth2
 
     User->>FE: 1. ログインボタン押下
-    FE->>Google: 2. Google認証画面にリダイレクト
+    Note over FE,Google: 2-4 はポップアップ/オーバーレイ内で完結
+    FE->>Google: 2. Google認証画面を表示
     Google->>User: 3. 認証・同意
-    Google->>User: 4. ID トークン返却（リダイレクト）
-    User->>FE: 5. ID トークン取得（クライアントサイド）
-    FE->>BE: 6. POST /api/v1/auth/google<br>{ id_token: "..." }
-    BE->>Google: 7. ID トークン検証
+    Google->>FE: 4. ID トークン返却（JSコールバック）
+    FE->>BE: 5. POST /api/v1/auth/google<br>{ id_token: "..." }
+    BE->>Google: 6. ID トークン検証（公開鍵で署名検証）
     Google-->>BE: 検証結果
-    Note over BE: 8. ユーザー検索/作成<br>(新規: locale→通貨推定)
-    Note over BE: 9. JWT 生成
-    BE-->>FE: 10. { access_token, user }
-    Note over FE: 11. JWT をメモリに保持
-    FE-->>User: 12. メイン画面表示
+    Note over BE: 7. ユーザー検索/作成<br>(新規: locale→通貨推定)
+    Note over BE: 8. JWT 生成（HS256）
+    BE-->>FE: 9. { access_token, user }
+    Note over FE: 10. JWT をメモリに保持
+    FE-->>User: 11. メイン画面表示
 ```
 
 ---
