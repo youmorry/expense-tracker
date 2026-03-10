@@ -19,15 +19,16 @@ sequenceDiagram
     User->>FE: 1. ログインボタン押下
     FE->>Google: 2. Google認証画面にリダイレクト
     Google->>User: 3. 認証・同意
-    Google->>FE: 4. ID トークン取得（クライアントサイド）
-    FE->>BE: 5. POST /api/v1/auth/google<br>{ id_token: "..." }
-    BE->>Google: 6. ID トークン検証
+    Google->>User: 4. ID トークン返却（リダイレクト）
+    User->>FE: 5. ID トークン取得（クライアントサイド）
+    FE->>BE: 6. POST /api/v1/auth/google<br>{ id_token: "..." }
+    BE->>Google: 7. ID トークン検証
     Google-->>BE: 検証結果
-    Note over BE: 7. ユーザー検索/作成<br>(新規: locale→通貨推定)
-    Note over BE: 8. JWT 生成
-    BE-->>FE: 9. { access_token, user }
-    Note over FE: 10. JWT をメモリに保持
-    FE-->>User: 11. メイン画面表示
+    Note over BE: 8. ユーザー検索/作成<br>(新規: locale→通貨推定)
+    Note over BE: 9. JWT 生成
+    BE-->>FE: 10. { access_token, user }
+    Note over FE: 11. JWT をメモリに保持
+    FE-->>User: 12. メイン画面表示
 ```
 
 ---
@@ -269,7 +270,6 @@ FE と BE が異なるオリジンで動作するため、CORS を適切に設�
 | 変数名 | 設定先 | 説明 |
 |--------|--------|------|
 | `GOOGLE_CLIENT_ID` | BE / FE | Google OAuth2 クライアント ID |
-| `GOOGLE_CLIENT_SECRET` | BE | Google OAuth2 クライアントシークレット |
 | `JWT_SECRET` | BE | JWT 署名用の秘密鍵（最低 32 バイト） |
 | `JWT_EXPIRATION_HOURS` | BE | JWT 有効期限（時間単位、デフォルト: 24） |
 
