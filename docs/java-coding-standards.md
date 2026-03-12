@@ -6,5 +6,4 @@
 
 ## プロジェクト固有の補足
 
-- インデント: 半角スペース 2 文字（Google Style 標準と同一）
-- Javadoc: `public` API には記述する。ただし Record の自動生成アクセサや自明な getter/setter は省略可
+- Javadoc: `public`メソッドには説明、`@param`, `@return`, `@throws`を記述する。ただし Record の自動生成アクセサや自明な getter/setter は省略可
