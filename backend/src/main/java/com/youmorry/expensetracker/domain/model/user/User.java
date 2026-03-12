@@ -1,9 +1,9 @@
 package com.youmorry.expensetracker.domain.model.user;
 
 import java.time.Instant;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.lang.Nullable;
 
 /** Google OAuth2 で認証されたユーザーを表すエンティティ。 */
 @Table("users")
