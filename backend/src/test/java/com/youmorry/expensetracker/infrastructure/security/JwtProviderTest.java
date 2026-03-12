@@ -5,9 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
-import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 class JwtProviderTest {
@@ -19,16 +17,10 @@ class JwtProviderTest {
 
   @Test
   void generateToken_returnsValidJwt() {
-    var user =
-        new User(
-            new UserId(42L),
-            "google-123",
-            "test@gmail.com",
-            "Test User",
-            "JPY",
-            Instant.parse("2026-01-01T00:00:00Z"));
+    var userId = new UserId(42L);
+    var email = "test@gmail.com";
 
-    String token = jwtProvider.generateToken(user);
+    String token = jwtProvider.generateToken(userId, email);
 
     assertNotNull(token);
     DecodedJWT decoded = JWT.decode(token);
@@ -40,16 +32,10 @@ class JwtProviderTest {
 
   @Test
   void generateToken_setsExpirationTo24Hours() {
-    var user =
-        new User(
-            new UserId(1L),
-            "google-456",
-            "user@gmail.com",
-            "User",
-            "USD",
-            Instant.parse("2026-01-01T00:00:00Z"));
+    var userId = new UserId(1L);
+    var email = "user@gmail.com";
 
-    String token = jwtProvider.generateToken(user);
+    String token = jwtProvider.generateToken(userId, email);
 
     DecodedJWT decoded = JWT.decode(token);
     long diffSeconds =
