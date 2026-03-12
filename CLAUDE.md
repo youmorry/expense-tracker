@@ -40,9 +40,19 @@ npm run build                            # ビルド
 - `.claude/rules/frontend.md` — Feature-Sliced Design、状態管理方針、認証フロー
 - `.claude/rules/design-principles.md` — ドメインモデル、クラス・モジュール設計の原則
 
+## Workflow
+
+Issue やタスクの作業を開始するとき、以下の手順を守ること:
+
+1. **ブランチ作成**: ブランチ戦略に則ってブランチを切る。
+2. **実装**: コードを書く
+3. **コミット**: `/commit` スキルを使う（コミット分割・メッセージ規約はスキル側で定義済み）
+4. **PR 作成**: `/create-pr` スキルを使う
+
 ## Conventions
 
 - ブランチ戦略: GitHub Flow（`main` から feature ブランチを切り、PR でマージ）
+  - バグ対応の時はhotfixブランチを切る。
 - ブランチ命名: `feature/<説明>`（例: `feature/add-expense-api`）
 - 言語: コードは英語
 
