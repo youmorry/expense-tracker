@@ -33,6 +33,7 @@ dependencies {
     implementation("com.auth0:java-jwt:4.5.0")
     implementation("com.google.guava:guava:33.4.0-jre")
     implementation("com.google.api-client:google-api-client:2.7.2")
+    implementation("org.jspecify:jspecify:1.0.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.security:spring-security-test")
