@@ -8,8 +8,8 @@ import org.springframework.data.relational.core.mapping.Table;
 /**
  * ユーザーを表すエンティティ。
  *
- * <p>現在は Google OAuth2 のみをサポートしているため {@code googleId} を直接保持しているが、
- * 複数の認証プロバイダをサポートする場合は {@code LinkedAccount} 等の別エンティティに分離すること。
+ * <p>現在は Google OAuth2 のみをサポートしているため {@code googleId} を直接保持しているが、 複数の認証プロバイダをサポートする場合は {@code
+ * LinkedAccount} 等の別エンティティに分離すること。
  */
 @Table("users")
 public record User(
