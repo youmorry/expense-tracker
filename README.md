@@ -15,15 +15,15 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Spring Boot 4.0.3 / Java 25 / Gradle (Kotlin DSL) |
-| Frontend | React 19 / TypeScript 5 / Vite / Tailwind CSS |
-| Data Access | Spring Data JDBC |
-| State Management | TanStack Query v5 |
-| Auth | Google OAuth2 + JWT (HS256) |
-| Database | PostgreSQL 18 / Flyway |
-| Hosting | Render (FE: Static Site, BE: Web Service) / Neon (DB) |
+| Layer            | Technology                                            |
+| ---------------- | ----------------------------------------------------- |
+| Backend          | Spring Boot 4.0.3 / Java 25 / Gradle (Kotlin DSL)     |
+| Frontend         | React 19 / TypeScript 5 / Vite / Tailwind CSS         |
+| Data Access      | Spring Data JDBC                                      |
+| State Management | TanStack Query v5                                     |
+| Auth             | Google OAuth2 + JWT (HS256)                           |
+| Database         | PostgreSQL 18 / Flyway                                |
+| Hosting          | Render (FE: Static Site, BE: Web Service) / Neon (DB) |
 
 ## Architecture
 
@@ -66,9 +66,13 @@ src/
 
 ## Getting Started
 
+### 環境変数
+
+- 'CONTEXT7_API_KEY': Context7 MCPサーバー接続利用時に必要。
+
 ### Dev Container（推奨）
 
-VS Code / GitHub Codespaces の [Dev Containers](https://containers.dev/) に対応しています。Java 25・Node.js 22・Claude Code が事前構成済みのため、環境構築なしですぐに開発を始められます。
+VS Code / GitHub Codespaces の [Dev Containers](https://containers.dev/) に対応しています。Java 25・Node.js 22・Claude Code が事前構成済みのため、環境構築なしですぐに開発を始められます。環境変数設定時は必ずコマンドでVSCodeを起動しなおして(`$ code .`)から`Rebuild Dev Container`をすること。
 
 1. VS Code で **Dev Containers** 拡張機能をインストール
 2. コマンドパレットから **Dev Containers: Reopen in Container** を実行
@@ -127,21 +131,21 @@ npm run build
 docker compose up -d
 ```
 
-| Service | Description | Port |
-|---------|-------------|------|
-| db | PostgreSQL 18 | `localhost:5432` |
+| Service     | Description                     | Port             |
+| ----------- | ------------------------------- | ---------------- |
+| db          | PostgreSQL 18                   | `localhost:5432` |
 | mock-server | Prism（OpenAPI モックサーバー） | `localhost:4010` |
-| swagger-ui | Swagger UI（OpenAPI ビューア） | `localhost:8081` |
+| swagger-ui  | Swagger UI（OpenAPI ビューア）  | `localhost:8081` |
 
 **DB 接続情報**
 
-| Key | Value |
-|-----|-------|
-| Host | `localhost` |
-| Port | `5432` |
+| Key      | Value             |
+| -------- | ----------------- |
+| Host     | `localhost`       |
+| Port     | `5432`            |
 | Database | `expense_tracker` |
-| User | `postgres` |
-| Password | `postgres` |
+| User     | `postgres`        |
+| Password | `postgres`        |
 
 データは Docker ボリューム `db-data` に永続化されます。リセットする場合:
 
@@ -165,17 +169,17 @@ cd backend && ./gradlew bootRun
 
 設計の詳細は [docs/](docs/) を参照してください。
 
-| Document | Content |
-|----------|---------|
-| [API Design](docs/03-design/api-design.md) | 全 12 エンドポイントの API 仕様 |
-| [Auth Design](docs/03-design/auth-design.md) | 認証フロー・JWT・セキュリティ |
-| [Database Schema](docs/03-design/database-schema.md) | DDL・インデックス・Flyway |
-| [Domain Model](docs/03-design/domain-model.md) | Entity / ValueObject / Aggregate 設計 |
-| [Error Handling](docs/03-design/error-handling.md) | 例外階層・RFC 9457 レスポンス |
-| [ER Diagram](docs/03-design/er-diagram.md) | ER 図・テーブル構成 |
-| [Repository Structure](docs/03-design/repository-structure.md) | モノレポ構成・ディレクトリ設計 |
-| [Screen Flow](docs/03-design/screen-flow.md) | UI 画面遷移・インタラクション |
-| [Java Coding Standards](docs/java-coding-standards.md) | Java コーディング規約（Google Style） |
+| Document                                                       | Content                               |
+| -------------------------------------------------------------- | ------------------------------------- |
+| [API Design](docs/03-design/api-design.md)                     | 全 12 エンドポイントの API 仕様       |
+| [Auth Design](docs/03-design/auth-design.md)                   | 認証フロー・JWT・セキュリティ         |
+| [Database Schema](docs/03-design/database-schema.md)           | DDL・インデックス・Flyway             |
+| [Domain Model](docs/03-design/domain-model.md)                 | Entity / ValueObject / Aggregate 設計 |
+| [Error Handling](docs/03-design/error-handling.md)             | 例外階層・RFC 9457 レスポンス         |
+| [ER Diagram](docs/03-design/er-diagram.md)                     | ER 図・テーブル構成                   |
+| [Repository Structure](docs/03-design/repository-structure.md) | モノレポ構成・ディレクトリ設計        |
+| [Screen Flow](docs/03-design/screen-flow.md)                   | UI 画面遷移・インタラクション         |
+| [Java Coding Standards](docs/java-coding-standards.md)         | Java コーディング規約（Google Style） |
 
 ## License
 
