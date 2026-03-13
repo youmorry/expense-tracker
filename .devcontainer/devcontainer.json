@@ -17,6 +17,9 @@
       "moby": false
     }
   },
+  "remoteEnv": {
+    "CONTEXT7_API_KEY": "${localEnv:CONTEXT7_API_KEY}"
+  },
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
@@ -31,7 +34,8 @@
         "bierner.markdown-mermaid",
         "github.vscode-github-actions",
         "github.vscode-pull-request-github",
-        "github.copilot-chat"
+        "github.copilot-chat",
+        "chunsen.bracket-select"
       ],
       "settings": {
         "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
