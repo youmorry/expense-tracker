@@ -1,30 +1,27 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 個人向け支出記録・分析 Web アプリ。モノレポ構成（`backend/` + `frontend/`）。
 
-## Commands
+## Development Philosophy
 
-```bash
-docker compose up                        # ローカル DB・モックサーバー・Swagger UI 起動
+### Before Implementation
 
-# Backend (cd backend)
-./gradlew bootRun                        # 開発サーバー
-./gradlew test                           # 全テスト
-./gradlew test --tests "com.youmorry.expensetracker.SomeTest"           # クラス単位
-./gradlew test --tests "com.youmorry.expensetracker.SomeTest.method"    # メソッド単位
-./gradlew build                          # ビルド
-./gradlew checkstyleMain checkstyleTest  # Checkstyle
-./gradlew spotlessCheck                  # Spotless チェック
-./gradlew spotlessApply                  # Spotless 自動修正
+- 新しい機能を実装する前に、以下を必ず確認する：
+  1. 既存のコードベース内に同様の実装やユーティリティがないか検索する
+  2. 使用しているライブラリ/フレームワークに該当する API や機能がないか確認する
+  3. Context7 MCP（`mcp__context7__`）を使ってライブラリのドキュメントを参照する
+- 「自分で実装する」より「既存の解決策を使う」を優先する
 
-# Frontend (cd frontend) ※未実装
-npm install
-npm run dev                              # 開発サーバー
-npm test                                 # テスト
-npm run build                            # ビルド
-```
+### Test-Driven Development (TDD)
+
+- 原則としてテスト駆動開発（TDD）で進める
+- 期待される入出力に基づき、まずテストを作成する
+- 実装コードは書かず、テストのみを用意する
+- テストを実行し、失敗を確認する
+- テストが正しいことを確認できた段階でコミットする
+- その後、テストをパスさせる実装を進める
+- 実装中はテストを変更せず、コードを修正し続ける
+- すべてのテストが通過するまで繰り返す
 
 ## Tech Stack
 
@@ -56,14 +53,32 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 - ブランチ命名: `feature/<説明>`（例: `feature/add-expense-api`）
 - 言語: コードは英語
 
+## Commands
+
+```bash
+docker compose up                        # ローカル DB・モックサーバー・Swagger UI 起動
+
+# Backend (cd backend)
+./gradlew bootRun                        # 開発サーバー
+./gradlew test                           # 全テスト
+./gradlew test --tests "com.youmorry.expensetracker.SomeTest"           # クラス単位
+./gradlew test --tests "com.youmorry.expensetracker.SomeTest.method"    # メソッド単位
+./gradlew build                          # ビルド
+./gradlew checkstyleMain checkstyleTest  # Checkstyle
+./gradlew spotlessCheck                  # Spotless チェック
+./gradlew spotlessApply                  # Spotless 自動修正
+
+# Frontend (cd frontend) ※未実装
+npm install
+npm run dev                              # 開発サーバー
+npm test                                 # テスト
+npm run build                            # ビルド
+```
+
 ## Skills
 
 - `/commit` — プロジェクトのコミットガイドラインに従ってコミットを作成する
 - `/create-pr` — プロジェクトの規約に従って GitHub Pull Request を作成する
-
-## Bash コマンド実行ルール
-
-- ファイルの読み書きは Bash ではなく Read / Edit / Write ツールを使う
 
 ## 参照ドキュメント
 
