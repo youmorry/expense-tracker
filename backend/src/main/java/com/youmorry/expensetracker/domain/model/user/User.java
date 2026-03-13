@@ -5,7 +5,12 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-/** Google OAuth2 で認証されたユーザーを表すエンティティ。 */
+/**
+ * ユーザーを表すエンティティ。
+ *
+ * <p>現在は Google OAuth2 のみをサポートしているため {@code googleId} を直接保持しているが、
+ * 複数の認証プロバイダをサポートする場合は {@code LinkedAccount} 等の別エンティティに分離すること。
+ */
 @Table("users")
 public record User(
     @Id @Nullable UserId id,
