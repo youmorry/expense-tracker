@@ -41,16 +41,21 @@
 
 Issue やタスクの作業を開始するとき、以下の手順を守ること:
 
-1. **ブランチ作成**: ブランチ戦略に則ってブランチを切る。
+1. **作業開始**: `/start-issue` スキルを使い、Issue の確認とブランチ作成を行う
 2. **実装**: コードを書く
 3. **コミット**: `/commit` スキルを使う（コミット分割・メッセージ規約はスキル側で定義済み）
 4. **PR 作成**: `/create-pr` スキルを使う
 
 ## Conventions
 
-- ブランチ戦略: GitHub Flow（`main` から feature ブランチを切り、PR でマージ）
-  - バグ対応の時はhotfixブランチを切る。
-- ブランチ命名: `feature/<説明>`（例: `feature/add-expense-api`）
+- ブランチ戦略: GitHub Flow
+  - `main` は常にデプロイ可能な状態を維持する
+  - `main` から feature/hotfix ブランチを切り、PR でマージする
+  - マージ後のブランチは削除する
+- ブランチ命名:
+  - 機能追加: `feature/<説明>`（例: `feature/add-expense-api`）
+  - バグ修正: `hotfix/<説明>`（例: `hotfix/fix-date-validation`）
+  - 英語・ケバブケースで記述する
 - 言語: コードは英語
 
 ## Commands
@@ -77,6 +82,7 @@ npm run build                            # ビルド
 
 ## Skills
 
+- `/start-issue` — GitHub Issue の内容を確認し、ブランチを作成して作業を開始する
 - `/commit` — プロジェクトのコミットガイドラインに従ってコミットを作成する
 - `/create-pr` — プロジェクトの規約に従って GitHub Pull Request を作成する
 
