@@ -19,19 +19,23 @@ import org.springframework.stereotype.Component;
 public class JwtProvider implements JwtTokenGenerator {
 
   private final NimbusJwtEncoder encoder;
+  private final String issuer;
   private final long expirationHours;
 
   /**
-   * 指定された秘密鍵と有効期限で JWT プロバイダーを構成する。
+   * 指定された秘密鍵、issuer、有効期限で JWT プロバイダーを構成する。
    *
    * @param secret JWT 署名用の秘密鍵
+   * @param issuer JWT の発行者（iss クレーム）
    * @param expirationHours JWT の有効期限（時間単位）
    */
   public JwtProvider(
       @Value("${app.auth.jwt-secret}") String secret,
+      @Value("${app.auth.jwt-issuer}") String issuer,
       @Value("${app.auth.jwt-expiration-hours}") long expirationHours) {
     SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     this.encoder = NimbusJwtEncoder.withSecretKey(key).build();
+    this.issuer = issuer;
     this.expirationHours = expirationHours;
   }
 
@@ -41,6 +45,7 @@ public class JwtProvider implements JwtTokenGenerator {
     JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
     JwtClaimsSet claims =
         JwtClaimsSet.builder()
+            .issuer(issuer)
             .subject(String.valueOf(userId.value()))
             .claim("email", email)
             .issuedAt(now)

@@ -16,4 +16,5 @@ app:
   auth:
     google-client-id: ${GOOGLE_CLIENT_ID:dummy-client-id}
     jwt-secret: ${JWT_SECRET:dev-secret-key-at-least-32-bytes-long!!}
+    jwt-issuer: ${JWT_ISSUER:https://expense-tracker.example.com}
     jwt-expiration-hours: ${JWT_EXPIRATION_HOURS:24}

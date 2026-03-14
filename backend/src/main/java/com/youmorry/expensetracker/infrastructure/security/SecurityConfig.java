@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -31,9 +32,11 @@ public class SecurityConfig {
     return http.build();
   }
 
-  /** HS256 で署名された JWT を検証する {@link JwtDecoder} を構成する。 */
+  /** HS256 で署名された JWT を検証する {@link JwtDecoder} を構成する。issuer の一致も検証する。 */
   @Bean
-  public JwtDecoder jwtDecoder(@Value("${app.auth.jwt-secret}") String secret) {
+  public JwtDecoder jwtDecoder(
+      @Value("${app.auth.jwt-secret}") String secret,
+      @Value("${app.auth.jwt-issuer}") String issuer) {
     byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
     if (keyBytes.length < 32) {
       throw new IllegalArgumentException(
@@ -42,6 +45,8 @@ public class SecurityConfig {
               + " bytes");
     }
     SecretKeySpec key = new SecretKeySpec(keyBytes, "HmacSHA256");
-    return NimbusJwtDecoder.withSecretKey(key).build();
+    NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(key).build();
+    decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuer));
+    return decoder;
   }
 }
