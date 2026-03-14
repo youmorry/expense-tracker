@@ -53,7 +53,7 @@ class SecurityConfigTest {
   }
 
   @Test
-  void jwtDecoder_rejectsTokenWithWrongIssuer() {
+  void jwtDecoder_withWrongIssuerToken_throwsJwtValidationException() {
     SecurityConfig config = new SecurityConfig();
     JwtDecoder decoder = config.jwtDecoder(SECRET, ISSUER);
 
@@ -64,7 +64,7 @@ class SecurityConfigTest {
   }
 
   @Test
-  void jwtDecoder_acceptsTokenWithCorrectIssuer() {
+  void jwtDecoder_withCorrectIssuerToken_returnsDecodedJwt() {
     SecurityConfig config = new SecurityConfig();
     JwtDecoder decoder = config.jwtDecoder(SECRET, ISSUER);
 
