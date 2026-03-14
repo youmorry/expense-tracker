@@ -1,19 +1,24 @@
 package com.youmorry.expensetracker.infrastructure.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.youmorry.expensetracker.application.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.domain.model.user.UserId;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.stereotype.Component;
 
 /** HS256 で署名する {@link JwtTokenGenerator} の実装。sub・email・iat・exp をペイロードに含める。 */
 @Component
 public class JwtProvider implements JwtTokenGenerator {
 
-  private final Algorithm algorithm;
+  private final NimbusJwtEncoder encoder;
   private final long expirationHours;
 
   /**
@@ -25,7 +30,8 @@ public class JwtProvider implements JwtTokenGenerator {
   public JwtProvider(
       @Value("${app.auth.jwt-secret}") String secret,
       @Value("${app.auth.jwt-expiration-hours}") long expirationHours) {
-    this.algorithm = Algorithm.HMAC256(secret);
+    SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    this.encoder = NimbusJwtEncoder.withSecretKey(key).build();
     this.expirationHours = expirationHours;
   }
 
@@ -39,11 +45,14 @@ public class JwtProvider implements JwtTokenGenerator {
   @Override
   public String generateToken(UserId userId, String email) {
     Instant now = Instant.now();
-    return JWT.create()
-        .withSubject(String.valueOf(userId.value()))
-        .withClaim("email", email)
-        .withIssuedAt(now)
-        .withExpiresAt(now.plus(expirationHours, ChronoUnit.HOURS))
-        .sign(algorithm);
+    JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
+    JwtClaimsSet claims =
+        JwtClaimsSet.builder()
+            .subject(String.valueOf(userId.value()))
+            .claim("email", email)
+            .issuedAt(now)
+            .expiresAt(now.plus(expirationHours, ChronoUnit.HOURS))
+            .build();
+    return encoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
   }
 }
