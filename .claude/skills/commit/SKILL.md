@@ -1,7 +1,6 @@
 ---
 name: commit
 description: プロジェクトのコミットガイドラインに従ってコミットを作成する
-disable-model-invocation: true
 ---
 
 以下のコミットガイドラインに従い、現在のステージ済み・未ステージの変更をコミットしてください。
