@@ -14,9 +14,10 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 class JwtProviderTest {
 
   private static final String SECRET = "test-secret-key-at-least-32-bytes-long!!";
+  private static final String ISSUER = "https://test.example.com";
   private static final long EXPIRATION_HOURS = 24;
 
-  private final JwtProvider jwtProvider = new JwtProvider(SECRET, EXPIRATION_HOURS);
+  private final JwtProvider jwtProvider = new JwtProvider(SECRET, ISSUER, EXPIRATION_HOURS);
 
   private final NimbusJwtDecoder decoder =
       NimbusJwtDecoder.withSecretKey(
@@ -36,6 +37,7 @@ class JwtProviderTest {
     assertEquals("test@gmail.com", decoded.getClaimAsString("email"));
     assertNotNull(decoded.getIssuedAt());
     assertNotNull(decoded.getExpiresAt());
+    assertEquals(ISSUER, decoded.getClaimAsString("iss"));
   }
 
   @Test
