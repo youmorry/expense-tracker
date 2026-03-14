@@ -6,15 +6,24 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.youmorry.expensetracker.domain.model.user.UserId;
+import java.nio.charset.StandardCharsets;
+import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidationException;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(SecurityTestController.class)
 @Import(SecurityConfig.class)
 class SecurityConfigTest {
+
+  private static final String SECRET = "test-secret-key-at-least-32-bytes-long!!";
+  private static final String ISSUER = "https://test.example.com";
 
   @Autowired private MockMvc mockMvc;
 
@@ -31,18 +40,40 @@ class SecurityConfigTest {
   @Test
   void jwtDecoder_withEmptySecret_throwsIllegalArgumentException() {
     SecurityConfig config = new SecurityConfig();
-    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder(""));
+    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder("", ISSUER));
   }
 
   @Test
   void jwtDecoder_withShortSecret_throwsIllegalArgumentException() {
     SecurityConfig config = new SecurityConfig();
-    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder("too-short"));
+    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder("too-short", ISSUER));
   }
 
   @Test
   void jwtDecoder_with32ByteSecret_returnsDecoder() {
     SecurityConfig config = new SecurityConfig();
-    assertNotNull(config.jwtDecoder("valid-secret-key-that-is-32-byte!"));
+    assertNotNull(config.jwtDecoder("valid-secret-key-that-is-32-byte!", ISSUER));
+  }
+
+  @Test
+  void jwtDecoder_rejectsTokenWithWrongIssuer() {
+    SecurityConfig config = new SecurityConfig();
+    JwtDecoder decoder = config.jwtDecoder(SECRET, ISSUER);
+
+    JwtProvider provider = new JwtProvider(SECRET, "https://wrong-issuer.example.com", 24);
+    String token = provider.generateToken(new UserId(1L), "test@gmail.com");
+
+    assertThrows(JwtValidationException.class, () -> decoder.decode(token));
+  }
+
+  @Test
+  void jwtDecoder_acceptsTokenWithCorrectIssuer() {
+    SecurityConfig config = new SecurityConfig();
+    JwtDecoder decoder = config.jwtDecoder(SECRET, ISSUER);
+
+    JwtProvider provider = new JwtProvider(SECRET, ISSUER, 24);
+    String token = provider.generateToken(new UserId(1L), "test@gmail.com");
+
+    assertNotNull(decoder.decode(token));
   }
 }
