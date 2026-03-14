@@ -34,7 +34,14 @@ public class SecurityConfig {
   /** HS256 で署名された JWT を検証する {@link JwtDecoder} を構成する。 */
   @Bean
   public JwtDecoder jwtDecoder(@Value("${app.auth.jwt-secret}") String secret) {
-    SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+    if (keyBytes.length < 32) {
+      throw new IllegalArgumentException(
+          "app.auth.jwt-secret must be at least 32 bytes for HS256, but was "
+              + keyBytes.length
+              + " bytes");
+    }
+    SecretKeySpec key = new SecretKeySpec(keyBytes, "HmacSHA256");
     return NimbusJwtDecoder.withSecretKey(key).build();
   }
 }
