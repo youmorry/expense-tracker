@@ -3,10 +3,13 @@ package com.youmorry.expensetracker.infrastructure.security;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.youmorry.expensetracker.domain.model.user.UserId;
+import java.nio.charset.StandardCharsets;
+import java.time.temporal.ChronoUnit;
+import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 class JwtProviderTest {
 
@@ -14,6 +17,11 @@ class JwtProviderTest {
   private static final long EXPIRATION_HOURS = 24;
 
   private final JwtProvider jwtProvider = new JwtProvider(SECRET, EXPIRATION_HOURS);
+
+  private final NimbusJwtDecoder decoder =
+      NimbusJwtDecoder.withSecretKey(
+              new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"))
+          .build();
 
   @Test
   void generateToken_returnsValidJwt() {
@@ -23,9 +31,9 @@ class JwtProviderTest {
     String token = jwtProvider.generateToken(userId, email);
 
     assertNotNull(token);
-    DecodedJWT decoded = JWT.decode(token);
+    Jwt decoded = decoder.decode(token);
     assertEquals("42", decoded.getSubject());
-    assertEquals("test@gmail.com", decoded.getClaim("email").asString());
+    assertEquals("test@gmail.com", decoded.getClaimAsString("email"));
     assertNotNull(decoded.getIssuedAt());
     assertNotNull(decoded.getExpiresAt());
   }
@@ -37,9 +45,8 @@ class JwtProviderTest {
 
     String token = jwtProvider.generateToken(userId, email);
 
-    DecodedJWT decoded = JWT.decode(token);
-    long diffSeconds =
-        decoded.getExpiresAt().getTime() / 1000 - decoded.getIssuedAt().getTime() / 1000;
+    Jwt decoded = decoder.decode(token);
+    long diffSeconds = ChronoUnit.SECONDS.between(decoded.getIssuedAt(), decoded.getExpiresAt());
     assertEquals(EXPIRATION_HOURS * 3600, diffSeconds);
   }
 }
