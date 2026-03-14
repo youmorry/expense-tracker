@@ -27,13 +27,6 @@ public class GoogleTokenVerifier implements OauthTokenVerifier {
     this.verifier = verifier;
   }
 
-  /**
-   * Google ID トークンを検証し、ユーザー情報を返す。
-   *
-   * @param idToken Google ID トークン文字列
-   * @return 検証済みのユーザー情報
-   * @throws UnauthorizedException トークンの検証に失敗した場合
-   */
   @Override
   public OauthUserInfo verify(String idToken) {
     GoogleIdToken googleIdToken;

@@ -35,13 +35,6 @@ public class JwtProvider implements JwtTokenGenerator {
     this.expirationHours = expirationHours;
   }
 
-  /**
-   * 指定されたユーザー情報から JWT アクセストークンを生成する。
-   *
-   * @param userId ユーザー ID
-   * @param email メールアドレス
-   * @return JWT アクセストークン文字列
-   */
   @Override
   public String generateToken(UserId userId, String email) {
     Instant now = Instant.now();
