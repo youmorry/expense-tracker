@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.domain.model.user.UserId;
+import java.util.Base64;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -19,7 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @Import(SecurityConfig.class)
 class SecurityConfigTest {
 
-  private static final String SECRET = "test-secret-key-at-least-32-bytes-long!!";
+  // 32 bytes of key material, Base64-encoded
+  private static final String SECRET =
+      Base64.getEncoder().encodeToString("test-secret-key-at-least-32-byte".getBytes());
   private static final String ISSUER = "https://test.example.com";
 
   @Autowired private MockMvc mockMvc;
@@ -41,15 +44,25 @@ class SecurityConfigTest {
   }
 
   @Test
+  void jwtDecoder_withInvalidBase64_throwsIllegalArgumentException() {
+    SecurityConfig config = new SecurityConfig();
+    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder("not-valid-base64!", ISSUER));
+  }
+
+  @Test
   void jwtDecoder_withShortSecret_throwsIllegalArgumentException() {
     SecurityConfig config = new SecurityConfig();
-    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder("too-short", ISSUER));
+    // Base64 of "short" (only 5 bytes, less than 32)
+    String shortBase64 = Base64.getEncoder().encodeToString("short".getBytes());
+    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder(shortBase64, ISSUER));
   }
 
   @Test
   void jwtDecoder_with32ByteSecret_returnsDecoder() {
     SecurityConfig config = new SecurityConfig();
-    assertNotNull(config.jwtDecoder("valid-secret-key-that-is-32-byte!", ISSUER));
+    String validBase64 =
+        Base64.getEncoder().encodeToString("valid-secret-key-that-is-32-byte".getBytes());
+    assertNotNull(config.jwtDecoder(validBase64, ISSUER));
   }
 
   @Test

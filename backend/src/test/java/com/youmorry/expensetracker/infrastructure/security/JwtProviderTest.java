@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.youmorry.expensetracker.domain.model.user.UserId;
-import java.nio.charset.StandardCharsets;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -13,7 +13,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 class JwtProviderTest {
 
-  private static final String SECRET = "test-secret-key-at-least-32-bytes-long!!";
+  // 32 bytes of key material, Base64-encoded
+  private static final String SECRET =
+      Base64.getEncoder().encodeToString("test-secret-key-at-least-32-byte".getBytes());
   private static final String ISSUER = "https://test.example.com";
   private static final long EXPIRATION_HOURS = 24;
 
@@ -21,7 +23,7 @@ class JwtProviderTest {
 
   private final NimbusJwtDecoder decoder =
       NimbusJwtDecoder.withSecretKey(
-              new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"))
+              new SecretKeySpec(Base64.getDecoder().decode(SECRET), "HmacSHA256"))
           .build();
 
   @Test
