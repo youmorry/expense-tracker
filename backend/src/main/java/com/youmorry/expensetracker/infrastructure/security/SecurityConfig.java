@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.infrastructure.security;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +37,13 @@ public class SecurityConfig {
   public JwtDecoder jwtDecoder(
       @Value("${app.auth.jwt-secret}") String secret,
       @Value("${app.auth.jwt-issuer}") String issuer) {
-    byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+    byte[] keyBytes;
+    try {
+      keyBytes = Base64.getDecoder().decode(secret);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException(
+          "app.auth.jwt-secret must be a valid Base64-encoded string", e);
+    }
     if (keyBytes.length < 32) {
       throw new IllegalArgumentException(
           "app.auth.jwt-secret must be at least 32 bytes for HS256, but was "
