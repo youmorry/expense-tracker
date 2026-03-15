@@ -46,7 +46,8 @@ class SecurityConfigTest {
   @Test
   void jwtDecoder_withInvalidBase64_throwsIllegalArgumentException() {
     SecurityConfig config = new SecurityConfig();
-    assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder("not-valid-base64!", ISSUER));
+    assertThrows(
+        IllegalArgumentException.class, () -> config.jwtDecoder("not-valid-base64!", ISSUER));
   }
 
   @Test
