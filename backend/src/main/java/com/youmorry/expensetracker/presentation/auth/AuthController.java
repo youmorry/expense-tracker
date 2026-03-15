@@ -33,7 +33,7 @@ public class AuthController {
    */
   @PostMapping("/google")
   public ResponseEntity<AuthResponse> authenticateWithGoogle(
-      @Valid @RequestBody GoogleAuthRequest request) {
+      @Valid @RequestBody AuthRequest request) {
     AuthResult result = authService.authenticate(request.idToken());
     return ResponseEntity.ok(AuthResponse.from(result));
   }
