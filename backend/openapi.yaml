@@ -38,7 +38,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GoogleAuthRequest"
+              $ref: "#/components/schemas/AuthRequest"
       responses:
         "200":
           description: 認証成功
@@ -336,7 +336,7 @@ components:
       enum: [NEED, WANT, UNSET]
 
     # ── Request Bodies ──
-    GoogleAuthRequest:
+    AuthRequest:
       type: object
       required: [id_token]
       properties:
@@ -344,7 +344,7 @@ components:
           type: string
           minLength: 1
           pattern: "\\S"
-          description: Google OAuth2 ID トークン
+          description: OAuth2 ID トークン
 
     UpdateCurrencyRequest:
       type: object
