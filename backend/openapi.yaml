@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
     delete:
@@ -93,7 +93,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "422":
@@ -342,6 +342,8 @@ components:
       properties:
         id_token:
           type: string
+          minLength: 1
+          pattern: "\\S"
           description: Google OAuth2 ID トークン
 
     UpdateCurrencyRequest:
@@ -393,9 +395,9 @@ components:
           type: string
           description: JWT アクセストークン
         user:
-          $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/UserResponse"
 
-    User:
+    UserResponse:
       type: object
       required: [id, email, display_name, currency_code, created_at]
       properties:
