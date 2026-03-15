@@ -116,18 +116,34 @@ public ResponseEntity<TransactionResponse> create(
 
 ## テスト方針
 
-- domain: 純粋な単体テスト（Spring 不要）
-- application: `@SpringBootTest` またはモック使用
-- presentation: `@WebMvcTest` + MockMvc
-- テストクラス名: `<対象クラス>Test`
+### レイヤー別テスト戦略
+
+| レイヤー | テスト種別 | アノテーション / ツール | DB |
+|----------|-----------|----------------------|-----|
+| domain | 純粋な単体テスト | なし（Plain JUnit） | 不要 |
+| application | 単体テスト | Mockito でリポジトリをモック | 不要 |
+| infrastructure | 統合テスト | `@SpringBootTest` + Testcontainers | PostgreSQL |
+| presentation | スライステスト | `@WebMvcTest` + MockMvc | 不要 |
+
+- H2 は使わない。統合テストでは必ず Testcontainers（PostgreSQL）を使用する
+- Spring Data JDBC は SQL を直接発行するため、DB 方言の差異が直接バグになる
+
+### テストクラスの配置
+
+- テストクラスは `src/test/java/` 配下に、対象クラスと同じパッケージ構成で配置する
+- クラス名: `<対象クラス>Test`（例: `TransactionService` → `TransactionServiceTest`）
 
 ### テストの書き方
 
-- テストメソッド名は振る舞いを説明する英語（例: `createTransaction_withValidInput_returnsCreated`）
+- メソッド名は振る舞いを説明する英語で書く
+  - パターン: `<メソッド名>_<条件>_<期待結果>`
+  - 例: `createTransaction_withValidInput_returnsCreated`
+  - 例: `findByUserIdAndDate_withNoResults_returnsEmptyList`
 - Arrange-Act-Assert パターンで構造化し、各セクションを空行で区切る
-- モックは外部依存（Repository、外部 API）のみに使い、ドメインオブジェクトのテストでは実オブジェクトを使う
-- 1テストメソッドにつき1つの振る舞いを検証する（複数の assert は同一の振る舞いに関するもののみ）
+- モックは外部依存（Repository、外部 API）のみに使い、ドメインオブジェクトは実オブジェクトを使う
+- 1 テストメソッドにつき 1 つの振る舞いを検証する
 - テストデータはテストメソッド内でローカルに生成し、テスト間で共有しない
+- `@DisplayName` は使わない（メソッド名で十分に振る舞いを表現する）
 
 ## 参照ドキュメント
 
