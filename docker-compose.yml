@@ -16,7 +16,7 @@ services:
       - "4010:4010"
     volumes:
       - ./backend/openapi.yaml:/tmp/openapi.yaml
-    command: mock -h 0.0.0.0 --cors /tmp/openapi.yaml
+    command: mock -h 0.0.0.0 --cors --errors /tmp/openapi.yaml
 
   swagger-ui:
     image: swaggerapi/swagger-ui
