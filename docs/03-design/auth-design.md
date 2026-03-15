@@ -129,6 +129,7 @@ BE が自前で発行する JWT。Google の ID トークンとは別物。
 
 ```json
 {
+  "iss": "https://expense-tracker.example.com",
   "sub": "42",
   "email": "user@gmail.com",
   "iat": 1740300600,
@@ -138,6 +139,7 @@ BE が自前で発行する JWT。Google の ID トークンとは別物。
 
 | クレーム | 型 | 説明 |
 |---------|-----|------|
+| iss | string | 発行者（`JWT_ISSUER` 環境変数で設定）。検証時に一致を確認する |
 | sub | string | ユーザーの内部 ID（users.id）。文字列として格納（JWT 標準仕様） |
 | email | string | メールアドレス（ログ・デバッグ用途） |
 | iat | number | 発行日時（Unix タイムスタンプ） |
