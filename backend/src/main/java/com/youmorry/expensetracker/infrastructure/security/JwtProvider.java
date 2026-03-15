@@ -2,9 +2,9 @@ package com.youmorry.expensetracker.infrastructure.security;
 
 import com.youmorry.expensetracker.application.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.domain.model.user.UserId;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -33,7 +33,7 @@ public class JwtProvider implements JwtTokenGenerator {
       @Value("${app.auth.jwt-secret}") String secret,
       @Value("${app.auth.jwt-issuer}") String issuer,
       @Value("${app.auth.jwt-expiration-hours}") long expirationHours) {
-    SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    SecretKeySpec key = new SecretKeySpec(Base64.getDecoder().decode(secret), "HmacSHA256");
     this.encoder = NimbusJwtEncoder.withSecretKey(key).build();
     this.issuer = issuer;
     this.expirationHours = expirationHours;
