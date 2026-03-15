@@ -38,7 +38,7 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6...
 認証が不要なエンドポイントには「🔓不要」、必要なエンドポイントには「🔒必要」と記載する。
 
 **認可ルール**
-- 支出記録（transactions）は所有ユーザーのみが操作可能。JWT から取得した userId と一致しないリソースへのアクセスは 403 Forbidden を返す
+- 支出記録（transactions）は所有ユーザーのみが操作可能。JWT から取得した userId と一致しないリソースへのアクセスは 404 Not Found を返す（リソースの存在を秘匿するため）
 - カテゴリ（categories）は全ユーザー共通の読み取り専用リソース
 
 ---
