@@ -36,9 +36,14 @@ public class AuthService {
   /**
    * OAuth ID トークンを検証し、ユーザーを取得または作成して JWT を発行する。
    *
+   * <p>注意: {@code @Transactional} のスコープ内に外部 HTTP 呼び出し（{@link OauthTokenVerifier#verify}）が
+   * 含まれており、Google の応答遅延時に DB コネクションを長時間保持するリスクがある。 現時点では個人利用で同時リクエスト数が
+   * 極めて少ないため許容している。将来マルチユーザー化する場合は {@code TransactionTemplate} で DB 操作のみにトランザクション範囲を絞ること。
+   *
    * @param idToken OAuth ID トークン文字列
    * @return 認証結果（アクセストークンとユーザー情報）
    * @throws com.youmorry.expensetracker.shared.exception.UnauthorizedException トークン検証失敗時
+   * @see <a href="https://github.com/youmorry/expense-tracker/issues/34">Issue #34</a>
    */
   @Transactional
   public AuthResult authenticate(String idToken) {
