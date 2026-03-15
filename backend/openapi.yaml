@@ -343,7 +343,7 @@ components:
         id_token:
           type: string
           minLength: 1
-          pattern: "\\S"
+          pattern: "^[^\\s]+$"
           description: OAuth2 ID トークン
 
     UpdateCurrencyRequest:
@@ -585,5 +585,5 @@ components:
           example: must not be null
         pointer:
           type: string
-          description: "JSON Pointer 形式のフィールドパス"
+          description: JSON Pointer 形式のフィールドパス
           example: "#/amount"
