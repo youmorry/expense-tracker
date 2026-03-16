@@ -52,6 +52,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          $ref: "#/components/responses/ValidationError"
 
   # ──────────────────────────── Users ────────────────────────────
   /api/v1/users/me:
