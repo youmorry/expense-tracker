@@ -395,7 +395,7 @@ components:
         id_token:
           type: string
           minLength: 1
-          pattern: "^[^\\s]+$"
+          pattern: '^[^\s]+$'
           description: OAuth2 ID トークン
 
     UpdateCurrencyRequest:
@@ -420,7 +420,7 @@ components:
           example: "2026-02-23"
         amount:
           type: string
-          pattern: "^(0|[1-9]\\d*)(\\.\\d+)?$"
+          pattern: '^(0|[1-9]\d*)(\.\d+)?$'
           description: 金額（正の数、文字列型で精度を保持）
           example: "1200"
         category_id:
