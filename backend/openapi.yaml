@@ -46,14 +46,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           description: ID トークン検証失敗
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
         "422":
           $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   # ──────────────────────────── Users ────────────────────────────
   /api/v1/users/me:
@@ -69,6 +73,8 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     delete:
       tags: [Users]
       summary: アカウント削除
@@ -78,6 +84,8 @@ paths:
           description: 削除成功
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/v1/users/me/currency:
     patch:
@@ -96,10 +104,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "422":
           $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   # ──────────────────────────── Categories ────────────────────────────
   /api/v1/categories:
@@ -115,6 +127,8 @@ paths:
                 $ref: "#/components/schemas/CategoryList"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   # ──────────────────────────── Transactions ────────────────────────────
   /api/v1/transactions:
@@ -134,10 +148,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Transaction"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "422":
           $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     get:
       tags: [Transactions]
       summary: 支出一覧取得
@@ -183,8 +201,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransactionList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/v1/transactions/{id}:
     parameters:
@@ -203,6 +225,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     put:
       tags: [Transactions]
       summary: 支出更新
@@ -220,12 +244,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Transaction"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
           $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     delete:
       tags: [Transactions]
       summary: 支出削除
@@ -236,6 +264,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   # ──────────────────────────── Analytics ────────────────────────────
   /api/v1/analytics/category:
@@ -253,8 +283,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CategoryAnalytics"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   /api/v1/analytics/need-want:
     get:
@@ -271,8 +305,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NeedWantAnalytics"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
 components:
   # ──────────────────────────── Security Schemes ────────────────────────────
@@ -314,21 +352,33 @@ components:
     Unauthorized:
       description: 認証が必要、またはトークンが無効・期限切れ
       content:
-        application/json:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    BadRequest:
+      description: リクエスト不正（JSON パースエラー、不正なクエリパラメータ）
+      content:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/ProblemDetail"
     NotFound:
       description: リソースが見つからない（他ユーザーのリソースも 404 を返す）
       content:
-        application/json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/ProblemDetail"
     ValidationError:
       description: バリデーションエラー
       content:
-        application/json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/ValidationProblemDetail"
+    InternalServerError:
+      description: 予期しないサーバーエラー
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
 
   # ──────────────────────────── Schemas ────────────────────────────
   schemas:
@@ -370,6 +420,7 @@ components:
           example: "2026-02-23"
         amount:
           type: string
+          pattern: "^(0|[1-9]\\d*)(\\.\\d+)?$"
           description: 金額（正の数、文字列型で精度を保持）
           example: "1200"
         category_id:
