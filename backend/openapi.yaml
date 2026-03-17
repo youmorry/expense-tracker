@@ -192,6 +192,7 @@ paths:
             items:
               type: integer
               format: int64
+              example: 1
           explode: true
         - name: 'need_want_type'
           in: query
@@ -203,6 +204,7 @@ paths:
           description: 'タイトル・メモの部分一致検索'
           schema:
             type: string
+            example: 'ランチ'
       responses:
         "200":
           description: '成功'
@@ -340,9 +342,11 @@ components:
       name: 'id'
       in: path
       required: true
+      description: '支出 ID'
       schema:
         type: integer
         format: int64
+        example: 1
     DateFrom:
       name: 'from'
       in: query
@@ -395,10 +399,12 @@ components:
   schemas:
     NeedWantType:
       type: string
+      description: '支出の NEED/WANT 分類'
       enum: [NEED, WANT, UNSET]
 
     AuthRequest:
       type: object
+      description: 'OAuth2 認証リクエスト'
       required: [id_token]
       properties:
         id_token:
@@ -406,9 +412,11 @@ components:
           minLength: 1
           pattern: '^[^\s]+$'
           description: 'OAuth2 ID トークン'
+          example: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...'
 
     UpdateCurrencyRequest:
       type: object
+      description: '通貨コード更新リクエスト'
       required: [currency_code]
       properties:
         currency_code:
@@ -420,6 +428,7 @@ components:
 
     TransactionRequest:
       type: object
+      description: '支出登録・更新リクエスト'
       required: [date, amount]
       properties:
         date:
@@ -436,6 +445,7 @@ components:
           type: integer
           format: int64
           description: 'カテゴリ ID（省略時は「未分類」）'
+          example: 1
         need_want_type:
           $ref: '#/components/schemas/NeedWantType'
           description: '分類（省略時は UNSET）'
@@ -443,116 +453,164 @@ components:
           type: string
           maxLength: 200
           description: 'タイトル'
+          example: 'ランチ'
         memo:
           type: string
           maxLength: 2000
           description: 'メモ'
+          example: '同僚と渋谷のイタリアンへ'
 
     AuthResponse:
       type: object
+      description: '認証レスポンス'
       required: [access_token, user]
       properties:
         access_token:
           type: string
-          description: 'JWT アクセストークン'
+          description: 'JWT アクセストークン（24 時間有効）'
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
         user:
           $ref: '#/components/schemas/UserResponse'
 
     UserResponse:
       type: object
+      description: 'ユーザー情報'
       required: [id, email, display_name, currency_code, created_at]
       properties:
         id:
           type: integer
           format: int64
+          description: 'ユーザー ID'
+          example: 1
         email:
           type: string
           format: email
+          description: 'メールアドレス'
+          example: 'user@example.com'
         display_name:
           type: string
+          description: '表示名'
+          example: '山田太郎'
         currency_code:
           type: string
           minLength: 3
           maxLength: 3
+          description: '通貨コード（ISO 4217）'
           example: 'JPY'
         created_at:
           type: string
           format: date-time
+          description: 'アカウント作成日時'
+          example: '2026-01-15T09:30:00Z'
 
     Category:
       type: object
+      description: 'カテゴリ'
       required: [id, name, display_order]
       properties:
         id:
           type: integer
           format: int64
+          description: 'カテゴリ ID'
+          example: 1
         name:
           type: string
+          description: 'カテゴリ名'
+          example: '食費'
         display_order:
           type: integer
+          description: '表示順（昇順）'
+          example: 1
 
     CategoryList:
       type: object
+      description: 'カテゴリ一覧'
       required: [items]
       properties:
         items:
           type: array
+          description: 'カテゴリの配列'
           items:
             $ref: '#/components/schemas/Category'
 
     Transaction:
       type: object
+      description: '支出レコード'
       required: [id, date, amount, category_id, category_name, need_want_type, created_at, updated_at]
       properties:
         id:
           type: integer
           format: int64
+          description: '支出 ID'
+          example: 1
         date:
           type: string
           format: date
+          description: '支出日'
           example: '2026-02-23'
         amount:
           type: string
-          description: '金額（文字列型）'
+          description: '金額（文字列型で精度を保持）'
           example: '1200'
         category_id:
           type: integer
           format: int64
+          description: 'カテゴリ ID'
+          example: 1
         category_name:
           type: string
+          description: 'カテゴリ名'
+          example: '食費'
         need_want_type:
           $ref: '#/components/schemas/NeedWantType'
+          description: 'NEED/WANT 分類'
         title:
           type: string
+          description: 'タイトル'
+          example: 'ランチ'
         memo:
           type: string
+          description: 'メモ'
+          example: '同僚と渋谷のイタリアンへ'
         created_at:
           type: string
           format: date-time
+          description: '作成日時'
+          example: '2026-02-23T12:00:00Z'
         updated_at:
           type: string
           format: date-time
+          description: '更新日時'
+          example: '2026-02-23T12:00:00Z'
 
     TransactionList:
       type: object
+      description: '支出一覧'
       required: [items]
       properties:
         items:
           type: array
+          description: '支出の配列'
           items:
             $ref: '#/components/schemas/Transaction'
 
     CategoryAnalyticsItem:
       type: object
+      description: 'カテゴリ別集計項目'
       required: [category_id, category_name, amount, percentage, transaction_count]
       properties:
         category_id:
           type: integer
           format: int64
+          description: 'カテゴリ ID'
+          example: 1
         category_name:
           type: string
+          description: 'カテゴリ名'
+          example: '食費'
         amount:
           type: string
+          description: 'カテゴリ別合計金額'
           example: '45000'
         percentage:
           type: number
@@ -561,27 +619,35 @@ components:
           example: 34.6
         transaction_count:
           type: integer
+          description: '取引件数'
+          example: 15
 
     CategoryAnalytics:
       type: object
+      description: 'カテゴリ別支出分析'
       required: [total_amount, categories]
       properties:
         total_amount:
           type: string
+          description: '全カテゴリの合計金額'
           example: '130000'
         categories:
           type: array
+          description: 'カテゴリ別集計（金額降順）'
           items:
             $ref: '#/components/schemas/CategoryAnalyticsItem'
 
     NeedWantBreakdownItem:
       type: object
+      description: 'NEED/WANT 別集計項目'
       required: [type, amount, percentage, transaction_count]
       properties:
         type:
           $ref: '#/components/schemas/NeedWantType'
+          description: '分類タイプ'
         amount:
           type: string
+          description: '分類別合計金額'
           example: '80000'
         percentage:
           type: number
@@ -590,16 +656,21 @@ components:
           example: 61.5
         transaction_count:
           type: integer
+          description: '取引件数'
+          example: 20
 
     NeedWantAnalytics:
       type: object
+      description: 'NEED/WANT 別支出分析'
       required: [total_amount, breakdown]
       properties:
         total_amount:
           type: string
+          description: '全分類の合計金額'
           example: '130000'
         breakdown:
           type: array
+          description: 'NEED/WANT/UNSET の内訳（3 種類すべて含む）'
           items:
             $ref: '#/components/schemas/NeedWantBreakdownItem'
 
@@ -614,23 +685,30 @@ components:
           example: 'about:blank'
         title:
           type: string
+          description: 'HTTP ステータスのフレーズ'
           example: 'Not Found'
         status:
           type: integer
+          description: 'HTTP ステータスコード'
           example: 404
         detail:
           type: string
+          description: 'エラーの詳細メッセージ'
+          example: 'Transaction with id 999 not found'
         instance:
           type: string
           description: 'リクエスト URI'
+          example: '/api/v1/transactions/999'
 
     ValidationProblemDetail:
+      description: 'バリデーションエラー詳細（RFC 9457 拡張）'
       allOf:
         - $ref: '#/components/schemas/ProblemDetail'
         - type: object
           properties:
             errors:
               type: array
+              description: 'フィールドごとのエラー一覧'
               items:
                 $ref: '#/components/schemas/FieldError'
 
