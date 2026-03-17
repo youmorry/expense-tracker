@@ -1,0 +1,54 @@
+package com.youmorry.expensetracker.presentation.category;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.youmorry.expensetracker.application.CategoryService;
+import com.youmorry.expensetracker.domain.model.category.Category;
+import com.youmorry.expensetracker.domain.model.category.CategoryId;
+import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(CategoryController.class)
+@Import(SecurityConfig.class)
+class CategoryControllerTest {
+
+  @Autowired private MockMvc mockMvc;
+  @MockitoBean private CategoryService categoryService;
+
+  @Test
+  void getCategories_withoutJwt_returns401() throws Exception {
+    mockMvc.perform(get("/api/v1/categories")).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void getCategories_withValidJwt_returnsOkWithItems() throws Exception {
+    var categories =
+        List.of(
+            new Category(new CategoryId(1L), "Food", 1),
+            new Category(new CategoryId(2L), "Transport", 2),
+            new Category(new CategoryId(11L), "Uncategorized", 11));
+    when(categoryService.findAll()).thenReturn(categories);
+
+    mockMvc
+        .perform(get("/api/v1/categories").with(jwt()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items").isArray())
+        .andExpect(jsonPath("$.items.length()").value(3))
+        .andExpect(jsonPath("$.items[0].id").value(1))
+        .andExpect(jsonPath("$.items[0].name").value("Food"))
+        .andExpect(jsonPath("$.items[0].display_order").value(1))
+        .andExpect(jsonPath("$.items[2].id").value(11))
+        .andExpect(jsonPath("$.items[2].name").value("Uncategorized"))
+        .andExpect(jsonPath("$.items[2].display_order").value(11));
+  }
+}
