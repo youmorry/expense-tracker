@@ -26,7 +26,6 @@ tags:
     description: '支出分析'
 
 paths:
-  # ──────────────────────────── Auth ────────────────────────────
   /api/v1/auth/google:
     post:
       tags: [Auth]
@@ -59,7 +58,6 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  # ──────────────────────────── Users ────────────────────────────
   /api/v1/users/me:
     get:
       tags: [Users]
@@ -113,7 +111,6 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  # ──────────────────────────── Categories ────────────────────────────
   /api/v1/categories:
     get:
       tags: [Categories]
@@ -130,7 +127,6 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  # ──────────────────────────── Transactions ────────────────────────────
   /api/v1/transactions:
     post:
       tags: [Transactions]
@@ -267,7 +263,6 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  # ──────────────────────────── Analytics ────────────────────────────
   /api/v1/analytics/category:
     get:
       tags: [Analytics]
@@ -313,7 +308,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
 components:
-  # ──────────────────────────── Security Schemes ────────────────────────────
   securitySchemes:
     BearerAuth:
       type: http
@@ -321,7 +315,6 @@ components:
       bearerFormat: JWT
       description: 'JWT アクセストークン（24 時間有効）'
 
-  # ──────────────────────────── Parameters ────────────────────────────
   parameters:
     TransactionId:
       name: 'id'
@@ -347,7 +340,6 @@ components:
         format: date
         example: '2026-01-31'
 
-  # ──────────────────────────── Responses ────────────────────────────
   responses:
     Unauthorized:
       description: '認証が必要、またはトークンが無効・期限切れ'
@@ -380,14 +372,11 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetail'
 
-  # ──────────────────────────── Schemas ────────────────────────────
   schemas:
-    # ── Enums ──
     NeedWantType:
       type: string
       enum: [NEED, WANT, UNSET]
 
-    # ── Request Bodies ──
     AuthRequest:
       type: object
       required: [id_token]
@@ -439,7 +428,6 @@ components:
           maxLength: 2000
           description: 'メモ'
 
-    # ── Response Bodies ──
     AuthResponse:
       type: object
       required: [access_token, user]
@@ -534,7 +522,6 @@ components:
           items:
             $ref: '#/components/schemas/Transaction'
 
-    # ── Analytics ──
     CategoryAnalyticsItem:
       type: object
       required: [category_id, category_name, amount, percentage, transaction_count]
@@ -596,7 +583,6 @@ components:
           items:
             $ref: '#/components/schemas/NeedWantBreakdownItem'
 
-    # ── Error ──
     ProblemDetail:
       type: object
       description: 'RFC 9457 Problem Details'
