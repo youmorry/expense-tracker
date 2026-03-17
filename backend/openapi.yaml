@@ -1,316 +1,316 @@
 openapi: 3.1.0
 info:
-  title: Expense Tracker API
-  description: 個人向け支出記録・分析 Web アプリの REST API
+  title: 'Expense Tracker API'
+  description: '個人向け支出記録・分析 Web アプリの REST API'
   version: v1
 
 servers:
   - url: http://localhost:4010
-    description: Mock server (Prism)
+    description: 'Mock server (Prism)'
   - url: http://localhost:8080
-    description: Local development
+    description: 'Local development'
 
 security:
   - BearerAuth: []
 
 tags:
-  - name: Auth
-    description: 認証
-  - name: Users
-    description: ユーザー管理
-  - name: Categories
-    description: カテゴリ
-  - name: Transactions
-    description: 支出記録
-  - name: Analytics
-    description: 支出分析
+  - name: 'Auth'
+    description: '認証'
+  - name: 'Users'
+    description: 'ユーザー管理'
+  - name: 'Categories'
+    description: 'カテゴリ'
+  - name: 'Transactions'
+    description: '支出記録'
+  - name: 'Analytics'
+    description: '支出分析'
 
 paths:
   # ──────────────────────────── Auth ────────────────────────────
   /api/v1/auth/google:
     post:
       tags: [Auth]
-      summary: Google 認証・JWT 発行
-      description: Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。
+      summary: 'Google 認証・JWT 発行'
+      description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。'
       security: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AuthRequest"
+              $ref: '#/components/schemas/AuthRequest'
       responses:
         "200":
-          description: 認証成功
+          description: '認証成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
+                $ref: '#/components/schemas/AuthResponse'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          description: ID トークン検証失敗
+          description: 'ID トークン検証失敗'
           content:
             application/problem+json:
               schema:
-                $ref: "#/components/schemas/ProblemDetail"
+                $ref: '#/components/schemas/ProblemDetail'
         "422":
-          $ref: "#/components/responses/ValidationError"
+          $ref: '#/components/responses/ValidationError'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   # ──────────────────────────── Users ────────────────────────────
   /api/v1/users/me:
     get:
       tags: [Users]
-      summary: 現在のユーザー取得
+      summary: '現在のユーザー取得'
       responses:
         "200":
-          description: 成功
+          description: '成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
+                $ref: '#/components/schemas/UserResponse'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
     delete:
       tags: [Users]
-      summary: アカウント削除
-      description: ユーザーと関連する全支出記録を削除する。
+      summary: 'アカウント削除'
+      description: 'ユーザーと関連する全支出記録を削除する。'
       responses:
         "204":
-          description: 削除成功
+          description: '削除成功'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/users/me/currency:
     patch:
       tags: [Users]
-      summary: 通貨コード更新
+      summary: '通貨コード更新'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateCurrencyRequest"
+              $ref: '#/components/schemas/UpdateCurrencyRequest'
       responses:
         "200":
-          description: 更新成功
+          description: '更新成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
+                $ref: '#/components/schemas/UserResponse'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "422":
-          $ref: "#/components/responses/ValidationError"
+          $ref: '#/components/responses/ValidationError'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   # ──────────────────────────── Categories ────────────────────────────
   /api/v1/categories:
     get:
       tags: [Categories]
-      summary: カテゴリ一覧取得
+      summary: 'カテゴリ一覧取得'
       responses:
         "200":
-          description: 成功
+          description: '成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryList"
+                $ref: '#/components/schemas/CategoryList'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   # ──────────────────────────── Transactions ────────────────────────────
   /api/v1/transactions:
     post:
       tags: [Transactions]
-      summary: 支出登録
+      summary: '支出登録'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransactionRequest"
+              $ref: '#/components/schemas/TransactionRequest'
       responses:
         "201":
-          description: 作成成功
+          description: '作成成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transaction"
+                $ref: '#/components/schemas/Transaction'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "422":
-          $ref: "#/components/responses/ValidationError"
+          $ref: '#/components/responses/ValidationError'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags: [Transactions]
-      summary: 支出一覧取得
-      description: フィルタ条件に基づいて支出一覧を返す。ソート順は date DESC, created_at DESC。
+      summary: '支出一覧取得'
+      description: 'フィルタ条件に基づいて支出一覧を返す。ソート順は date DESC, created_at DESC。'
       parameters:
-        - name: from
+        - name: 'from'
           in: query
-          description: 開始日（inclusive、ISO 8601）
+          description: '開始日（inclusive、ISO 8601）'
           schema:
             type: string
             format: date
-            example: "2026-01-01"
-        - name: to
+            example: '2026-01-01'
+        - name: 'to'
           in: query
-          description: 終了日（inclusive、ISO 8601）
+          description: '終了日（inclusive、ISO 8601）'
           schema:
             type: string
             format: date
-            example: "2026-01-31"
-        - name: category_id
+            example: '2026-01-31'
+        - name: 'category_id'
           in: query
-          description: カテゴリ ID（複数指定可）
+          description: 'カテゴリ ID（複数指定可）'
           schema:
             type: array
             items:
               type: integer
               format: int64
           explode: true
-        - name: need_want_type
+        - name: 'need_want_type'
           in: query
-          description: NEED/WANT フィルタ
+          description: 'NEED/WANT フィルタ'
           schema:
-            $ref: "#/components/schemas/NeedWantType"
-        - name: keyword
+            $ref: '#/components/schemas/NeedWantType'
+        - name: 'keyword'
           in: query
-          description: タイトル・メモの部分一致検索
+          description: 'タイトル・メモの部分一致検索'
           schema:
             type: string
       responses:
         "200":
-          description: 成功
+          description: '成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TransactionList"
+                $ref: '#/components/schemas/TransactionList'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/transactions/{id}:
     parameters:
-      - $ref: "#/components/parameters/TransactionId"
+      - $ref: '#/components/parameters/TransactionId'
     get:
       tags: [Transactions]
-      summary: 支出詳細取得
+      summary: '支出詳細取得'
       responses:
         "200":
-          description: 成功
+          description: '成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transaction"
+                $ref: '#/components/schemas/Transaction'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "404":
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
     put:
       tags: [Transactions]
-      summary: 支出更新
-      description: 支出を全項目置換で更新する。
+      summary: '支出更新'
+      description: '支出を全項目置換で更新する。'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TransactionRequest"
+              $ref: '#/components/schemas/TransactionRequest'
       responses:
         "200":
-          description: 更新成功
+          description: '更新成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Transaction"
+                $ref: '#/components/schemas/Transaction'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "404":
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
         "422":
-          $ref: "#/components/responses/ValidationError"
+          $ref: '#/components/responses/ValidationError'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
     delete:
       tags: [Transactions]
-      summary: 支出削除
+      summary: '支出削除'
       responses:
         "204":
-          description: 削除成功
+          description: '削除成功'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "404":
-          $ref: "#/components/responses/NotFound"
+          $ref: '#/components/responses/NotFound'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   # ──────────────────────────── Analytics ────────────────────────────
   /api/v1/analytics/category:
     get:
       tags: [Analytics]
-      summary: カテゴリ別分析
-      description: 指定期間のカテゴリ別支出集計を返す。金額 0 のカテゴリは除外。金額降順でソート。
+      summary: 'カテゴリ別分析'
+      description: '指定期間のカテゴリ別支出集計を返す。金額 0 のカテゴリは除外。金額降順でソート。'
       parameters:
-        - $ref: "#/components/parameters/DateFrom"
-        - $ref: "#/components/parameters/DateTo"
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
       responses:
         "200":
-          description: 成功
+          description: '成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryAnalytics"
+                $ref: '#/components/schemas/CategoryAnalytics'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/analytics/need-want:
     get:
       tags: [Analytics]
-      summary: NEED/WANT 分析
-      description: 指定期間の NEED/WANT/UNSET 別支出集計を返す。3 種類すべて常に含まれる。
+      summary: 'NEED/WANT 分析'
+      description: '指定期間の NEED/WANT/UNSET 別支出集計を返す。3 種類すべて常に含まれる。'
       parameters:
-        - $ref: "#/components/parameters/DateFrom"
-        - $ref: "#/components/parameters/DateTo"
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
       responses:
         "200":
-          description: 成功
+          description: '成功'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NeedWantAnalytics"
+                $ref: '#/components/schemas/NeedWantAnalytics'
         "400":
-          $ref: "#/components/responses/BadRequest"
+          $ref: '#/components/responses/BadRequest'
         "401":
-          $ref: "#/components/responses/Unauthorized"
+          $ref: '#/components/responses/Unauthorized'
         "500":
-          $ref: "#/components/responses/InternalServerError"
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   # ──────────────────────────── Security Schemes ────────────────────────────
@@ -319,66 +319,66 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT アクセストークン（24 時間有効）
+      description: 'JWT アクセストークン（24 時間有効）'
 
   # ──────────────────────────── Parameters ────────────────────────────
   parameters:
     TransactionId:
-      name: id
+      name: 'id'
       in: path
       required: true
       schema:
         type: integer
         format: int64
     DateFrom:
-      name: from
+      name: 'from'
       in: query
-      description: 開始日（inclusive、ISO 8601）
+      description: '開始日（inclusive、ISO 8601）'
       schema:
         type: string
         format: date
-        example: "2026-01-01"
+        example: '2026-01-01'
     DateTo:
-      name: to
+      name: 'to'
       in: query
-      description: 終了日（inclusive、ISO 8601）
+      description: '終了日（inclusive、ISO 8601）'
       schema:
         type: string
         format: date
-        example: "2026-01-31"
+        example: '2026-01-31'
 
   # ──────────────────────────── Responses ────────────────────────────
   responses:
     Unauthorized:
-      description: 認証が必要、またはトークンが無効・期限切れ
+      description: '認証が必要、またはトークンが無効・期限切れ'
       content:
         application/problem+json:
           schema:
-            $ref: "#/components/schemas/ProblemDetail"
+            $ref: '#/components/schemas/ProblemDetail'
     BadRequest:
-      description: リクエスト不正（JSON パースエラー、不正なクエリパラメータ）
+      description: 'リクエスト不正（JSON パースエラー、不正なクエリパラメータ）'
       content:
         application/problem+json:
           schema:
-            $ref: "#/components/schemas/ProblemDetail"
+            $ref: '#/components/schemas/ProblemDetail'
     NotFound:
-      description: リソースが見つからない（他ユーザーのリソースも 404 を返す）
+      description: 'リソースが見つからない（他ユーザーのリソースも 404 を返す）'
       content:
         application/problem+json:
           schema:
-            $ref: "#/components/schemas/ProblemDetail"
+            $ref: '#/components/schemas/ProblemDetail'
     ValidationError:
-      description: バリデーションエラー
+      description: 'バリデーションエラー'
       content:
         application/problem+json:
           schema:
-            $ref: "#/components/schemas/ValidationProblemDetail"
+            $ref: '#/components/schemas/ValidationProblemDetail'
     InternalServerError:
-      description: 予期しないサーバーエラー
+      description: '予期しないサーバーエラー'
       content:
         application/problem+json:
           schema:
-            $ref: "#/components/schemas/ProblemDetail"
+            $ref: '#/components/schemas/ProblemDetail'
 
   # ──────────────────────────── Schemas ────────────────────────────
   schemas:
@@ -396,7 +396,7 @@ components:
           type: string
           minLength: 1
           pattern: '^[^\s]+$'
-          description: OAuth2 ID トークン
+          description: 'OAuth2 ID トークン'
 
     UpdateCurrencyRequest:
       type: object
@@ -406,8 +406,8 @@ components:
           type: string
           minLength: 3
           maxLength: 3
-          description: ISO 4217 通貨コード
-          example: JPY
+          description: 'ISO 4217 通貨コード'
+          example: 'JPY'
 
     TransactionRequest:
       type: object
@@ -416,28 +416,28 @@ components:
         date:
           type: string
           format: date
-          description: 支出日（ISO 8601）
-          example: "2026-02-23"
+          description: '支出日（ISO 8601）'
+          example: '2026-02-23'
         amount:
           type: string
           pattern: '^(0|[1-9]\d*)(\.\d+)?$'
-          description: 金額（正の数、文字列型で精度を保持）
-          example: "1200"
+          description: '金額（正の数、文字列型で精度を保持）'
+          example: '1200'
         category_id:
           type: integer
           format: int64
-          description: カテゴリ ID（省略時は「未分類」）
+          description: 'カテゴリ ID（省略時は「未分類」）'
         need_want_type:
-          $ref: "#/components/schemas/NeedWantType"
-          description: 分類（省略時は UNSET）
+          $ref: '#/components/schemas/NeedWantType'
+          description: '分類（省略時は UNSET）'
         title:
           type: string
           maxLength: 200
-          description: タイトル
+          description: 'タイトル'
         memo:
           type: string
           maxLength: 2000
-          description: メモ
+          description: 'メモ'
 
     # ── Response Bodies ──
     AuthResponse:
@@ -446,9 +446,9 @@ components:
       properties:
         access_token:
           type: string
-          description: JWT アクセストークン
+          description: 'JWT アクセストークン'
         user:
-          $ref: "#/components/schemas/UserResponse"
+          $ref: '#/components/schemas/UserResponse'
 
     UserResponse:
       type: object
@@ -466,7 +466,7 @@ components:
           type: string
           minLength: 3
           maxLength: 3
-          example: JPY
+          example: 'JPY'
         created_at:
           type: string
           format: date-time
@@ -490,7 +490,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/Category"
+            $ref: '#/components/schemas/Category'
 
     Transaction:
       type: object
@@ -502,18 +502,18 @@ components:
         date:
           type: string
           format: date
-          example: "2026-02-23"
+          example: '2026-02-23'
         amount:
           type: string
-          description: 金額（文字列型）
-          example: "1200"
+          description: '金額（文字列型）'
+          example: '1200'
         category_id:
           type: integer
           format: int64
         category_name:
           type: string
         need_want_type:
-          $ref: "#/components/schemas/NeedWantType"
+          $ref: '#/components/schemas/NeedWantType'
         title:
           type: string
         memo:
@@ -532,7 +532,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/Transaction"
+            $ref: '#/components/schemas/Transaction'
 
     # ── Analytics ──
     CategoryAnalyticsItem:
@@ -546,11 +546,11 @@ components:
           type: string
         amount:
           type: string
-          example: "45000"
+          example: '45000'
         percentage:
           type: number
           format: double
-          description: 構成比（小数第 1 位）
+          description: '構成比（小数第 1 位）'
           example: 34.6
         transaction_count:
           type: integer
@@ -561,25 +561,25 @@ components:
       properties:
         total_amount:
           type: string
-          example: "130000"
+          example: '130000'
         categories:
           type: array
           items:
-            $ref: "#/components/schemas/CategoryAnalyticsItem"
+            $ref: '#/components/schemas/CategoryAnalyticsItem'
 
     NeedWantBreakdownItem:
       type: object
       required: [type, amount, percentage, transaction_count]
       properties:
         type:
-          $ref: "#/components/schemas/NeedWantType"
+          $ref: '#/components/schemas/NeedWantType'
         amount:
           type: string
-          example: "80000"
+          example: '80000'
         percentage:
           type: number
           format: double
-          description: 構成比（小数第 1 位）
+          description: '構成比（小数第 1 位）'
           example: 61.5
         transaction_count:
           type: integer
@@ -590,25 +590,25 @@ components:
       properties:
         total_amount:
           type: string
-          example: "130000"
+          example: '130000'
         breakdown:
           type: array
           items:
-            $ref: "#/components/schemas/NeedWantBreakdownItem"
+            $ref: '#/components/schemas/NeedWantBreakdownItem'
 
     # ── Error ──
     ProblemDetail:
       type: object
-      description: RFC 9457 Problem Details
+      description: 'RFC 9457 Problem Details'
       required: [type, title, status]
       properties:
         type:
           type: string
-          description: エラー種別の URI
-          example: about:blank
+          description: 'エラー種別の URI'
+          example: 'about:blank'
         title:
           type: string
-          example: Not Found
+          example: 'Not Found'
         status:
           type: integer
           example: 404
@@ -616,17 +616,17 @@ components:
           type: string
         instance:
           type: string
-          description: リクエスト URI
+          description: 'リクエスト URI'
 
     ValidationProblemDetail:
       allOf:
-        - $ref: "#/components/schemas/ProblemDetail"
+        - $ref: '#/components/schemas/ProblemDetail'
         - type: object
           properties:
             errors:
               type: array
               items:
-                $ref: "#/components/schemas/FieldError"
+                $ref: '#/components/schemas/FieldError'
 
     FieldError:
       type: object
@@ -634,9 +634,9 @@ components:
       properties:
         detail:
           type: string
-          description: エラーメッセージ
-          example: must not be null
+          description: 'エラーメッセージ'
+          example: 'must not be null'
         pointer:
           type: string
-          description: JSON Pointer 形式のフィールドパス
-          example: "#/amount"
+          description: 'JSON Pointer 形式のフィールドパス'
+          example: '#/amount'
