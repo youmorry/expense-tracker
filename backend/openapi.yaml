@@ -3,6 +3,8 @@ info:
   title: 'Expense Tracker API'
   description: '個人向け支出記録・分析 Web アプリの REST API'
   version: v1
+  contact:
+    name: 'Expense Tracker Team'
 
 servers:
   - url: http://localhost:4010
@@ -29,6 +31,7 @@ paths:
   /api/v1/auth/google:
     post:
       tags: [Auth]
+      operationId: authenticateWithGoogle
       summary: 'Google 認証・JWT 発行'
       description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。'
       security: []
@@ -61,7 +64,9 @@ paths:
   /api/v1/users/me:
     get:
       tags: [Users]
+      operationId: getCurrentUser
       summary: '現在のユーザー取得'
+      description: '認証済みユーザーの情報を取得する。'
       responses:
         "200":
           description: '成功'
@@ -75,6 +80,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags: [Users]
+      operationId: deleteCurrentUser
       summary: 'アカウント削除'
       description: 'ユーザーと関連する全支出記録を削除する。'
       responses:
@@ -88,7 +94,9 @@ paths:
   /api/v1/users/me/currency:
     patch:
       tags: [Users]
+      operationId: updateCurrencyCode
       summary: '通貨コード更新'
+      description: 'ユーザーの通貨コードを更新する。'
       requestBody:
         required: true
         content:
@@ -114,7 +122,9 @@ paths:
   /api/v1/categories:
     get:
       tags: [Categories]
+      operationId: listCategories
       summary: 'カテゴリ一覧取得'
+      description: 'カテゴリの一覧を表示順で取得する。'
       responses:
         "200":
           description: '成功'
@@ -130,7 +140,9 @@ paths:
   /api/v1/transactions:
     post:
       tags: [Transactions]
+      operationId: createTransaction
       summary: '支出登録'
+      description: '新しい支出を登録する。'
       requestBody:
         required: true
         content:
@@ -154,6 +166,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
     get:
       tags: [Transactions]
+      operationId: listTransactions
       summary: '支出一覧取得'
       description: 'フィルタ条件に基づいて支出一覧を返す。ソート順は date DESC, created_at DESC。'
       parameters:
@@ -209,7 +222,9 @@ paths:
       - $ref: '#/components/parameters/TransactionId'
     get:
       tags: [Transactions]
+      operationId: getTransaction
       summary: '支出詳細取得'
+      description: '指定された ID の支出詳細を取得する。'
       responses:
         "200":
           description: '成功'
@@ -225,6 +240,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
     put:
       tags: [Transactions]
+      operationId: updateTransaction
       summary: '支出更新'
       description: '支出を全項目置換で更新する。'
       requestBody:
@@ -252,7 +268,9 @@ paths:
           $ref: '#/components/responses/InternalServerError'
     delete:
       tags: [Transactions]
+      operationId: deleteTransaction
       summary: '支出削除'
+      description: '指定された ID の支出を削除する。'
       responses:
         "204":
           description: '削除成功'
@@ -266,6 +284,7 @@ paths:
   /api/v1/analytics/category:
     get:
       tags: [Analytics]
+      operationId: getCategoryAnalytics
       summary: 'カテゴリ別分析'
       description: '指定期間のカテゴリ別支出集計を返す。金額 0 のカテゴリは除外。金額降順でソート。'
       parameters:
@@ -288,6 +307,7 @@ paths:
   /api/v1/analytics/need-want:
     get:
       tags: [Analytics]
+      operationId: getNeedWantAnalytics
       summary: 'NEED/WANT 分析'
       description: '指定期間の NEED/WANT/UNSET 別支出集計を返す。3 種類すべて常に含まれる。'
       parameters:
