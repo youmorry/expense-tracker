@@ -18,14 +18,13 @@ services:
       - ./backend/openapi.yaml:/tmp/openapi.yaml
     command: mock -h 0.0.0.0 --cors --errors /tmp/openapi.yaml
 
-  swagger-ui:
-    image: swaggerapi/swagger-ui
+  scalar:
+    image: nginx:alpine
     ports:
-      - "8081:8080"
+      - "8081:80"
     volumes:
+      - ./backend/scalar.html:/usr/share/nginx/html/index.html
       - ./backend/openapi.yaml:/usr/share/nginx/html/openapi.yaml
-    environment:
-      URL: openapi.yaml
 
 volumes:
   db-data:
