@@ -225,7 +225,7 @@ Spring Security + OAuth2 Resource Server を使用して JWT 検証を行う。
 |---------|--------|
 | `POST /api/v1/auth/**` | 全員許可（`permitAll`） |
 | `/api/v1/**` | 認証必要（`authenticated`） |
-| `/swagger-ui/**`, `/v3/api-docs/**` | 全員許可（開発時のみ） |
+| `/v3/api-docs/**` | 全員許可（開発時のみ） |
 
 ### 認証情報の取得
 

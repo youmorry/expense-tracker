@@ -6,7 +6,7 @@ Expense Tracker の REST API 仕様を定義する。（[Web API設計ガイド�
 バックエンド（Spring Boot）が提供する API エンドポイントの一覧、リクエスト/レスポンス形式、
 エラーレスポンス形式を記述する。
 
-詳細な OpenAPI 仕様は SpringDoc により自動生成し、Swagger UI で閲覧可能にする。
+詳細な OpenAPI 仕様は SpringDoc により自動生成し、Scalar で閲覧可能にする。
 
 ---
 
