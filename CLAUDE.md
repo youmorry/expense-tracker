@@ -64,7 +64,7 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 ## Commands
 
 ```bash
-docker compose up                        # ローカル DB・モックサーバー・Swagger UI 起動
+docker compose up                        # ローカル DB・モックサーバー・Scalar 起動
 
 # Backend (cd backend)
 ./gradlew bootRun                        # 開発サーバー

@@ -125,7 +125,7 @@ npm run build
 
 ## Docker Compose
 
-ローカル開発用に PostgreSQL と Swagger UI を提供します。
+ローカル開発用に PostgreSQL と Scalar を提供します。
 
 ```bash
 docker compose up -d
@@ -135,7 +135,7 @@ docker compose up -d
 | ----------- | ------------------------------- | ---------------- |
 | db          | PostgreSQL 18                   | `localhost:5432` |
 | mock-server | Prism（OpenAPI モックサーバー） | `localhost:4010` |
-| swagger-ui  | Swagger UI（OpenAPI ビューア）  | `localhost:8081` |
+| scalar      | Scalar（OpenAPI ビューア）      | `localhost:8081` |
 
 **DB 接続情報**
 

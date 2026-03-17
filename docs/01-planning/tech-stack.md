@@ -61,7 +61,7 @@ Spring Boot の新規プロジェクトで採用が増えており、Spring Init
 | 技術 | 用途 |
 |------|------|
 | SpringDoc OpenAPI | OpenAPI 3.0 仕様の自動生成 |
-| Swagger UI | API ドキュメント閲覧 |
+| Scalar | API ドキュメント閲覧 |
 
 ---
 
