@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.domain.model.user;
 
 import java.time.Instant;
 import java.util.Currency;
+import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
@@ -48,8 +49,9 @@ public record User(
   }
 
   private static void validateCurrencyCode(String currencyCode) {
-    if (currencyCode == null || currencyCode.isBlank()) {
-      throw new IllegalArgumentException("Currency code must not be null or blank");
+    Objects.requireNonNull(currencyCode, "Currency code must not be null");
+    if (currencyCode.isBlank()) {
+      throw new IllegalArgumentException("Currency code must not be blank");
     }
     try {
       Currency.getInstance(currencyCode);

@@ -42,10 +42,10 @@ class UserTest {
   }
 
   @Test
-  void changeCurrencyCode_withNull_throwsException() {
+  void changeCurrencyCode_withNull_throwsNullPointerException() {
     var user = createUser("JPY");
 
-    assertThrows(IllegalArgumentException.class, () -> user.changeCurrencyCode(null));
+    assertThrows(NullPointerException.class, () -> user.changeCurrencyCode(null));
   }
 
   private User createUser(String currencyCode) {
