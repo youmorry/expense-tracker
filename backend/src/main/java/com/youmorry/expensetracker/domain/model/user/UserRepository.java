@@ -28,4 +28,11 @@ public interface UserRepository {
    * @return 保存されたユーザー（ID 採番済み）
    */
   User save(User user);
+
+  /**
+   * 指定された ID のユーザーを削除する。
+   *
+   * @param id 削除するユーザーの ID
+   */
+  void deleteById(UserId id);
 }
