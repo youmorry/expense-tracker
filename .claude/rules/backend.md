@@ -27,6 +27,11 @@ com.youmorry.expensetracker/
 - domain 層は他の層に依存しない（依存性逆転）
 - Controller から Repository を直接呼ばない（必ず application 層を経由）
 
+### application 層の設計指針
+
+- 同値ガード（変更がない場合に save をスキップ）は、外部 API 呼び出しや重い処理を伴う場合にのみ導入する
+- 単純な DB 保存のみの場合は条件分岐を入れず、冪等性をシンプルに保つ
+
 ### 禁止事項
 
 - domain 層で Spring 固有のサービス（`@Service`, `@Transactional` 等）を使わない
