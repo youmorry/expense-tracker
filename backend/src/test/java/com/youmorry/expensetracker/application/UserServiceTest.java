@@ -76,7 +76,7 @@ class UserServiceTest {
   }
 
   @Test
-  void updateCurrency_withSameCode_returnsSameUserWithoutSave() {
+  void updateCurrency_withSameCode_returnsSameUser() {
     var userId = new UserId(1L);
     var existingUser =
         new User(
@@ -91,7 +91,8 @@ class UserServiceTest {
 
     var result = userService.updateCurrency(userId, "JPY");
 
-    assertEquals("JPY", result.currencyCode());
+    assertEquals(existingUser, result);
+    verify(userRepository).save(existingUser);
   }
 
   @Test
