@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.domain.model.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,37 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class UserTest {
+
+  @Test
+  void createNew_withValidCurrencyCode_createsUser() {
+    var user = User.createNew("google-123", "user@example.com", "Test User", "JPY");
+
+    assertEquals("JPY", user.currencyCode());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"INVALID", "XX", "123", "jp", ""})
+  void createNew_withInvalidCurrencyCode_throwsException(String invalidCode) {
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> User.createNew("google-123", "user@example.com", "Test User", invalidCode));
+  }
+
+  @Test
+  void createNew_withNullCurrencyCode_throwsNullPointerException() {
+    assertThrows(
+        NullPointerException.class,
+        () -> User.createNew("google-123", "user@example.com", "Test User", null));
+  }
+
+  @Test
+  void changeCurrencyCode_withSameCode_returnsSameInstance() {
+    var user = createUser("JPY");
+
+    var result = user.changeCurrencyCode("JPY");
+
+    assertSame(user, result);
+  }
 
   @Test
   void changeCurrencyCode_withValidCode_returnsUserWithUpdatedCurrency() {

@@ -33,6 +33,7 @@ public record User(
    */
   public static User createNew(
       String googleId, String email, String displayName, String currencyCode) {
+    validateCurrencyCode(currencyCode);
     return new User(null, googleId, email, displayName, currencyCode, null);
   }
 
@@ -45,6 +46,9 @@ public record User(
    */
   public User changeCurrencyCode(String newCurrencyCode) {
     validateCurrencyCode(newCurrencyCode);
+    if (currencyCode.equals(newCurrencyCode)) {
+      return this;
+    }
     return new User(id, googleId, email, displayName, newCurrencyCode, createdAt);
   }
 
