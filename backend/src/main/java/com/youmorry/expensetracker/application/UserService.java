@@ -50,14 +50,16 @@ public class UserService {
   @Transactional
   public User updateCurrency(UserId userId, String currencyCode) {
     var user = findUserOrThrow(userId);
+    CurrencyCode code;
     try {
-      var updated = user.changeCurrencyCode(new CurrencyCode(currencyCode));
-      return userRepository.save(updated);
+      code = new CurrencyCode(currencyCode);
     } catch (IllegalArgumentException e) {
       throw new ValidationException(
           e.getMessage(),
           List.of(new FieldError("Invalid ISO 4217 currency code.", "#/currency_code")));
     }
+    var updated = user.changeCurrencyCode(code);
+    return userRepository.save(updated);
   }
 
   /**
