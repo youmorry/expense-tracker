@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.application;
 
+import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
@@ -50,7 +51,7 @@ public class UserService {
   public User updateCurrency(UserId userId, String currencyCode) {
     var user = findUserOrThrow(userId);
     try {
-      var updated = user.changeCurrencyCode(currencyCode);
+      var updated = user.changeCurrencyCode(new CurrencyCode(currencyCode));
       return userRepository.save(updated);
     } catch (IllegalArgumentException e) {
       throw new ValidationException(

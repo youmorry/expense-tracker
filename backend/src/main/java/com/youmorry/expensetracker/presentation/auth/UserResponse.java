@@ -15,6 +15,10 @@ public record UserResponse(
    */
   public static UserResponse from(User user) {
     return new UserResponse(
-        user.id().value(), user.email(), user.displayName(), user.currencyCode(), user.createdAt());
+        user.id().value(),
+        user.email(),
+        user.displayName(),
+        user.currencyCode().value(),
+        user.createdAt());
   }
 }

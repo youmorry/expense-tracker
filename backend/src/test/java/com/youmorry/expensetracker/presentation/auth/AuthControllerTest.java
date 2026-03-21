@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.youmorry.expensetracker.application.AuthService;
 import com.youmorry.expensetracker.application.AuthService.AuthResult;
+import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
@@ -33,7 +34,7 @@ class AuthControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
     when(authService.authenticate("valid-id-token")).thenReturn(authResult);

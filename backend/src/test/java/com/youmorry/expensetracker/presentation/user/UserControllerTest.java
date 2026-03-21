@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.UserService;
+import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
@@ -49,7 +50,7 @@ class UserControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userService.getMe(userId)).thenReturn(user);
 
@@ -95,7 +96,7 @@ class UserControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "USD",
+            new CurrencyCode("USD"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userService.updateCurrency(userId, "USD")).thenReturn(updatedUser);
 
