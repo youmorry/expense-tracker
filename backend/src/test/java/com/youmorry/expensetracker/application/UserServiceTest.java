@@ -115,8 +115,7 @@ class UserServiceTest {
     var userId = new UserId(999L);
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-    assertThrows(
-        ResourceNotFoundException.class, () -> userService.updateCurrency(userId, "USD"));
+    assertThrows(ResourceNotFoundException.class, () -> userService.updateCurrency(userId, "USD"));
   }
 
   // --- deleteAccount ---
