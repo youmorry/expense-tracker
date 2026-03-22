@@ -47,9 +47,24 @@ class LocaleCurrencyMapperTest {
     assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(null));
   }
 
-  @Test
-  void toCurrencyCode_withLanguageOnlyLocale_returnsUsd() {
-    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(Locale.JAPANESE));
+  @ParameterizedTest
+  @CsvSource({
+    "ja, JPY", "ko, KRW", "zh, CNY", "hi, INR", "th, THB", "vi, VND", "tr, TRY", "ru, RUB",
+    "pl, PLN", "sv, SEK", "da, DKK", "nb, NOK"
+  })
+  void toCurrencyCode_withMappedLanguageOnlyLocale_returnsEstimatedCurrency(
+      String languageTag, String expected) {
+    Locale locale = Locale.forLanguageTag(languageTag);
+
+    assertEquals(new CurrencyCode(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
+  }
+
+  @ParameterizedTest
+  @CsvSource({"fr", "es", "pt", "ar", "de", "it", "nl", "en"})
+  void toCurrencyCode_withUnmappedLanguageOnlyLocale_returnsUsd(String languageTag) {
+    Locale locale = Locale.forLanguageTag(languageTag);
+
+    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(locale));
   }
 
   @Test
