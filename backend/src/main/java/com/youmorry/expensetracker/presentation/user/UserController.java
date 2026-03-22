@@ -2,7 +2,6 @@ package com.youmorry.expensetracker.presentation.user;
 
 import com.youmorry.expensetracker.application.UserService;
 import com.youmorry.expensetracker.domain.model.user.UserId;
-import com.youmorry.expensetracker.presentation.auth.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
