@@ -21,45 +21,38 @@ class CategoryTest {
 
   @Test
   void constructor_withNullName_throwsNullPointerException() {
-    assertThrows(
-        NullPointerException.class, () -> new Category(new CategoryId(1L), null, 1));
+    assertThrows(NullPointerException.class, () -> new Category(new CategoryId(1L), null, 1));
   }
 
   @Test
   void constructor_withBlankName_throwsIllegalArgumentException() {
-    assertThrows(
-        IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "  ", 1));
+    assertThrows(IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "  ", 1));
   }
 
   @Test
   void constructor_withEmptyName_throwsIllegalArgumentException() {
-    assertThrows(
-        IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "", 1));
+    assertThrows(IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "", 1));
   }
 
   @Test
   void constructor_withNameExceeding50Chars_throwsIllegalArgumentException() {
     var name = "a".repeat(51);
 
-    assertThrows(
-        IllegalArgumentException.class, () -> new Category(new CategoryId(1L), name, 1));
+    assertThrows(IllegalArgumentException.class, () -> new Category(new CategoryId(1L), name, 1));
   }
 
   @Test
   void constructor_withNullDisplayOrder_throwsNullPointerException() {
-    assertThrows(
-        NullPointerException.class, () -> new Category(new CategoryId(1L), "食費", null));
+    assertThrows(NullPointerException.class, () -> new Category(new CategoryId(1L), "食費", null));
   }
 
   @Test
   void constructor_withZeroDisplayOrder_throwsIllegalArgumentException() {
-    assertThrows(
-        IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "食費", 0));
+    assertThrows(IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "食費", 0));
   }
 
   @Test
   void constructor_withNegativeDisplayOrder_throwsIllegalArgumentException() {
-    assertThrows(
-        IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "食費", -1));
+    assertThrows(IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "食費", -1));
   }
 }
