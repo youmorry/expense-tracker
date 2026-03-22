@@ -41,7 +41,7 @@ classDiagram
         <<Entity / AggregateRoot>>
         CategoryId id
         String name
-        Integer displayOrder
+        int displayOrder
     }
 
     class CurrencyCode {
@@ -127,7 +127,7 @@ Google OAuth2 で認証されたユーザーを表す。
 |-----------|-----|------|------|
 | id | CategoryId | ○ | 内部ID（自動採番） |
 | name | String | ○ | カテゴリ名 |
-| displayOrder | Integer | ○ | 表示順 |
+| displayOrder | int | ○ | 表示順 |
 
 **プリセットカテゴリ**
 
