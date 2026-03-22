@@ -21,10 +21,10 @@ sequenceDiagram
     FE->>Google: 2. Google認証画面を表示
     Google->>User: 3. 認証・同意
     Google->>FE: 4. ID トークン返却（JSコールバック）
-    FE->>BE: 5. POST /api/v1/auth/google<br>{ id_token: "..." }
+    FE->>BE: 5. POST /api/v1/auth/google<br>{ id_token: "..." }<br>Accept-Language: ja-JP,...
     BE->>Google: 6. ID トークン検証（公開鍵で署名検証）
     Google-->>BE: 検証結果
-    Note over BE: 7. ユーザー検索/作成<br>(新規: locale→通貨推定)
+    Note over BE: 7. ユーザー検索/作成<br>(新規: Accept-Language→通貨推定)
     Note over BE: 8. JWT 生成（HS256）
     BE-->>FE: 9. { access_token, user }
     Note over FE: 10. JWT をメモリに保持
@@ -79,7 +79,6 @@ FE から受け取った ID トークンを Google の公開鍵で検証する�
 | sub | Google ユーザーの一意識別子 | users.google_id |
 | email | メールアドレス | users.email |
 | name | 表示名 | users.display_name |
-| locale | 通貨コードの推定に使用 | - |
 
 ### ユーザーの検索・自動作成
 
@@ -92,20 +91,25 @@ ID トークン検証後、`sub` クレームで users テーブルを検索す�
 
 ### 通貨コードの自動設定
 
-新規ユーザー作成時、Google ID トークンの `locale` クレームから通貨コードを推定し、`currency_code` に設定する。
+新規ユーザー作成時、ブラウザの `Accept-Language` ヘッダーから通貨コードを推定し、`currency_code` に設定する。
 
-**locale → 通貨コードのマッピング例**
+**解決方法**
 
-| locale | 国 | 通貨コード |
-|--------|-----|----------|
-| `ja` | Japan | JPY |
-| `en-US` | United States | USD |
-| `en-GB` | United Kingdom | GBP |
-| `de` | Germany | EUR |
-| `zh-CN` | China | CNY |
+1. `AuthController` が `Accept-Language` ヘッダーから最優先の BCP 47 locale（例: `ja-JP`）を抽出する
+2. `LocaleCurrencyMapper` が `Locale.forLanguageTag()` + `Currency.getInstance(Locale)` で JDK の locale-通貨マッピングを使用して通貨コードを解決する
 
-- マッピングテーブルはバックエンドで管理する
-- マッピングできない locale の場合は `USD` をフォールバックとする
+**locale → 通貨コードの解決例**
+
+| Accept-Language | 抽出される locale | 通貨コード |
+|----------------|------------------|----------|
+| `ja-JP,ja;q=0.9` | `ja-JP` | JPY |
+| `en-US,en;q=0.9` | `en-US` | USD |
+| `en-GB,en;q=0.9` | `en-GB` | GBP |
+| `de-DE,de;q=0.9` | `de-DE` | EUR |
+| `zh-CN,zh;q=0.9` | `zh-CN` | CNY |
+
+- JDK が 200 以上の locale-通貨マッピングを自動処理するため、手動マッピングテーブルは不要
+- `Accept-Language` ヘッダーが存在しない場合（API クライアント等）や地域コードなしの locale の場合は `USD` にフォールバック
 - ユーザーが通貨を変更したい場合は設定画面から変更可能
 
 ---
@@ -307,6 +311,8 @@ FE と BE が異なるオリジンで動作するため、CORS を適切に設�
 
 ### currency_code の初期値について
 
-新規ユーザー作成時、Google ID トークンの `locale` クレームから通貨コードを推定し、`currency_code` に設定する。
+新規ユーザー作成時、ブラウザの `Accept-Language` ヘッダーから通貨コードを推定し、`currency_code` に設定する。
+`Accept-Language` は `ja-JP,ja;q=0.9` のように地域コード付きで送られるため、JDK の `Currency.getInstance(Locale)` で直接解決できる。
+Google ID トークンの `locale` クレームは地域コード（`ja-JP` の `JP` 部分）が含まれない場合があるため使用しない。
 これにより通貨選択の専用画面が不要になり、ユーザーは認証後すぐにメイン画面を利用できる。
 通貨を変更したい場合は設定画面からいつでも変更可能。
