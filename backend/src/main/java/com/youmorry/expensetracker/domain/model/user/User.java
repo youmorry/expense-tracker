@@ -1,7 +1,6 @@
 package com.youmorry.expensetracker.domain.model.user;
 
 import java.time.Instant;
-import java.util.Currency;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
@@ -19,7 +18,7 @@ public record User(
     String googleId,
     String email,
     String displayName,
-    String currencyCode,
+    CurrencyCode currencyCode,
     @Nullable Instant createdAt) {
 
   /**
@@ -28,39 +27,26 @@ public record User(
    * @param googleId Google ユーザーの一意識別子
    * @param email メールアドレス
    * @param displayName 表示名
-   * @param currencyCode 通貨コード（ISO 4217）
+   * @param currencyCode 通貨コード
    * @return 新規ユーザー
    */
   public static User createNew(
-      String googleId, String email, String displayName, String currencyCode) {
-    validateCurrencyCode(currencyCode);
+      String googleId, String email, String displayName, CurrencyCode currencyCode) {
+    Objects.requireNonNull(currencyCode, "Currency code must not be null");
     return new User(null, googleId, email, displayName, currencyCode, null);
   }
 
   /**
    * 通貨コードを変更した新しいユーザーを返す。
    *
-   * @param newCurrencyCode ISO 4217 通貨コード
+   * @param newCurrencyCode 通貨コード
    * @return 通貨コードが更新されたユーザー
-   * @throws IllegalArgumentException 無効な通貨コードの場合
    */
-  public User changeCurrencyCode(String newCurrencyCode) {
-    validateCurrencyCode(newCurrencyCode);
+  public User changeCurrencyCode(CurrencyCode newCurrencyCode) {
+    Objects.requireNonNull(newCurrencyCode, "Currency code must not be null");
     if (currencyCode.equals(newCurrencyCode)) {
       return this;
     }
     return new User(id, googleId, email, displayName, newCurrencyCode, createdAt);
-  }
-
-  private static void validateCurrencyCode(String currencyCode) {
-    Objects.requireNonNull(currencyCode, "Currency code must not be null");
-    if (currencyCode.isBlank()) {
-      throw new IllegalArgumentException("Currency code must not be blank");
-    }
-    try {
-      Currency.getInstance(currencyCode);
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Invalid ISO 4217 currency code: " + currencyCode);
-    }
   }
 }

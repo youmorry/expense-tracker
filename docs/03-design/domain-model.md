@@ -19,7 +19,7 @@ classDiagram
         String googleId
         String email
         String displayName
-        String currencyCode
+        CurrencyCode currencyCode
         Instant createdAt
     }
 
@@ -44,6 +44,11 @@ classDiagram
         Integer displayOrder
     }
 
+    class CurrencyCode {
+        <<ValueObject>>
+        String value
+    }
+
     class Money {
         <<ValueObject>>
         BigDecimal value
@@ -56,6 +61,7 @@ classDiagram
         UNSET
     }
 
+    User --> CurrencyCode : currencyCode
     Transaction --> User : userId で参照
     Transaction --> Category : categoryId で参照
     Transaction --> Money : amount
@@ -76,7 +82,7 @@ Google OAuth2 で認証されたユーザーを表す。
 | googleId | String | ○ | Google アカウントの識別子（sub クレーム） |
 | email | String | ○ | メールアドレス |
 | displayName | String | ○ | 表示名 |
-| currencyCode | String | ○ | 使用通貨（ISO 4217 コード。例: `JPY`, `USD`） |
+| currencyCode | CurrencyCode | ○ | 使用通貨（ISO 4217 コード。例: `JPY`, `USD`） |
 | createdAt | Instant | ○ | 登録日時 |
 
 **ルール**
@@ -147,6 +153,20 @@ Google OAuth2 で認証されたユーザーを表す。
 ---
 
 ## 値オブジェクト
+
+### CurrencyCode（通貨コード）
+
+ISO 4217 通貨コードを表す値オブジェクト。
+
+| フィールド | 型 | 説明 |
+|-----------|-----|------|
+| value | String | ISO 4217 通貨コード |
+
+**ルール**
+- null・空文字は不可
+- Java の `Currency.getInstance()` で ISO 4217 準拠を検証する
+
+---
 
 ### Money（金額）
 

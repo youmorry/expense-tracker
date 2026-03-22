@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.application;
 
+import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
@@ -49,14 +50,16 @@ public class UserService {
   @Transactional
   public User updateCurrency(UserId userId, String currencyCode) {
     var user = findUserOrThrow(userId);
+    CurrencyCode code;
     try {
-      var updated = user.changeCurrencyCode(currencyCode);
-      return userRepository.save(updated);
+      code = new CurrencyCode(currencyCode);
     } catch (IllegalArgumentException e) {
       throw new ValidationException(
           e.getMessage(),
           List.of(new FieldError("Invalid ISO 4217 currency code.", "#/currency_code")));
     }
+    var updated = user.changeCurrencyCode(code);
+    return userRepository.save(updated);
   }
 
   /**

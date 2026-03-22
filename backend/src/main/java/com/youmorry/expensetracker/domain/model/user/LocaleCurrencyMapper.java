@@ -5,48 +5,46 @@ import java.util.Map;
 /** Google ID トークンの locale クレームから ISO 4217 通貨コードを推定する。 */
 public final class LocaleCurrencyMapper {
 
-  private static final String FALLBACK_CURRENCY = "USD";
-
-  private static final Map<String, String> LOCALE_TO_CURRENCY =
+  private static final Map<String, CurrencyCode> LOCALE_TO_CURRENCY =
       Map.ofEntries(
-          Map.entry("ja", "JPY"),
-          Map.entry("en-US", "USD"),
-          Map.entry("en-GB", "GBP"),
-          Map.entry("en-AU", "AUD"),
-          Map.entry("en-CA", "CAD"),
-          Map.entry("de", "EUR"),
-          Map.entry("fr", "EUR"),
-          Map.entry("it", "EUR"),
-          Map.entry("es", "EUR"),
-          Map.entry("nl", "EUR"),
-          Map.entry("pt-BR", "BRL"),
-          Map.entry("ko", "KRW"),
-          Map.entry("zh-CN", "CNY"),
-          Map.entry("zh-TW", "TWD"),
-          Map.entry("th", "THB"),
-          Map.entry("vi", "VND"),
-          Map.entry("id", "IDR"),
-          Map.entry("ms", "MYR"),
-          Map.entry("hi", "INR"),
-          Map.entry("ru", "RUB"),
-          Map.entry("tr", "TRY"),
-          Map.entry("pl", "PLN"),
-          Map.entry("sv", "SEK"),
-          Map.entry("da", "DKK"),
-          Map.entry("nb", "NOK"),
-          Map.entry("fi", "EUR"),
-          Map.entry("en", "USD"));
+          Map.entry("ja", CurrencyCode.JPY),
+          Map.entry("en-US", CurrencyCode.USD),
+          Map.entry("en-GB", CurrencyCode.GBP),
+          Map.entry("en-AU", CurrencyCode.AUD),
+          Map.entry("en-CA", CurrencyCode.CAD),
+          Map.entry("de", CurrencyCode.EUR),
+          Map.entry("fr", CurrencyCode.EUR),
+          Map.entry("it", CurrencyCode.EUR),
+          Map.entry("es", CurrencyCode.EUR),
+          Map.entry("nl", CurrencyCode.EUR),
+          Map.entry("pt-BR", CurrencyCode.BRL),
+          Map.entry("ko", CurrencyCode.KRW),
+          Map.entry("zh-CN", CurrencyCode.CNY),
+          Map.entry("zh-TW", CurrencyCode.TWD),
+          Map.entry("th", CurrencyCode.THB),
+          Map.entry("vi", CurrencyCode.VND),
+          Map.entry("id", CurrencyCode.IDR),
+          Map.entry("ms", CurrencyCode.MYR),
+          Map.entry("hi", CurrencyCode.INR),
+          Map.entry("ru", CurrencyCode.RUB),
+          Map.entry("tr", CurrencyCode.TRY),
+          Map.entry("pl", CurrencyCode.PLN),
+          Map.entry("sv", CurrencyCode.SEK),
+          Map.entry("da", CurrencyCode.DKK),
+          Map.entry("nb", CurrencyCode.NOK),
+          Map.entry("fi", CurrencyCode.EUR),
+          Map.entry("en", CurrencyCode.USD));
 
   private LocaleCurrencyMapper() {}
 
   /** 指定された locale 文字列を ISO 4217 通貨コードに変換する。マッピングできない場合は USD を返す。 */
-  public static String toCurrencyCode(String locale) {
+  public static CurrencyCode toCurrencyCode(String locale) {
     if (locale == null || locale.isBlank()) {
-      return FALLBACK_CURRENCY;
+      return CurrencyCode.USD;
     }
 
     // 完全一致を試行（例: "en-US"）
-    String currency = LOCALE_TO_CURRENCY.get(locale);
+    CurrencyCode currency = LOCALE_TO_CURRENCY.get(locale);
     if (currency != null) {
       return currency;
     }
@@ -60,6 +58,6 @@ public final class LocaleCurrencyMapper {
       }
     }
 
-    return FALLBACK_CURRENCY;
+    return CurrencyCode.USD;
   }
 }

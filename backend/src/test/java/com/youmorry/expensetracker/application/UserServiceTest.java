@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
@@ -35,7 +36,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
@@ -63,15 +64,15 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
-    var updatedUser = existingUser.changeCurrencyCode("USD");
+    var updatedUser = existingUser.changeCurrencyCode(new CurrencyCode("USD"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(updatedUser)).thenReturn(updatedUser);
 
     var result = userService.updateCurrency(userId, "USD");
 
-    assertEquals("USD", result.currencyCode());
+    assertEquals(new CurrencyCode("USD"), result.currencyCode());
     verify(userRepository).save(updatedUser);
   }
 
@@ -84,7 +85,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(existingUser)).thenReturn(existingUser);
@@ -104,7 +105,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
@@ -130,7 +131,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            "JPY",
+            new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 

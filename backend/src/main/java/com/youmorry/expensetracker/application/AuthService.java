@@ -3,6 +3,7 @@ package com.youmorry.expensetracker.application;
 import com.youmorry.expensetracker.application.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.port.OauthTokenVerifier;
 import com.youmorry.expensetracker.application.port.OauthUserInfo;
+import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.LocaleCurrencyMapper;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
@@ -57,7 +58,7 @@ public class AuthService {
   }
 
   private User createNewUser(OauthUserInfo userInfo) {
-    String currencyCode = LocaleCurrencyMapper.toCurrencyCode(userInfo.locale());
+    CurrencyCode currencyCode = LocaleCurrencyMapper.toCurrencyCode(userInfo.locale());
     User newUser =
         User.createNew(userInfo.subject(), userInfo.email(), userInfo.name(), currencyCode);
     return userRepository.save(newUser);

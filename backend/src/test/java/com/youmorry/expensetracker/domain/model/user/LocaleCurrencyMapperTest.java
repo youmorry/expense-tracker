@@ -24,19 +24,19 @@ class LocaleCurrencyMapperTest {
     "en, USD"
   })
   void toCurrencyCode_withKnownLocale_returnsExpectedCurrency(String locale, String expected) {
-    assertEquals(expected, LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(new CurrencyCode(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
   }
 
   @Test
   void toCurrencyCode_withLanguageOnlyFallback_returnsLanguageCurrency() {
     // "ja-JP" は完全一致しないが、言語部分 "ja" で JPY にマッチする
-    assertEquals("JPY", LocaleCurrencyMapper.toCurrencyCode("ja-JP"));
+    assertEquals(new CurrencyCode("JPY"), LocaleCurrencyMapper.toCurrencyCode("ja-JP"));
   }
 
   @ParameterizedTest
   @NullAndEmptySource
   @ValueSource(strings = {"  ", "xx", "xx-YY"})
   void toCurrencyCode_withUnknownOrBlankLocale_returnsUsd(String locale) {
-    assertEquals("USD", LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(new CurrencyCode("USD"), LocaleCurrencyMapper.toCurrencyCode(locale));
   }
 }
