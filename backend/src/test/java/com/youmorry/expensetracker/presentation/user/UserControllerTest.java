@@ -1,5 +1,8 @@
 package com.youmorry.expensetracker.presentation.user;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -110,6 +113,8 @@ class UserControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.currency_code").value("USD"));
+
+    verify(userService).updateCurrency(userId, "USD");
   }
 
   @Test
@@ -129,6 +134,8 @@ class UserControllerTest {
         .andExpect(status().is(422))
         .andExpect(jsonPath("$.type").value("/errors/validation-error"))
         .andExpect(jsonPath("$.errors[0].pointer").value("#/currency_code"));
+
+    verify(userService).updateCurrency(new UserId(1L), "INVALID");
   }
 
   @Test
@@ -140,6 +147,8 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
         .andExpect(status().is(422));
+
+    verify(userService, never()).updateCurrency(eq(new UserId(1L)), anyString());
   }
 
   // --- DELETE /api/v1/users/me ---
