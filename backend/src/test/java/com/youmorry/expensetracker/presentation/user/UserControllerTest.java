@@ -14,6 +14,7 @@ import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
+import com.youmorry.expensetracker.infrastructure.security.WebMvcConfig;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
@@ -28,7 +29,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, WebMvcConfig.class})
 class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
