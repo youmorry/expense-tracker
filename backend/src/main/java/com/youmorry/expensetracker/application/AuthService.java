@@ -8,16 +8,12 @@ import com.youmorry.expensetracker.domain.model.user.LocaleCurrencyMapper;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
 import java.util.Locale;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /** OAuth 認証 → ユーザー取得/作成 → JWT 発行のユースケースを実装する。 */
 @Service
 public class AuthService {
-
-  private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
   private final OauthTokenVerifier oauthTokenVerifier;
   private final UserRepository userRepository;
@@ -67,9 +63,6 @@ public class AuthService {
 
   private User createNewUser(OauthUserInfo userInfo, Locale locale) {
     CurrencyCode currencyCode = LocaleCurrencyMapper.toCurrencyCode(locale);
-    if (CurrencyCode.USD.equals(currencyCode) && !locale.getCountry().isEmpty()) {
-      log.warn("Locale '{}' resolved to USD fallback", locale.toLanguageTag());
-    }
     User newUser =
         User.createNew(userInfo.subject(), userInfo.email(), userInfo.name(), currencyCode);
     return userRepository.save(newUser);
