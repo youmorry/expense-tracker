@@ -35,14 +35,6 @@ paths:
       summary: 'Google 認証・JWT 発行'
       description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。新規ユーザーの通貨コードは Accept-Language ヘッダーから推定する。'
       security: []
-      parameters:
-        - name: 'Accept-Language'
-          in: header
-          description: 'ブラウザの言語設定（BCP 47）。新規ユーザー作成時の通貨コード推定に使用する。省略時は USD をデフォルトとする。'
-          required: false
-          schema:
-            type: string
-            example: 'ja-JP,ja;q=0.9,en-US;q=0.8'
       requestBody:
         required: true
         content:
