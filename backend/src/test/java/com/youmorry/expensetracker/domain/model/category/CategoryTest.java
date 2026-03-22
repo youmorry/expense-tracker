@@ -42,11 +42,6 @@ class CategoryTest {
   }
 
   @Test
-  void constructor_withNullDisplayOrder_throwsNullPointerException() {
-    assertThrows(NullPointerException.class, () -> new Category(new CategoryId(1L), "食費", null));
-  }
-
-  @Test
   void constructor_withZeroDisplayOrder_throwsIllegalArgumentException() {
     assertThrows(IllegalArgumentException.class, () -> new Category(new CategoryId(1L), "食費", 0));
   }

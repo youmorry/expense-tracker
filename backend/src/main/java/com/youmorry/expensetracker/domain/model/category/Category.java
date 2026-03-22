@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 /** 支出を分類するカテゴリのエンティティ。 */
 @Table("categories")
-public record Category(@Id CategoryId id, String name, Integer displayOrder) {
+public record Category(@Id CategoryId id, String name, int displayOrder) {
 
   private static final int NAME_MAX_LENGTH = 50;
 
@@ -20,7 +20,6 @@ public record Category(@Id CategoryId id, String name, Integer displayOrder) {
       throw new IllegalArgumentException(
           "name must not exceed " + NAME_MAX_LENGTH + " characters, but was: " + name.length());
     }
-    Objects.requireNonNull(displayOrder, "displayOrder must not be null");
     if (displayOrder <= 0) {
       throw new IllegalArgumentException("displayOrder must be positive, but was: " + displayOrder);
     }
