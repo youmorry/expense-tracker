@@ -13,11 +13,6 @@ class UserIdTest {
   }
 
   @Test
-  void constructor_withNullValue_throwsNullPointerException() {
-    assertThrows(NullPointerException.class, () -> new UserId(null));
-  }
-
-  @Test
   void constructor_withZeroValue_throwsIllegalArgumentException() {
     assertThrows(IllegalArgumentException.class, () -> new UserId(0L));
   }

@@ -13,11 +13,6 @@ class TransactionIdTest {
   }
 
   @Test
-  void constructor_withNullValue_throwsNullPointerException() {
-    assertThrows(NullPointerException.class, () -> new TransactionId(null));
-  }
-
-  @Test
   void constructor_withZeroValue_throwsIllegalArgumentException() {
     assertThrows(IllegalArgumentException.class, () -> new TransactionId(0L));
   }

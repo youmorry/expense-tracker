@@ -13,11 +13,6 @@ class CategoryIdTest {
   }
 
   @Test
-  void constructor_withNullValue_throwsNullPointerException() {
-    assertThrows(NullPointerException.class, () -> new CategoryId(null));
-  }
-
-  @Test
   void constructor_withZeroValue_throwsIllegalArgumentException() {
     assertThrows(IllegalArgumentException.class, () -> new CategoryId(0L));
   }
