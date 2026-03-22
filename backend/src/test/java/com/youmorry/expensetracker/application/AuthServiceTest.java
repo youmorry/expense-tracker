@@ -18,6 +18,7 @@ import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +36,7 @@ class AuthServiceTest {
 
   @Test
   void authenticate_withExistingUser_returnsTokenAndUser() {
-    var userInfo = new OauthUserInfo("google-123", "test@gmail.com", "Test User", "ja");
+    var userInfo = new OauthUserInfo("google-123", "test@gmail.com", "Test User");
     var existingUser =
         new User(
             new UserId(1L),
@@ -49,7 +50,7 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(existingUser.id()), eq(existingUser.email())))
         .thenReturn("jwt-token");
 
-    var result = authService.authenticate("valid-token");
+    var result = authService.authenticate("valid-token", Locale.forLanguageTag("ja-JP"));
 
     assertEquals("jwt-token", result.accessToken());
     assertEquals(existingUser, result.user());
@@ -57,8 +58,8 @@ class AuthServiceTest {
   }
 
   @Test
-  void authenticate_withNewUser_createsUserAndReturnsToken() {
-    var userInfo = new OauthUserInfo("google-new", "new@gmail.com", "New User", "ja");
+  void authenticate_withNewUserAndJaLocale_setsCurrencyToJpy() {
+    var userInfo = new OauthUserInfo("google-new", "new@gmail.com", "New User");
     var savedUser =
         new User(
             new UserId(2L),
@@ -73,7 +74,7 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
         .thenReturn("new-jwt-token");
 
-    var result = authService.authenticate("new-token");
+    var result = authService.authenticate("new-token", Locale.forLanguageTag("ja-JP"));
 
     assertEquals("new-jwt-token", result.accessToken());
     assertEquals(savedUser, result.user());
@@ -81,8 +82,8 @@ class AuthServiceTest {
   }
 
   @Test
-  void authenticate_withNewUserAndEnLocale_setsCurrencyToUsd() {
-    var userInfo = new OauthUserInfo("google-en", "en@gmail.com", "EN User", "en-US");
+  void authenticate_withNewUserAndEnUsLocale_setsCurrencyToUsd() {
+    var userInfo = new OauthUserInfo("google-en", "en@gmail.com", "EN User");
     var savedUser =
         new User(
             new UserId(3L),
@@ -97,7 +98,29 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
         .thenReturn("en-jwt-token");
 
-    var result = authService.authenticate("en-token");
+    var result = authService.authenticate("en-token", Locale.forLanguageTag("en-US"));
+
+    assertEquals(new CurrencyCode("USD"), result.user().currencyCode());
+  }
+
+  @Test
+  void authenticate_withNewUserAndLanguageOnlyLocale_setsCurrencyToUsd() {
+    var userInfo = new OauthUserInfo("google-lang", "lang@gmail.com", "Lang User");
+    var savedUser =
+        new User(
+            new UserId(4L),
+            "google-lang",
+            "lang@gmail.com",
+            "Lang User",
+            new CurrencyCode("USD"),
+            Instant.parse("2026-01-01T00:00:00Z"));
+    when(oauthTokenVerifier.verify("lang-token")).thenReturn(userInfo);
+    when(userRepository.findByGoogleId("google-lang")).thenReturn(Optional.empty());
+    when(userRepository.save(any(User.class))).thenReturn(savedUser);
+    when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
+        .thenReturn("lang-jwt-token");
+
+    var result = authService.authenticate("lang-token", Locale.ENGLISH);
 
     assertEquals(new CurrencyCode("USD"), result.user().currencyCode());
   }
@@ -107,6 +130,8 @@ class AuthServiceTest {
     when(oauthTokenVerifier.verify(anyString()))
         .thenThrow(new UnauthorizedException("The Google ID token is invalid."));
 
-    assertThrows(UnauthorizedException.class, () -> authService.authenticate("invalid-token"));
+    assertThrows(
+        UnauthorizedException.class,
+        () -> authService.authenticate("invalid-token", Locale.forLanguageTag("ja-JP")));
   }
 }

@@ -105,7 +105,7 @@ POST /api/v1/auth/google
 |-----------|-----|------|
 | access_token | string | JWT アクセストークン |
 | user | object | ユーザー情報 |
-| user.currency_code | string | 通貨コード。新規ユーザーの場合は Google ID トークンの locale から自動設定 |
+| user.currency_code | string | 通貨コード。新規ユーザーの場合は `Accept-Language` ヘッダーから自動設定 |
 
 **レスポンス 401 Unauthorized**
 
@@ -661,7 +661,7 @@ interface User {
   id: number;
   email: string;
   display_name: string;
-  currency_code: string;   // 常に設定済み（新規ユーザーは locale から自動設定）
+  currency_code: string;   // 常に設定済み（新規ユーザーは Accept-Language から自動設定）
   created_at: string;      // ISO 8601
 }
 ```

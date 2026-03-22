@@ -43,9 +43,6 @@ public class GoogleTokenVerifier implements OauthTokenVerifier {
 
     GoogleIdToken.Payload payload = googleIdToken.getPayload();
     return new OauthUserInfo(
-        payload.getSubject(),
-        payload.getEmail(),
-        (String) payload.get("name"),
-        (String) payload.get("locale"));
+        payload.getSubject(), payload.getEmail(), (String) payload.get("name"));
   }
 }

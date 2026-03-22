@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.presentation.auth;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,6 +14,7 @@ import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -37,11 +39,13 @@ class AuthControllerTest {
             new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
-    when(authService.authenticate("valid-id-token")).thenReturn(authResult);
+    when(authService.authenticate(eq("valid-id-token"), eq(Locale.forLanguageTag("ja-JP"))))
+        .thenReturn(authResult);
 
     mockMvc
         .perform(
             post("/api/v1/auth/google")
+                .locale(Locale.forLanguageTag("ja-JP"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"id_token\": \"valid-id-token\"}"))
         .andExpect(status().isOk())
@@ -54,13 +58,36 @@ class AuthControllerTest {
   }
 
   @Test
+  void authenticateWithGoogle_withoutAcceptLanguageHeader_usesDefaultLocale() throws Exception {
+    var user =
+        new User(
+            new UserId(1L),
+            "google-123",
+            "test@gmail.com",
+            "Test User",
+            new CurrencyCode("USD"),
+            Instant.parse("2026-01-01T00:00:00Z"));
+    var authResult = new AuthResult("jwt-token-value", user);
+    when(authService.authenticate(eq("valid-id-token"), eq(Locale.ENGLISH))).thenReturn(authResult);
+
+    mockMvc
+        .perform(
+            post("/api/v1/auth/google")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id_token\": \"valid-id-token\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.user.currency_code").value("USD"));
+  }
+
+  @Test
   void authenticateWithGoogle_withInvalidToken_returns401() throws Exception {
-    when(authService.authenticate(anyString()))
+    when(authService.authenticate(anyString(), eq(Locale.forLanguageTag("ja-JP"))))
         .thenThrow(new UnauthorizedException("The Google ID token is invalid."));
 
     mockMvc
         .perform(
             post("/api/v1/auth/google")
+                .locale(Locale.forLanguageTag("ja-JP"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"id_token\": \"invalid-token\"}"))
         .andExpect(status().isUnauthorized())

@@ -33,7 +33,7 @@ paths:
       tags: [Auth]
       operationId: authenticateWithGoogle
       summary: 'Google 認証・JWT 発行'
-      description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。'
+      description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。新規ユーザーの通貨コードは Accept-Language ヘッダーから推定する。'
       security: []
       requestBody:
         required: true
