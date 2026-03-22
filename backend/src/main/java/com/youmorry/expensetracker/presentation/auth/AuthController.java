@@ -40,8 +40,8 @@ public class AuthController {
   @PostMapping("/google")
   public ResponseEntity<AuthResponse> authenticateWithGoogle(
       @Valid @RequestBody AuthRequest request,
-      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) @Nullable
-          String acceptLanguage) {
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false)
+          @Nullable String acceptLanguage) {
     String locale = parsePreferredLocale(acceptLanguage);
     AuthResult result = authService.authenticate(request.idToken(), locale);
     return ResponseEntity.ok(AuthResponse.from(result));
