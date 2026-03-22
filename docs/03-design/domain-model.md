@@ -246,9 +246,9 @@ Transaction
 Java の Record を使い、型安全性を確保する。
 
 ```java
-public record UserId(Long value) {}
-public record TransactionId(Long value) {}
-public record CategoryId(Long value) {}
+public record UserId(long value) {}
+public record TransactionId(long value) {}
+public record CategoryId(long value) {}
 ```
 
 これにより、`findById(UserId)` と `findById(TransactionId)` のような引数の取り違えをコンパイル時に検出できる。
