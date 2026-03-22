@@ -18,6 +18,7 @@ import com.youmorry.expensetracker.domain.model.user.UserId;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +50,7 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(existingUser.id()), eq(existingUser.email())))
         .thenReturn("jwt-token");
 
-    var result = authService.authenticate("valid-token", "ja-JP");
+    var result = authService.authenticate("valid-token", Locale.forLanguageTag("ja-JP"));
 
     assertEquals("jwt-token", result.accessToken());
     assertEquals(existingUser, result.user());
@@ -73,7 +74,7 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
         .thenReturn("new-jwt-token");
 
-    var result = authService.authenticate("new-token", "ja-JP");
+    var result = authService.authenticate("new-token", Locale.forLanguageTag("ja-JP"));
 
     assertEquals("new-jwt-token", result.accessToken());
     assertEquals(savedUser, result.user());
@@ -97,29 +98,29 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
         .thenReturn("en-jwt-token");
 
-    var result = authService.authenticate("en-token", "en-US");
+    var result = authService.authenticate("en-token", Locale.forLanguageTag("en-US"));
 
     assertEquals(new CurrencyCode("USD"), result.user().currencyCode());
   }
 
   @Test
-  void authenticate_withNewUserAndNullLocale_setsCurrencyToUsd() {
-    var userInfo = new OauthUserInfo("google-null", "null@gmail.com", "Null User");
+  void authenticate_withNewUserAndLanguageOnlyLocale_setsCurrencyToUsd() {
+    var userInfo = new OauthUserInfo("google-lang", "lang@gmail.com", "Lang User");
     var savedUser =
         new User(
             new UserId(4L),
-            "google-null",
-            "null@gmail.com",
-            "Null User",
+            "google-lang",
+            "lang@gmail.com",
+            "Lang User",
             new CurrencyCode("USD"),
             Instant.parse("2026-01-01T00:00:00Z"));
-    when(oauthTokenVerifier.verify("null-token")).thenReturn(userInfo);
-    when(userRepository.findByGoogleId("google-null")).thenReturn(Optional.empty());
+    when(oauthTokenVerifier.verify("lang-token")).thenReturn(userInfo);
+    when(userRepository.findByGoogleId("google-lang")).thenReturn(Optional.empty());
     when(userRepository.save(any(User.class))).thenReturn(savedUser);
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
-        .thenReturn("null-jwt-token");
+        .thenReturn("lang-jwt-token");
 
-    var result = authService.authenticate("null-token", null);
+    var result = authService.authenticate("lang-token", Locale.ENGLISH);
 
     assertEquals(new CurrencyCode("USD"), result.user().currencyCode());
   }
@@ -130,6 +131,7 @@ class AuthServiceTest {
         .thenThrow(new UnauthorizedException("The Google ID token is invalid."));
 
     assertThrows(
-        UnauthorizedException.class, () -> authService.authenticate("invalid-token", "ja-JP"));
+        UnauthorizedException.class,
+        () -> authService.authenticate("invalid-token", Locale.forLanguageTag("ja-JP")));
   }
 }

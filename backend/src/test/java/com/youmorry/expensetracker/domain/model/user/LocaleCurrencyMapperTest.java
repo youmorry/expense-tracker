@@ -2,11 +2,10 @@ package com.youmorry.expensetracker.domain.model.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class LocaleCurrencyMapperTest {
 
@@ -36,27 +35,27 @@ class LocaleCurrencyMapperTest {
     "nb-NO, NOK",
     "fi-FI, EUR"
   })
-  void toCurrencyCode_withBcp47LocaleIncludingRegion_returnsExpectedCurrency(
-      String locale, String expected) {
+  void toCurrencyCode_withLocaleIncludingRegion_returnsExpectedCurrency(
+      String localeTag, String expected) {
+    Locale locale = Locale.forLanguageTag(localeTag);
+
     assertEquals(new CurrencyCode(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
   }
 
   @Test
-  void toCurrencyCode_withAcceptLanguageStyleLocale_resolvesCurrency() {
-    // Accept-Language ヘッダーから抽出された BCP 47 タグ（ハイフン区切り）を処理できる
-    assertEquals(new CurrencyCode("JPY"), LocaleCurrencyMapper.toCurrencyCode("ja-JP"));
-  }
-
-  @ParameterizedTest
-  @NullAndEmptySource
-  @ValueSource(strings = {"  ", "xx", "xx-YY", "invalid"})
-  void toCurrencyCode_withUnknownOrBlankLocale_returnsUsd(String locale) {
-    assertEquals(new CurrencyCode("USD"), LocaleCurrencyMapper.toCurrencyCode(locale));
+  void toCurrencyCode_withNullLocale_returnsUsd() {
+    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(null));
   }
 
   @Test
   void toCurrencyCode_withLanguageOnlyLocale_returnsUsd() {
-    // 地域コードなしの言語のみ（例: "ja"）は Currency.getInstance で解決できないため USD フォールバック
-    assertEquals(new CurrencyCode("USD"), LocaleCurrencyMapper.toCurrencyCode("ja"));
+    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(Locale.JAPANESE));
+  }
+
+  @Test
+  void toCurrencyCode_withUnknownCountryLocale_returnsUsd() {
+    Locale unknown = Locale.forLanguageTag("xx-YY");
+
+    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(unknown));
   }
 }
