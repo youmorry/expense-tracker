@@ -21,6 +21,32 @@ public record User(
     CurrencyCode currencyCode,
     @Nullable Instant createdAt) {
 
+  private static final int DISPLAY_NAME_MAX_LENGTH = 100;
+
+  /** 不変条件を検証する。 */
+  public User {
+    Objects.requireNonNull(googleId, "googleId must not be null");
+    if (googleId.isBlank()) {
+      throw new IllegalArgumentException("googleId must not be blank");
+    }
+    Objects.requireNonNull(email, "email must not be null");
+    if (email.isBlank()) {
+      throw new IllegalArgumentException("email must not be blank");
+    }
+    Objects.requireNonNull(displayName, "displayName must not be null");
+    if (displayName.isBlank()) {
+      throw new IllegalArgumentException("displayName must not be blank");
+    }
+    if (displayName.length() > DISPLAY_NAME_MAX_LENGTH) {
+      throw new IllegalArgumentException(
+          "displayName must not exceed "
+              + DISPLAY_NAME_MAX_LENGTH
+              + " characters, but was: "
+              + displayName.length());
+    }
+    Objects.requireNonNull(currencyCode, "currencyCode must not be null");
+  }
+
   /**
    * 新規ユーザーを生成する。ID と作成日時は永続化時に設定される。
    *
@@ -32,7 +58,6 @@ public record User(
    */
   public static User createNew(
       String googleId, String email, String displayName, CurrencyCode currencyCode) {
-    Objects.requireNonNull(currencyCode, "Currency code must not be null");
     return new User(null, googleId, email, displayName, currencyCode, null);
   }
 
