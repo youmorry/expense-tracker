@@ -7,6 +7,7 @@ import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.model.user.LocaleCurrencyMapper;
 import com.youmorry.expensetracker.domain.model.user.User;
 import com.youmorry.expensetracker.domain.model.user.UserRepository;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,23 +43,26 @@ public class AuthService {
    * 極めて少ないため許容している。将来マルチユーザー化する場合は {@code TransactionTemplate} で DB 操作のみにトランザクション範囲を絞ること。
    *
    * @param idToken OAuth ID トークン文字列
+   * @param locale Accept-Language ヘッダーから抽出した BCP 47 locale 文字列（例: "ja-JP"）。null 可
    * @return 認証結果（アクセストークンとユーザー情報）
    * @throws com.youmorry.expensetracker.shared.exception.UnauthorizedException トークン検証失敗時
    * @see <a href="https://github.com/youmorry/expense-tracker/issues/34">Issue #34</a>
    */
   @Transactional
-  public AuthResult authenticate(String idToken) {
+  public AuthResult authenticate(String idToken, @Nullable String locale) {
     OauthUserInfo userInfo = oauthTokenVerifier.verify(idToken);
 
     User user =
-        userRepository.findByGoogleId(userInfo.subject()).orElseGet(() -> createNewUser(userInfo));
+        userRepository
+            .findByGoogleId(userInfo.subject())
+            .orElseGet(() -> createNewUser(userInfo, locale));
 
     String accessToken = jwtTokenGenerator.generateToken(user.id(), user.email());
     return new AuthResult(accessToken, user);
   }
 
-  private User createNewUser(OauthUserInfo userInfo) {
-    CurrencyCode currencyCode = LocaleCurrencyMapper.toCurrencyCode(userInfo.locale());
+  private User createNewUser(OauthUserInfo userInfo, @Nullable String locale) {
+    CurrencyCode currencyCode = LocaleCurrencyMapper.toCurrencyCode(locale);
     User newUser =
         User.createNew(userInfo.subject(), userInfo.email(), userInfo.name(), currencyCode);
     return userRepository.save(newUser);

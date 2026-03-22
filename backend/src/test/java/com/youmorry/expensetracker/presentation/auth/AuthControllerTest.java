@@ -39,7 +39,7 @@ class AuthControllerTest {
             new CurrencyCode("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
-    when(authService.authenticate(eq("valid-id-token"), eq("ja-JP"))).thenReturn(authResult);
+    when(authService.authenticate(eq("valid-id-token"), eq("ja-jp"))).thenReturn(authResult);
 
     mockMvc
         .perform(
