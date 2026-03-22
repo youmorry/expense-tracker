@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.presentation.auth;
+package com.youmorry.expensetracker.presentation.user;
 
 import com.youmorry.expensetracker.domain.model.user.User;
 import java.time.Instant;
