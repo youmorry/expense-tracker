@@ -32,6 +32,11 @@ Issue の指定: `$ARGUMENTS`
 6. TDD サイクルで実装を開始する:
    - CLAUDE.md の TDD ワークフローに従う
    - コミット時は `.claude/skills/commit/SKILL.md` の規約に従う
+7. ビルドが確認できることを確認する:
+   - `./gradlew build`（backend）や `npm run build`（frontend）でビルドが成功することを確認する
+   - ビルドに失敗した場合は修正する
+8. PRの作成を行う
+    - ./claude/skills/create-pr/SKILL.md の規約に従って PR を作成する
 
 ## 注意事項
 
