@@ -47,7 +47,8 @@ class UserIdArgumentResolverTest {
     SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
 
     var result =
-        resolver.resolveArgument(mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
+        resolver.resolveArgument(
+            mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
 
     assertEquals(new UserId(42L), result);
   }
@@ -57,7 +58,8 @@ class UserIdArgumentResolverTest {
     SecurityContextHolder.clearContext();
 
     var result =
-        resolver.resolveArgument(mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
+        resolver.resolveArgument(
+            mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
 
     assertNull(result);
   }
