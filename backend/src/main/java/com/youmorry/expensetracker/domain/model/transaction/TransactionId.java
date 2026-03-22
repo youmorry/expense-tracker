@@ -8,8 +8,7 @@ public record TransactionId(Long value) {
   public TransactionId {
     Objects.requireNonNull(value, "value must not be null");
     if (value <= 0) {
-      throw new IllegalArgumentException(
-          "TransactionId value must be positive, but was: " + value);
+      throw new IllegalArgumentException("TransactionId value must be positive, but was: " + value);
     }
   }
 }
