@@ -33,8 +33,8 @@ public final class LocaleCurrencyMapper {
   /**
    * 指定された {@link Locale} を ISO 4217 通貨コードに変換する。
    *
-   * <p>{@link Currency#getInstance(Locale)} を使用して JDK の locale-通貨マッピングで解決する。
-   * 国コードを持たない Locale の場合、言語コードから代表国コードを推定して解決を試みる。 解決できない場合は USD を返す。
+   * <p>{@link Currency#getInstance(Locale)} を使用して JDK の locale-通貨マッピングで解決する。 国コードを持たない Locale
+   * の場合、言語コードから代表国コードを推定して解決を試みる。 解決できない場合は USD を返す。
    *
    * @param locale ロケール（例: {@code Locale.of("ja", "JP")}）。null 可
    * @return 推定された通貨コード

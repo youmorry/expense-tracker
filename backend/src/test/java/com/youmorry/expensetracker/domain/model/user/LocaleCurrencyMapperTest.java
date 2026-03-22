@@ -49,18 +49,8 @@ class LocaleCurrencyMapperTest {
 
   @ParameterizedTest
   @CsvSource({
-    "ja, JPY",
-    "ko, KRW",
-    "zh, CNY",
-    "hi, INR",
-    "th, THB",
-    "vi, VND",
-    "tr, TRY",
-    "ru, RUB",
-    "pl, PLN",
-    "sv, SEK",
-    "da, DKK",
-    "nb, NOK"
+    "ja, JPY", "ko, KRW", "zh, CNY", "hi, INR", "th, THB", "vi, VND", "tr, TRY", "ru, RUB",
+    "pl, PLN", "sv, SEK", "da, DKK", "nb, NOK"
   })
   void toCurrencyCode_withMappedLanguageOnlyLocale_returnsEstimatedCurrency(
       String languageTag, String expected) {
