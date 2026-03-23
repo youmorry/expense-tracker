@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.persistence;
+package com.youmorry.expensetracker.infrastructure.persistence.converter;
 
 import com.youmorry.expensetracker.domain.model.category.CategoryId;
 import com.youmorry.expensetracker.domain.model.transaction.TransactionId;
@@ -12,12 +12,12 @@ import org.springframework.data.convert.WritingConverter;
  *
  * <p>{@code Long ↔ CategoryId}, {@code Long ↔ UserId}, {@code Long ↔ TransactionId} の変換を提供する。
  */
-final class IdConverters {
+public final class IdConverters {
 
   private IdConverters() {}
 
   @ReadingConverter
-  enum LongToCategoryId implements Converter<Long, CategoryId> {
+  public enum LongToCategoryId implements Converter<Long, CategoryId> {
     INSTANCE;
 
     @Override
@@ -27,7 +27,7 @@ final class IdConverters {
   }
 
   @WritingConverter
-  enum CategoryIdToLong implements Converter<CategoryId, Long> {
+  public enum CategoryIdToLong implements Converter<CategoryId, Long> {
     INSTANCE;
 
     @Override
@@ -37,7 +37,7 @@ final class IdConverters {
   }
 
   @ReadingConverter
-  enum LongToUserId implements Converter<Long, UserId> {
+  public enum LongToUserId implements Converter<Long, UserId> {
     INSTANCE;
 
     @Override
@@ -47,7 +47,7 @@ final class IdConverters {
   }
 
   @WritingConverter
-  enum UserIdToLong implements Converter<UserId, Long> {
+  public enum UserIdToLong implements Converter<UserId, Long> {
     INSTANCE;
 
     @Override
@@ -57,7 +57,7 @@ final class IdConverters {
   }
 
   @ReadingConverter
-  enum LongToTransactionId implements Converter<Long, TransactionId> {
+  public enum LongToTransactionId implements Converter<Long, TransactionId> {
     INSTANCE;
 
     @Override
@@ -67,7 +67,7 @@ final class IdConverters {
   }
 
   @WritingConverter
-  enum TransactionIdToLong implements Converter<TransactionId, Long> {
+  public enum TransactionIdToLong implements Converter<TransactionId, Long> {
     INSTANCE;
 
     @Override
