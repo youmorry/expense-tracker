@@ -14,7 +14,6 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 abstract class AbstractRepositoryTest {
 
   @ServiceConnection
-  @SuppressWarnings("resource")
   static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:17");
 
   static {

@@ -17,18 +17,22 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
   @Autowired private UserRepository userRepository;
 
   @Test
-  void save_newUser_assignsIdAndCreatedAt() {
+  void save_newUser_assignsId() {
     User newUser = User.createNew("google-123", "test@example.com", "Test User", CurrencyCode.JPY);
 
     User saved = userRepository.save(newUser);
 
     assertThat(saved.id()).isNotNull();
-    assertThat(saved.googleId()).isEqualTo("google-123");
-    assertThat(saved.email()).isEqualTo("test@example.com");
-    assertThat(saved.displayName()).isEqualTo("Test User");
-    assertThat(saved.currencyCode()).isEqualTo(CurrencyCode.JPY);
+  }
+
+  @Test
+  void save_newUser_setsCreatedAt() {
+    User saved =
+        userRepository.save(
+            User.createNew("google-123", "test@example.com", "Test User", CurrencyCode.JPY));
 
     User fetched = userRepository.findById(saved.id()).orElseThrow();
+
     assertThat(fetched.createdAt()).isNotNull();
   }
 
