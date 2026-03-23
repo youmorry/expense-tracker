@@ -127,7 +127,7 @@ public ResponseEntity<TransactionResponse> create(
 |----------|-----------|----------------------|-----|
 | domain | 純粋な単体テスト | なし（Plain JUnit） | 不要 |
 | application | 単体テスト | Mockito でリポジトリをモック | 不要 |
-| infrastructure | 統合テスト | `@SpringBootTest` + Testcontainers | PostgreSQL |
+| infrastructure | 統合テスト | `@DataJdbcTest` + Testcontainers + Flyway | PostgreSQL |
 | presentation | スライステスト | `@WebMvcTest` + MockMvc | 不要 |
 
 - H2 は使わない。統合テストでは必ず Testcontainers（PostgreSQL）を使用する
