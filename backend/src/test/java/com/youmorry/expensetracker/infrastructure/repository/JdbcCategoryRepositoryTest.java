@@ -26,8 +26,6 @@ class JdbcCategoryRepositoryTest extends AbstractRepositoryTest {
   void findAll_returnsCategoriesOrderedByDisplayOrder() {
     List<Category> categories = categoryRepository.findAll();
 
-    assertThat(categories)
-        .extracting(Category::displayOrder)
-        .isSorted();
+    assertThat(categories).extracting(Category::displayOrder).isSorted();
   }
 }
