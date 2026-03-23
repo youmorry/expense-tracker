@@ -43,6 +43,9 @@ gradle-app.setting
 .project
 .classpath
 
+# ==================== Testcontainers ====================
+org/
+
 # ==================== Environment ====================
 .env
 .env.local
