@@ -1,9 +1,9 @@
 package com.youmorry.expensetracker.infrastructure.repository;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
  * リポジトリ統合テストの基底クラス。
