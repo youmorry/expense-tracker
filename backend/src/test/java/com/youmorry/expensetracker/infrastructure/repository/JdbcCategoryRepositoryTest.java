@@ -3,7 +3,10 @@ package com.youmorry.expensetracker.infrastructure.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.youmorry.expensetracker.domain.model.category.Category;
+import com.youmorry.expensetracker.domain.model.category.CategoryId;
+import com.youmorry.expensetracker.domain.model.category.CategoryRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
@@ -11,7 +14,7 @@ import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
 @DataJdbcTest
 class JdbcCategoryRepositoryTest extends AbstractRepositoryTest {
 
-  @Autowired private JdbcCategoryRepository categoryRepository;
+  @Autowired private CategoryRepository categoryRepository;
 
   @Test
   void findAll_returnsPresetCategories() {
@@ -27,5 +30,20 @@ class JdbcCategoryRepositoryTest extends AbstractRepositoryTest {
     List<Category> categories = categoryRepository.findAll();
 
     assertThat(categories).extracting(Category::displayOrder).isSorted();
+  }
+
+  @Test
+  void findById_existingId_returnsCategory() {
+    Optional<Category> category = categoryRepository.findById(new CategoryId(1));
+
+    assertThat(category).isPresent();
+    assertThat(category.get().name()).isEqualTo("Food");
+  }
+
+  @Test
+  void findById_nonExistingId_returnsEmpty() {
+    Optional<Category> category = categoryRepository.findById(new CategoryId(9999));
+
+    assertThat(category).isEmpty();
   }
 }
