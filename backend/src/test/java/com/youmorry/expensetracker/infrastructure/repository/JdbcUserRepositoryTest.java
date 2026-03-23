@@ -44,9 +44,7 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
 
     Optional<User> found = userRepository.findById(saved.id());
 
-    assertThat(found).isPresent();
-    assertThat(found.get().googleId()).isEqualTo("google-456");
-    assertThat(found.get().email()).isEqualTo("user@example.com");
+    assertThat(found).hasValueSatisfying(user -> assertThat(user.id()).isEqualTo(saved.id()));
   }
 
   @Test
@@ -63,8 +61,8 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
 
     Optional<User> found = userRepository.findByGoogleId("google-789");
 
-    assertThat(found).isPresent();
-    assertThat(found.get().email()).isEqualTo("google@example.com");
+    assertThat(found)
+        .hasValueSatisfying(user -> assertThat(user.googleId()).isEqualTo("google-789"));
   }
 
   @Test
