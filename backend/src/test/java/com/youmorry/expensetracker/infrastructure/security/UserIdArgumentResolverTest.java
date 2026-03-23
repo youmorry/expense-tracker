@@ -25,6 +25,7 @@ class UserIdArgumentResolverTest {
     SecurityContextHolder.clearContext();
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   void supportsParameter_withUserIdType_returnsTrue() {
     var parameter = mock(MethodParameter.class);
@@ -33,6 +34,7 @@ class UserIdArgumentResolverTest {
     assertTrue(resolver.supportsParameter(parameter));
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   void supportsParameter_withOtherType_returnsFalse() {
     var parameter = mock(MethodParameter.class);
