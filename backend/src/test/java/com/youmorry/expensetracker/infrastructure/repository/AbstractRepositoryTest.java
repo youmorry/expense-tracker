@@ -1,8 +1,6 @@
 package com.youmorry.expensetracker.infrastructure.repository;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
@@ -10,10 +8,15 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
  *
  * <p>Testcontainers で PostgreSQL コンテナを起動し、{@code @ServiceConnection} で Spring に接続情報を自動注入する。 Flyway
  * マイグレーションはスライステスト起動時に自動実行される。
+ *
+ * <p>Singleton Container パターンを採用し、複数のテストクラス間でコンテナを共有する。
  */
-@Testcontainers
 abstract class AbstractRepositoryTest {
 
-  @Container @ServiceConnection
+  @ServiceConnection
   static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:17");
+
+  static {
+    POSTGRES.start();
+  }
 }
