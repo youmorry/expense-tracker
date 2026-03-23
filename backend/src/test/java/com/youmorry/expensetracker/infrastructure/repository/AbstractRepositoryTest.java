@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.infrastructure.repository;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -15,5 +15,5 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 abstract class AbstractRepositoryTest {
 
   @Container @ServiceConnection
-  static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:17");
+  static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:17");
 }
