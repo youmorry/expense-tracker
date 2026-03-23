@@ -23,11 +23,13 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
     User saved = userRepository.save(newUser);
 
     assertThat(saved.id()).isNotNull();
-    assertThat(saved.createdAt()).isNotNull();
     assertThat(saved.googleId()).isEqualTo("google-123");
     assertThat(saved.email()).isEqualTo("test@example.com");
     assertThat(saved.displayName()).isEqualTo("Test User");
     assertThat(saved.currencyCode()).isEqualTo(CurrencyCode.JPY);
+
+    User fetched = userRepository.findById(saved.id()).orElseThrow();
+    assertThat(fetched.createdAt()).isNotNull();
   }
 
   @Test
