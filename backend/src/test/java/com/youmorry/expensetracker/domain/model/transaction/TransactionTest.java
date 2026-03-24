@@ -156,6 +156,23 @@ class TransactionTest {
   }
 
   @Test
+  void constructor_withNullIdAndTimestamps_createsTransaction() {
+    assertDoesNotThrow(
+        () ->
+            new Transaction(
+                null,
+                new UserId(1L),
+                LocalDate.of(2026, 1, 1),
+                new Money(new BigDecimal("1000")),
+                new CategoryId(1L),
+                NeedWantType.NEED,
+                "ランチ",
+                "メモ",
+                null,
+                null));
+  }
+
+  @Test
   void constructor_withTitleExceeding200Chars_throwsIllegalArgumentException() {
     var title = "a".repeat(201);
 
