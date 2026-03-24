@@ -16,11 +16,14 @@ java {
     }
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -59,4 +62,5 @@ spotless {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
 }
