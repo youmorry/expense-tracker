@@ -5,14 +5,17 @@ import com.youmorry.expensetracker.domain.model.user.UserId;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
+import org.jspecify.annotations.Nullable;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 /** ユーザーが記録する1件の支出を表すエンティティ。 */
 @Table("transactions")
 public record Transaction(
-    @Id TransactionId id,
+    @Id @Nullable TransactionId id,
     UserId userId,
     LocalDate date,
     @Column("amount") Money amount,
@@ -20,8 +23,8 @@ public record Transaction(
     NeedWantType needWantType,
     String title,
     String memo,
-    Instant createdAt,
-    Instant updatedAt) {
+    @CreatedDate @Nullable Instant createdAt,
+    @LastModifiedDate @Nullable Instant updatedAt) {
 
   private static final int TITLE_MAX_LENGTH = 200;
 

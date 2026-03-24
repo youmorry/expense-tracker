@@ -3,8 +3,8 @@ package com.youmorry.expensetracker.domain.model.user;
 import java.time.Instant;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
@@ -20,7 +20,7 @@ public record User(
     String email,
     String displayName,
     CurrencyCode currencyCode,
-    @ReadOnlyProperty @Nullable Instant createdAt) {
+    @CreatedDate @Nullable Instant createdAt) {
 
   private static final int DISPLAY_NAME_MAX_LENGTH = 100;
 

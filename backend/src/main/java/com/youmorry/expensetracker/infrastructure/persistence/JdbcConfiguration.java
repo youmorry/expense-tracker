@@ -2,12 +2,19 @@ package com.youmorry.expensetracker.infrastructure.persistence;
 
 import com.youmorry.expensetracker.infrastructure.persistence.converter.IdConverters;
 import com.youmorry.expensetracker.infrastructure.persistence.converter.ValueObjectConverters;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
+import org.springframework.data.jdbc.repository.config.EnableJdbcAuditing;
 
-/** Spring Data JDBC のカスタム設定。カスタム型のコンバーターを登録する。 */
+/** Spring Data JDBC のカスタム設定。カスタム型のコンバーターと Auditing を構成する。 */
 @Configuration
+@EnableJdbcAuditing(dateTimeProviderRef = "dateTimeProvider")
 public class JdbcConfiguration extends AbstractJdbcConfiguration {
 
   @Override
@@ -23,5 +30,15 @@ public class JdbcConfiguration extends AbstractJdbcConfiguration {
         ValueObjectConverters.MoneyToBigDecimal.INSTANCE,
         ValueObjectConverters.StringToCurrencyCode.INSTANCE,
         ValueObjectConverters.CurrencyCodeToString.INSTANCE);
+  }
+
+  @Bean
+  Clock clock() {
+    return Clock.systemUTC();
+  }
+
+  @Bean
+  DateTimeProvider dateTimeProvider(Clock clock) {
+    return () -> Optional.of(Instant.now(clock));
   }
 }
