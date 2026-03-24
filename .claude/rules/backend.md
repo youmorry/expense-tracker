@@ -43,7 +43,7 @@ com.youmorry.expensetracker/
 #### 良い例: Entity でバリデーション付きコンストラクタ
 
 ```java
-public record Money(@Column("amount") BigDecimal value) {
+public record Money(BigDecimal value) {
 
   public Money {
     Objects.requireNonNull(value, "value must not be null");
@@ -59,7 +59,7 @@ public record Money(@Column("amount") BigDecimal value) {
 
 ```java
 // NG: 不変条件を検証していない。不正な状態のオブジェクトが生成される
-public record Money(@Column("amount") BigDecimal value) {}
+public record Money(BigDecimal value) {}
 ```
 
 #### 良い例: Controller → Service の呼び出し
