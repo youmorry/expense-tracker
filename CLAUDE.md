@@ -47,10 +47,8 @@
 
 Issue やタスクの作業を開始するとき、以下の手順を守ること:
 
-1. **作業開始**: `/start-issue` スキルを使い、Issue の確認とブランチ作成を行う
-2. **実装**: コードを書く
-3. **コミット**: `/commit` スキルを使う（コミット分割・メッセージ規約はスキル側で定義済み）
-4. **PR 作成**: ビルドが通ることを確認した後に、`/create-pr` スキルを使う
+1. **作業開始〜実装完了**: `/start-issue <番号>` で Issue 確認・計画・ブランチ作成・TDD 実装・ビルド確認まで行う
+2. **PR 作成**: `/create-pr` で PR を作成する
 
 ## Conventions
 
@@ -88,9 +86,9 @@ npm run build                            # ビルド
 
 ## Skills
 
-- `.claude/skills/start-issue/SKILL.md` — GitHub Issue の内容を確認し、ブランチを作成して作業を開始する
+- `.claude/skills/start-issue/SKILL.md` — Issue 確認〜計画〜ブランチ作成〜TDD 実装〜ビルド確認まで
 - `.claude/skills/commit/SKILL.md` — プロジェクトのコミットガイドラインに従ってコミットを作成する
-- `.claude/skills/create-pr/SKILL.md` — プロジェクトの規約に従って GitHub Pull Request を作成する
+- `.claude/skills/create-pr/SKILL.md` — ビルド確認済みの実装を PR として作成する
 
 ## 参照ドキュメント
 
