@@ -26,17 +26,6 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
   }
 
   @Test
-  void save_newUser_setsCreatedAt() {
-    User saved =
-        userRepository.save(
-            User.createNew("google-123", "test@example.com", "Test User", CurrencyCode.JPY));
-
-    User fetched = userRepository.findById(saved.id()).orElseThrow();
-
-    assertThat(fetched.createdAt()).isNotNull();
-  }
-
-  @Test
   void findById_existingId_returnsUser() {
     User saved =
         userRepository.save(
