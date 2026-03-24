@@ -1,8 +1,10 @@
 ---
 name: start-issue
-description: GitHub Issue の内容を確認し、ブランチを作成して作業を開始する
+description: >
+  GitHub Issue の内容を確認し、ブランチを作成して作業を開始する。
+  Issueの把握、作業計画、承認、実装、ビルド、PR作成までの一連の流れを行う。
 disable-model-invocation: true
-argument-hint: "<Issue番号 または Issue URL>"
+argument-hint: "<Issue番号>"
 ---
 
 指定された GitHub Issue の作業を開始してください。
@@ -15,7 +17,7 @@ Issue の指定: `$ARGUMENTS`
    - Issue が存在しない、またはクローズ済みの場合はユーザーに確認する
    - タイトル・本文から作業内容を把握する
    - ラベルからバグか機能追加かを判断する
-2. 作業計画を提示し、ユーザーの承認を得る:
+2. Plan Modeで作業計画を立て、ユーザーの承認を得る:
    - Issue の内容をもとに、調査及び作業計画をたてる。
    - 作業スコープが適切か（この Issue を1つの PR で完結できるか）をユーザーに確認する
    - スコープが大きい場合（複数の独立した機能、複数ドメイン領域にまたがる等）は、具体的な分割案を提示してユーザーに確認する
@@ -32,7 +34,7 @@ Issue の指定: `$ARGUMENTS`
 6. TDD サイクルで実装を開始する:
    - CLAUDE.md の TDD ワークフローに従う
    - コミット時は `.claude/skills/commit/SKILL.md` の規約に従う
-7. ビルドが確認できることを確認する:
+7. 実装が完了したらビルドできることを確認する:
    - `./gradlew build`（backend）や `npm run build`（frontend）でビルドが成功することを確認する
    - ビルドに失敗した場合は修正する
 8. PRの作成を行う
