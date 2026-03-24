@@ -2,10 +2,9 @@ package com.youmorry.expensetracker.domain.model.transaction;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import org.springframework.data.relational.core.mapping.Column;
 
 /** 金額を表す値オブジェクト。0 より大きい正の値のみ許容する。 */
-public record Money(@Column("amount") BigDecimal value) {
+public record Money(BigDecimal value) {
 
   /** 金額が正の値であることを検証する。 */
   public Money {

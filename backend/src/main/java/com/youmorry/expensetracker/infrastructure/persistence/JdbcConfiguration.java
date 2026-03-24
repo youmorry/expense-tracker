@@ -19,6 +19,8 @@ public class JdbcConfiguration extends AbstractJdbcConfiguration {
         IdConverters.UserIdToLong.INSTANCE,
         IdConverters.LongToTransactionId.INSTANCE,
         IdConverters.TransactionIdToLong.INSTANCE,
+        ValueObjectConverters.BigDecimalToMoney.INSTANCE,
+        ValueObjectConverters.MoneyToBigDecimal.INSTANCE,
         ValueObjectConverters.StringToCurrencyCode.INSTANCE,
         ValueObjectConverters.CurrencyCodeToString.INSTANCE);
   }
