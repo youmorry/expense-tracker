@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 /** ユーザーが記録する1件の支出を表すエンティティ。 */
@@ -15,7 +15,7 @@ public record Transaction(
     @Id TransactionId id,
     UserId userId,
     LocalDate date,
-    @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL) Money amount,
+    @Column("amount") Money amount,
     CategoryId categoryId,
     NeedWantType needWantType,
     String title,

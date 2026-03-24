@@ -2,10 +2,9 @@ package com.youmorry.expensetracker.domain.model.user;
 
 import java.util.Currency;
 import java.util.Objects;
-import org.springframework.data.relational.core.mapping.Column;
 
 /** ISO 4217 通貨コードを表す値オブジェクト。 */
-public record CurrencyCode(@Column("currency_code") String value) {
+public record CurrencyCode(String value) {
 
   public static final CurrencyCode JPY = new CurrencyCode("JPY");
   public static final CurrencyCode USD = new CurrencyCode("USD");
