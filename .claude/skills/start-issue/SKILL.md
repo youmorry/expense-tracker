@@ -4,16 +4,17 @@ description: >
   GitHub Issue の内容を確認し、ブランチを作成して実装を完了する。
   Issueの把握、作業計画、承認、ブランチ作成、TDD実装、ビルド確認までを行う。
 disable-model-invocation: true
-argument-hint: "<Issue番号>"
+argument-hint: "[issue-number]"
 ---
 
+[issue-number]: $0
 指定された GitHub Issue の作業を開始し、実装を完了してください。
-Issue の指定: `$ARGUMENTS`
+[issue-number] が指定されていない場合はユーザーに確認してください。
 
 ## 手順
 
 1. Issue の内容を取得・分析する:
-   - `gh issue view <Issue番号> --json number,title,body,labels,assignees,milestone` で Issue の詳細を取得する
+   - `gh issue view $0 --json number,title,body,labels,assignees,milestone` で Issue の詳細を取得する
    - Issue が存在しない、またはクローズ済みの場合はユーザーに確認する
    - タイトル・本文から作業内容を把握する
    - ラベルからバグか機能追加かを判断する

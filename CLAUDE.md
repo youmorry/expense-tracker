@@ -52,6 +52,7 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 
 ## Conventions
 
+- 言語: コードは英語
 - ブランチ戦略: GitHub Flow
   - `main` は常にデプロイ可能な状態を維持する
   - `main` から feature/hotfix ブランチを切り、PR でマージする
@@ -60,7 +61,7 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
   - 機能追加: `feature/<説明>`（例: `feature/add-expense-api`）
   - バグ修正: `hotfix/<説明>`（例: `hotfix/fix-date-validation`）
   - 英語・ケバブケースで記述する
-- 言語: コードは英語
+- bash実行時に不要な cd を付けない
 
 ## Commands
 

@@ -1,21 +1,21 @@
 ---
 name: create-pr
 description: プロジェクトの規約に従って GitHub Pull Request を作成する
-argument-hint: "[ベースブランチ]"
+argument-hint: "[base-branch]"
 ---
 
 以下の規約に従って Pull Request を作成してください。
-ベースブランチは `$ARGUMENTS` を使用する。引数がない場合は `main` をデフォルトとする。
+ベースブランチは $0 を使用する。指定がない場合は `main` をデフォルトとする。
 
 ## 手順
 
 1. 現在の状態を確認する（並列実行）:
    - `git status` で未コミットの変更を確認
-   - `git log --oneline <ベースブランチ>..HEAD` で PR に含まれる全コミットを確認
-   - `git diff <ベースブランチ>...HEAD` で差分の全体像を把握
+   - `git log --oneline $0..HEAD` で PR に含まれる全コミットを確認
+   - `git diff $0...HEAD` で差分の全体像を把握
    - リモートとの同期状態を確認
 2. 未コミットの変更がある場合は、コミットするかどうかユーザーに確認する。ユーザーが中断を選んだ場合は PR 作成を中止する
-3. リモートにプッシュする（`git push -u origin <ブランチ名>`）
+3. リモートにプッシュする（`git push -u origin <作業ブランチ名>`）
 4. `gh pr create` で PR を作成する
 
 ## PR の規約
