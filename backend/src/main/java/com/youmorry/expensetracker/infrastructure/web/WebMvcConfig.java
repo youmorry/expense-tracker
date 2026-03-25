@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.security;
+package com.youmorry.expensetracker.infrastructure.web;
 
 import java.util.List;
 import org.springframework.context.annotation.Configuration;

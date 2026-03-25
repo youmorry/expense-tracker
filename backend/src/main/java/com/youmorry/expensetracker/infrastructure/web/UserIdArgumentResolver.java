@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.security;
+package com.youmorry.expensetracker.infrastructure.web;
 
 import com.youmorry.expensetracker.domain.user.UserId;
 import org.springframework.core.MethodParameter;
