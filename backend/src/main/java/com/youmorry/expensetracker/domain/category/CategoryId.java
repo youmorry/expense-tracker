@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.category;
+package com.youmorry.expensetracker.domain.category;
 
 /** カテゴリの識別子。 */
 public record CategoryId(long value) {

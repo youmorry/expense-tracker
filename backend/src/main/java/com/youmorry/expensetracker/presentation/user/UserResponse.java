@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.presentation.user;
 
-import com.youmorry.expensetracker.domain.model.user.User;
+import com.youmorry.expensetracker.domain.user.User;
 import java.time.Instant;
 
 /** ユーザー情報のレスポンス DTO。 */

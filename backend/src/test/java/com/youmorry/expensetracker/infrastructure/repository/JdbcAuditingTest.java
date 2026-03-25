@@ -2,15 +2,15 @@ package com.youmorry.expensetracker.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.transaction.Money;
-import com.youmorry.expensetracker.domain.model.transaction.NeedWantType;
-import com.youmorry.expensetracker.domain.model.transaction.Transaction;
-import com.youmorry.expensetracker.domain.model.transaction.TransactionRepository;
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
-import com.youmorry.expensetracker.domain.model.user.User;
-import com.youmorry.expensetracker.domain.model.user.UserId;
-import com.youmorry.expensetracker.domain.model.user.UserRepository;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.transaction.Money;
+import com.youmorry.expensetracker.domain.transaction.NeedWantType;
+import com.youmorry.expensetracker.domain.transaction.Transaction;
+import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.domain.user.UserRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;

@@ -1,7 +1,7 @@
-package com.youmorry.expensetracker.domain.model.transaction;
+package com.youmorry.expensetracker.domain.transaction;
 
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.user.UserId;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;

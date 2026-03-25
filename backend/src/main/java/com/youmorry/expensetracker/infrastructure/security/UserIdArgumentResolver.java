@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.infrastructure.security;
 
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.user.UserId;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

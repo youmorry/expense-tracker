@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.transaction;
+package com.youmorry.expensetracker.domain.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

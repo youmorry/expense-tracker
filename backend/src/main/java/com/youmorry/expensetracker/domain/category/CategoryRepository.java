@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.category;
+package com.youmorry.expensetracker.domain.category;
 
 import java.util.List;
 import java.util.Optional;

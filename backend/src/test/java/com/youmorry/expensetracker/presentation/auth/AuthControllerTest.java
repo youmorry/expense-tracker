@@ -9,9 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.youmorry.expensetracker.application.AuthService;
 import com.youmorry.expensetracker.application.AuthService.AuthResult;
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
-import com.youmorry.expensetracker.domain.model.user.User;
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
 import java.util.Locale;

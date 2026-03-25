@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.presentation.category;
 
-import com.youmorry.expensetracker.domain.model.category.Category;
+import com.youmorry.expensetracker.domain.category.Category;
 import java.util.List;
 
 /** カテゴリ一覧のレスポンス DTO。 */

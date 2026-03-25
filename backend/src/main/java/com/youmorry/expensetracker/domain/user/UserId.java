@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.user;
+package com.youmorry.expensetracker.domain.user;
 
 /** ユーザーの識別子。 */
 public record UserId(long value) {

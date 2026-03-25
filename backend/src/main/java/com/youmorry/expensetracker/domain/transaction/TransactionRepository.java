@@ -1,6 +1,6 @@
-package com.youmorry.expensetracker.domain.model.transaction;
+package com.youmorry.expensetracker.domain.transaction;
 
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.user.UserId;
 import java.util.List;
 import java.util.Optional;
 

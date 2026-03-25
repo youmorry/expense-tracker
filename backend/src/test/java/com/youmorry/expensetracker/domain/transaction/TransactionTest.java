@@ -1,10 +1,10 @@
-package com.youmorry.expensetracker.domain.model.transaction;
+package com.youmorry.expensetracker.domain.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.user.UserId;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;

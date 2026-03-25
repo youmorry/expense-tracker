@@ -1,8 +1,8 @@
 package com.youmorry.expensetracker.infrastructure.persistence.converter;
 
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.transaction.TransactionId;
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.transaction.TransactionId;
+import com.youmorry.expensetracker.domain.user.UserId;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;

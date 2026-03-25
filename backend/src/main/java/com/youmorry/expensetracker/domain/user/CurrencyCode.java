@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.user;
+package com.youmorry.expensetracker.domain.user;
 
 import java.util.Currency;
 import java.util.Objects;

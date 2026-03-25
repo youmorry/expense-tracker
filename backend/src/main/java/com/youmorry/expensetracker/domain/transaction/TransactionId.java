@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.transaction;
+package com.youmorry.expensetracker.domain.transaction;
 
 /** 支出記録の識別子。 */
 public record TransactionId(long value) {

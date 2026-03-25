@@ -2,9 +2,9 @@ package com.youmorry.expensetracker.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.youmorry.expensetracker.domain.model.category.Category;
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.category.CategoryRepository;
+import com.youmorry.expensetracker.domain.category.Category;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.category.CategoryRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

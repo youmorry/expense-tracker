@@ -1,9 +1,9 @@
 package com.youmorry.expensetracker.application;
 
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
-import com.youmorry.expensetracker.domain.model.user.User;
-import com.youmorry.expensetracker.domain.model.user.UserId;
-import com.youmorry.expensetracker.domain.model.user.UserRepository;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.domain.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;

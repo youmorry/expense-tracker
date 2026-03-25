@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.user;
+package com.youmorry.expensetracker.domain.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;

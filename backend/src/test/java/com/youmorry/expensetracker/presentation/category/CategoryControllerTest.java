@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.CategoryService;
-import com.youmorry.expensetracker.domain.model.category.Category;
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
+import com.youmorry.expensetracker.domain.category.Category;
+import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import java.util.List;
 import org.junit.jupiter.api.Test;

@@ -1,24 +1,24 @@
-package com.youmorry.expensetracker.domain.model.user;
+package com.youmorry.expensetracker.domain.category;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-class UserIdTest {
+class CategoryIdTest {
 
   @Test
-  void constructor_withPositiveValue_createsUserId() {
-    assertDoesNotThrow(() -> new UserId(1L));
+  void constructor_withPositiveValue_createsCategoryId() {
+    assertDoesNotThrow(() -> new CategoryId(1L));
   }
 
   @Test
   void constructor_withZeroValue_throwsIllegalArgumentException() {
-    assertThrows(IllegalArgumentException.class, () -> new UserId(0L));
+    assertThrows(IllegalArgumentException.class, () -> new CategoryId(0L));
   }
 
   @Test
   void constructor_withNegativeValue_throwsIllegalArgumentException() {
-    assertThrows(IllegalArgumentException.class, () -> new UserId(-1L));
+    assertThrows(IllegalArgumentException.class, () -> new CategoryId(-1L));
   }
 }

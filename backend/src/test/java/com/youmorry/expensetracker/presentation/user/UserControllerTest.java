@@ -13,9 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.UserService;
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
-import com.youmorry.expensetracker.domain.model.user.User;
-import com.youmorry.expensetracker.domain.model.user.UserId;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import com.youmorry.expensetracker.infrastructure.security.WebMvcConfig;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;

@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.model.transaction;
+package com.youmorry.expensetracker.domain.transaction;
 
 import java.math.BigDecimal;
 import java.util.Objects;
