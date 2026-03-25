@@ -90,6 +90,54 @@ class JdbcTransactionRepositoryTest extends AbstractRepositoryTest {
   }
 
   @Test
+  void findByUserId_multipleTransactions_returnsOrderedByDateDesc() {
+    User user = saveUser("google-tx-sort");
+    Transaction jan =
+        transactionRepository.save(
+            new Transaction(
+                null,
+                user.id(),
+                LocalDate.of(2025, 1, 10),
+                new Money(new BigDecimal("100")),
+                CATEGORY_ID,
+                NeedWantType.NEED,
+                null,
+                null,
+                null,
+                null));
+    Transaction mar =
+        transactionRepository.save(
+            new Transaction(
+                null,
+                user.id(),
+                LocalDate.of(2025, 3, 20),
+                new Money(new BigDecimal("200")),
+                CATEGORY_ID,
+                NeedWantType.WANT,
+                null,
+                null,
+                null,
+                null));
+    Transaction feb =
+        transactionRepository.save(
+            new Transaction(
+                null,
+                user.id(),
+                LocalDate.of(2025, 2, 15),
+                new Money(new BigDecimal("300")),
+                CATEGORY_ID,
+                NeedWantType.UNSET,
+                null,
+                null,
+                null,
+                null));
+
+    List<Transaction> found = transactionRepository.findByUserId(user.id());
+
+    assertThat(found).extracting(Transaction::id).containsExactly(mar.id(), feb.id(), jan.id());
+  }
+
+  @Test
   void findByUserId_noTransactions_returnsEmptyList() {
     User user = saveUser("google-tx-5");
 
