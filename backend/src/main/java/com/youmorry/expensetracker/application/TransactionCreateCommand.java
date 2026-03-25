@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.application;
 
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import java.time.LocalDate;
+import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -20,4 +21,11 @@ public record TransactionCreateCommand(
     @Nullable Long categoryId,
     @Nullable NeedWantType needWantType,
     @Nullable String title,
-    @Nullable String memo) {}
+    @Nullable String memo) {
+
+  /** 必須フィールドの不変条件を検証する。 */
+  public TransactionCreateCommand {
+    Objects.requireNonNull(date, "date must not be null");
+    Objects.requireNonNull(amount, "amount must not be null");
+  }
+}
