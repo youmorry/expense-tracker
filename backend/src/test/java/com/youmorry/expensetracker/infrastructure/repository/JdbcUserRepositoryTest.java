@@ -2,10 +2,10 @@ package com.youmorry.expensetracker.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
-import com.youmorry.expensetracker.domain.model.user.User;
-import com.youmorry.expensetracker.domain.model.user.UserId;
-import com.youmorry.expensetracker.domain.model.user.UserRepository;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.domain.user.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

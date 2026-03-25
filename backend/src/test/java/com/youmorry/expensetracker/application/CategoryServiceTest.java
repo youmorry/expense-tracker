@@ -3,9 +3,9 @@ package com.youmorry.expensetracker.application;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.youmorry.expensetracker.domain.model.category.Category;
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.category.CategoryRepository;
+import com.youmorry.expensetracker.domain.category.Category;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.category.CategoryRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

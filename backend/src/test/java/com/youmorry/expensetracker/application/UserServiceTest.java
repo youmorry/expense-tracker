@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
-import com.youmorry.expensetracker.domain.model.user.User;
-import com.youmorry.expensetracker.domain.model.user.UserId;
-import com.youmorry.expensetracker.domain.model.user.UserRepository;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.domain.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import java.time.Instant;

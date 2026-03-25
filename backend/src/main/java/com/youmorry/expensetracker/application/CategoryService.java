@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.application;
 
-import com.youmorry.expensetracker.domain.model.category.Category;
-import com.youmorry.expensetracker.domain.model.category.CategoryRepository;
+import com.youmorry.expensetracker.domain.category.Category;
+import com.youmorry.expensetracker.domain.category.CategoryRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

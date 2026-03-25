@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.infrastructure.persistence.converter;
 
-import com.youmorry.expensetracker.domain.model.transaction.Money;
-import com.youmorry.expensetracker.domain.model.user.CurrencyCode;
+import com.youmorry.expensetracker.domain.transaction.Money;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import java.math.BigDecimal;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;

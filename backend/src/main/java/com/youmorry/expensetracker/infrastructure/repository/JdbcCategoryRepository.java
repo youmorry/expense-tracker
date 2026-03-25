@@ -1,8 +1,8 @@
 package com.youmorry.expensetracker.infrastructure.repository;
 
-import com.youmorry.expensetracker.domain.model.category.Category;
-import com.youmorry.expensetracker.domain.model.category.CategoryId;
-import com.youmorry.expensetracker.domain.model.category.CategoryRepository;
+import com.youmorry.expensetracker.domain.category.Category;
+import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.category.CategoryRepository;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
