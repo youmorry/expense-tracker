@@ -1,6 +1,10 @@
 package com.youmorry.expensetracker.domain.user;
 
-/** ユーザーの識別子。 */
+/**
+ * ユーザーの識別子。
+ *
+ * @param value ユーザー ID
+ */
 public record UserId(long value) {
 
   /**

@@ -3,7 +3,11 @@ package com.youmorry.expensetracker.domain.transaction;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-/** 金額を表す値オブジェクト。0 より大きい正の値のみ許容する。 */
+/**
+ * 金額を表す値オブジェクト。0 より大きい正の値のみ許容する。
+ *
+ * @param value 金額
+ */
 public record Money(BigDecimal value) {
 
   /**

@@ -4,7 +4,13 @@ import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-/** 支出を分類するカテゴリのエンティティ。 */
+/**
+ * 支出を分類するカテゴリのエンティティ。
+ *
+ * @param id カテゴリ ID
+ * @param name カテゴリ名
+ * @param displayOrder 表示順
+ */
 @Table("categories")
 public record Category(@Id CategoryId id, String name, int displayOrder) {
 

@@ -3,7 +3,11 @@ package com.youmorry.expensetracker.domain.user;
 import java.util.Currency;
 import java.util.Objects;
 
-/** ISO 4217 通貨コードを表す値オブジェクト。 */
+/**
+ * ISO 4217 通貨コードを表す値オブジェクト。
+ *
+ * @param value ISO 4217 通貨コード（例: "JPY", "USD"）
+ */
 public record CurrencyCode(String value) {
 
   public static final CurrencyCode JPY = new CurrencyCode("JPY");

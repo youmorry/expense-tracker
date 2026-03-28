@@ -12,7 +12,20 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-/** ユーザーが記録する1件の支出を表すエンティティ。 */
+/**
+ * ユーザーが記録する1件の支出を表すエンティティ。
+ *
+ * @param id 支出記録 ID（永続化時に採番）
+ * @param userId 記録したユーザーの ID
+ * @param date 支出日
+ * @param amount 金額
+ * @param categoryId カテゴリ ID
+ * @param needWantType 必要/欲しい 区分
+ * @param title タイトル
+ * @param memo メモ
+ * @param createdAt 作成日時（永続化時に設定）
+ * @param updatedAt 更新日時（永続化時に設定）
+ */
 @Table("transactions")
 public record Transaction(
     @Id @Nullable TransactionId id,
