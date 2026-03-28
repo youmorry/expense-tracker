@@ -52,7 +52,7 @@ public class TransactionService {
       amount = new Money(command.amount());
     } catch (IllegalArgumentException e) {
       throw new ValidationException(
-          e.getMessage(), List.of(new FieldError("Invalid amount.", "#/amount")));
+          e.getMessage(), List.of(new FieldError("Invalid amount.", "amount")));
     }
 
     var category =
@@ -62,7 +62,7 @@ public class TransactionService {
                 () ->
                     new ValidationException(
                         "Category not found: " + categoryId.value(),
-                        List.of(new FieldError("Category does not exist.", "#/category_id"))));
+                        List.of(new FieldError("Category does not exist.", "categoryId"))));
 
     var transaction =
         new Transaction(
