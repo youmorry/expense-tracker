@@ -24,7 +24,12 @@ public record User(
 
   private static final int DISPLAY_NAME_MAX_LENGTH = 100;
 
-  /** 不変条件を検証する。 */
+  /**
+   * 不変条件を検証する。
+   *
+   * @throws NullPointerException googleId, email, displayName, currencyCode が null の場合
+   * @throws IllegalArgumentException googleId, email, displayName が空白、または displayName が 100 文字超過の場合
+   */
   public User {
     Objects.requireNonNull(googleId, "googleId must not be null");
     if (googleId.isBlank()) {

@@ -28,7 +28,12 @@ public record Transaction(
 
   private static final int TITLE_MAX_LENGTH = 200;
 
-  /** 不変条件を検証する。 */
+  /**
+   * 不変条件を検証する。
+   *
+   * @throws NullPointerException userId, date, amount, categoryId, needWantType が null の場合
+   * @throws IllegalArgumentException title が 200 文字を超過する場合
+   */
   public Transaction {
     Objects.requireNonNull(userId, "userId must not be null");
     Objects.requireNonNull(date, "date must not be null");
