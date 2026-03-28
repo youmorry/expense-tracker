@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.domain.category;
 
 /**
- * Value Object: Category ID.
+ * Value Object: Category ID。
  *
  * @param value Category ID
  */

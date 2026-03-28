@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.domain.transaction;
 
 /**
- * Value Object: Transaction ID.
+ * Value Object: Transaction ID。
  *
  * @param value Transaction ID
  */
