@@ -29,6 +29,10 @@ com.youmorry.expensetracker/
 
 ### application 層の設計指針
 
+- CQRS（Command Query Responsibility Segregation）を採用する
+  - 書き込み系の入力: `<Entity>CreateCommand`, `<Entity>UpdateCommand` など
+  - 読み取り系の入力: `<Entity>SearchQuery`, `<Entity>GetQuery` など
+  - 出力: `<Entity>Result`
 - 同値ガード（変更がない場合に save をスキップ）は、外部 API 呼び出しや重い処理を伴う場合にのみ導入する
 - 単純な DB 保存のみの場合は条件分岐を入れず、冪等性をシンプルに保つ
 
