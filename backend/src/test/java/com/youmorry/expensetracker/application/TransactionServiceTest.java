@@ -40,7 +40,12 @@ class TransactionServiceTest {
     var category = new Category(categoryId, "Food", 1);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), "1200", 1L, NeedWantType.NEED, "Lunch", "with friends");
+            LocalDate.of(2026, 3, 25),
+            new BigDecimal("1200"),
+            1L,
+            NeedWantType.NEED,
+            "Lunch",
+            "with friends");
     var savedTransaction =
         new Transaction(
             new TransactionId(42L),
@@ -70,7 +75,12 @@ class TransactionServiceTest {
     var uncategorized = new Category(uncategorizedId, "Uncategorized", 11);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), "500", null, NeedWantType.WANT, "Coffee", null);
+            LocalDate.of(2026, 3, 25),
+            new BigDecimal("500"),
+            null,
+            NeedWantType.WANT,
+            "Coffee",
+            null);
     var savedTransaction =
         new Transaction(
             new TransactionId(43L),
@@ -98,7 +108,8 @@ class TransactionServiceTest {
     var categoryId = new CategoryId(2L);
     var category = new Category(categoryId, "Transport", 2);
     var command =
-        new TransactionCreateCommand(LocalDate.of(2026, 3, 25), "300", 2L, null, "Bus", null);
+        new TransactionCreateCommand(
+            LocalDate.of(2026, 3, 25), new BigDecimal("300"), 2L, null, "Bus", null);
     var savedTransaction =
         new Transaction(
             new TransactionId(44L),
@@ -124,18 +135,18 @@ class TransactionServiceTest {
     var userId = new UserId(1L);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), "1000", 999L, NeedWantType.NEED, "Test", null);
+            LocalDate.of(2026, 3, 25), new BigDecimal("1000"), 999L, NeedWantType.NEED, "Test", null);
     when(categoryRepository.findById(new CategoryId(999L))).thenReturn(Optional.empty());
 
     assertThrows(ValidationException.class, () -> transactionService.create(userId, command));
   }
 
   @Test
-  void create_withInvalidAmount_throwsValidationException() {
+  void create_withNegativeAmount_throwsValidationException() {
     var userId = new UserId(1L);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), "not-a-number", 1L, NeedWantType.NEED, "Test", null);
+            LocalDate.of(2026, 3, 25), new BigDecimal("-100"), 1L, NeedWantType.NEED, "Test", null);
 
     assertThrows(ValidationException.class, () -> transactionService.create(userId, command));
   }
