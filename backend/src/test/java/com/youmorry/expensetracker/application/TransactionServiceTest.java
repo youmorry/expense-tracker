@@ -135,7 +135,12 @@ class TransactionServiceTest {
     var userId = new UserId(1L);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), new BigDecimal("1000"), 999L, NeedWantType.NEED, "Test", null);
+            LocalDate.of(2026, 3, 25),
+            new BigDecimal("1000"),
+            999L,
+            NeedWantType.NEED,
+            "Test",
+            null);
     when(categoryRepository.findById(new CategoryId(999L))).thenReturn(Optional.empty());
 
     assertThrows(ValidationException.class, () -> transactionService.create(userId, command));
