@@ -4,12 +4,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.TransactionCreateCommand;
 import com.youmorry.expensetracker.application.TransactionResult;
+import com.youmorry.expensetracker.application.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.TransactionService;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.Money;
@@ -22,6 +24,7 @@ import com.youmorry.expensetracker.infrastructure.web.WebMvcConfig;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -173,5 +176,85 @@ class TransactionControllerTest {
         .andExpect(jsonPath("$.need_want_type").value("UNSET"))
         .andExpect(jsonPath("$.title").doesNotExist())
         .andExpect(jsonPath("$.memo").doesNotExist());
+  }
+
+  @Test
+  void list_withNoParams_returns200WithItems() throws Exception {
+    var transaction =
+        new Transaction(
+            new TransactionId(42L),
+            new UserId(1L),
+            LocalDate.of(2026, 2, 23),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-02-23T10:30:00Z"),
+            Instant.parse("2026-02-23T10:30:00Z"));
+    when(transactionService.search(eq(new UserId(1L)), any(TransactionSearchQuery.class)))
+        .thenReturn(List.of(new TransactionResult(transaction, "Food")));
+
+    mockMvc
+        .perform(
+            get("/api/v1/transactions").with(jwt().jwt(j -> j.subject("1"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items").isArray())
+        .andExpect(jsonPath("$.items.length()").value(1))
+        .andExpect(jsonPath("$.items[0].id").value(42))
+        .andExpect(jsonPath("$.items[0].date").value("2026-02-23"))
+        .andExpect(jsonPath("$.items[0].amount").value("1200"))
+        .andExpect(jsonPath("$.items[0].category_id").value(1))
+        .andExpect(jsonPath("$.items[0].category_name").value("Food"))
+        .andExpect(jsonPath("$.items[0].need_want_type").value("NEED"));
+  }
+
+  @Test
+  void list_withAllParams_returns200WithFilteredItems() throws Exception {
+    var transaction =
+        new Transaction(
+            new TransactionId(10L),
+            new UserId(1L),
+            LocalDate.of(2026, 2, 15),
+            new Money(new BigDecimal("500")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-02-15T10:00:00Z"),
+            Instant.parse("2026-02-15T10:00:00Z"));
+    when(transactionService.search(eq(new UserId(1L)), any(TransactionSearchQuery.class)))
+        .thenReturn(List.of(new TransactionResult(transaction, "Food")));
+
+    mockMvc
+        .perform(
+            get("/api/v1/transactions")
+                .with(jwt().jwt(j -> j.subject("1")))
+                .param("from", "2026-02-01")
+                .param("to", "2026-02-28")
+                .param("category_id", "1", "3")
+                .param("need_want_type", "NEED")
+                .param("keyword", "Lunch"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items.length()").value(1))
+        .andExpect(jsonPath("$.items[0].id").value(10));
+  }
+
+  @Test
+  void list_withoutJwt_returns401() throws Exception {
+    mockMvc.perform(get("/api/v1/transactions")).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void list_withEmptyResult_returns200WithEmptyItems() throws Exception {
+    when(transactionService.search(eq(new UserId(1L)), any(TransactionSearchQuery.class)))
+        .thenReturn(List.of());
+
+    mockMvc
+        .perform(
+            get("/api/v1/transactions").with(jwt().jwt(j -> j.subject("1"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items").isArray())
+        .andExpect(jsonPath("$.items.length()").value(0));
   }
 }
