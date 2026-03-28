@@ -56,13 +56,7 @@ public class TransactionService {
     var categoryId = command.categoryId() != null ? command.categoryId() : UNCATEGORIZED_ID;
     var needWantType = command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
 
-    Money amount;
-    try {
-      amount = new Money(command.amount());
-    } catch (IllegalArgumentException e) {
-      throw new ValidationException(
-          e.getMessage(), List.of(new FieldError("Invalid amount.", "amount")));
-    }
+    var amount = new Money(command.amount());
 
     var category =
         categoryRepository
