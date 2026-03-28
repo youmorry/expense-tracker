@@ -12,6 +12,13 @@ import org.springframework.data.relational.core.mapping.Table;
  *
  * <p>現在は Google OAuth2 のみをサポートしているため {@code googleId} を直接保持しているが、 複数の認証プロバイダをサポートする場合は {@code
  * LinkedAccount} 等の別エンティティに分離すること。
+ *
+ * @param id ユーザー ID（永続化時に採番）
+ * @param googleId Google ユーザーの一意識別子
+ * @param email メールアドレス
+ * @param displayName 表示名
+ * @param currencyCode 通貨コード
+ * @param createdAt 作成日時（永続化時に設定）
  */
 @Table("users")
 public record User(
@@ -72,6 +79,7 @@ public record User(
    *
    * @param newCurrencyCode 通貨コード
    * @return 通貨コードが更新されたユーザー
+   * @throws NullPointerException newCurrencyCode が null の場合
    */
   public User changeCurrencyCode(CurrencyCode newCurrencyCode) {
     Objects.requireNonNull(newCurrencyCode, "Currency code must not be null");
