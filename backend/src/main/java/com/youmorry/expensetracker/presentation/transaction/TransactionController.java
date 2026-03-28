@@ -69,7 +69,9 @@ public class TransactionController {
       @RequestParam(required = false) String keyword,
       @AuthenticationPrincipal UserId userId) {
     var categoryIds =
-        categoryId != null ? categoryId.stream().map(CategoryId::new).toList() : List.<CategoryId>of();
+        categoryId != null
+            ? categoryId.stream().map(CategoryId::new).toList()
+            : List.<CategoryId>of();
     var query = new TransactionSearchQuery(from, to, categoryIds, needWantType, keyword);
     var results = transactionService.search(userId, query);
     return ResponseEntity.ok(TransactionListResponse.from(results));

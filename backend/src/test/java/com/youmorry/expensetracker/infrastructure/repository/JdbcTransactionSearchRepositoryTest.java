@@ -6,8 +6,8 @@ import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.Transaction;
-import com.youmorry.expensetracker.domain.transaction.TransactionSearchCriteria;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
+import com.youmorry.expensetracker.domain.transaction.TransactionSearchCriteria;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
 import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.user.User;
@@ -39,8 +39,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
     transactionRepository.save(newTransaction(user.id(), LocalDate.of(2026, 1, 10), FOOD));
     transactionRepository.save(newTransaction(user.id(), LocalDate.of(2026, 2, 15), TRANSPORT));
 
-    List<Transaction> result =
-        transactionSearchRepository.search(user.id(), emptyCriteria());
+    List<Transaction> result = transactionSearchRepository.search(user.id(), emptyCriteria());
 
     assertThat(result).hasSize(2);
   }
@@ -56,11 +55,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
         transactionSearchRepository.search(
             user.id(),
             new TransactionSearchCriteria(
-                LocalDate.of(2026, 2, 1),
-                LocalDate.of(2026, 2, 28),
-                List.of(),
-                null,
-                null));
+                LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 28), List.of(), null, null));
 
     assertThat(result).hasSize(1);
     assertThat(result.getFirst().date()).isEqualTo(LocalDate.of(2026, 2, 15));
@@ -75,8 +70,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
     List<Transaction> result =
         transactionSearchRepository.search(
             user.id(),
-            new TransactionSearchCriteria(
-                LocalDate.of(2026, 2, 1), null, List.of(), null, null));
+            new TransactionSearchCriteria(LocalDate.of(2026, 2, 1), null, List.of(), null, null));
 
     assertThat(result).hasSize(1);
     assertThat(result.getFirst().date()).isEqualTo(LocalDate.of(2026, 3, 20));
@@ -91,8 +85,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
     List<Transaction> result =
         transactionSearchRepository.search(
             user.id(),
-            new TransactionSearchCriteria(
-                null, LocalDate.of(2026, 2, 28), List.of(), null, null));
+            new TransactionSearchCriteria(null, LocalDate.of(2026, 2, 28), List.of(), null, null));
 
     assertThat(result).hasSize(1);
     assertThat(result.getFirst().date()).isEqualTo(LocalDate.of(2026, 1, 10));
@@ -106,8 +99,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
 
     List<Transaction> result =
         transactionSearchRepository.search(
-            user.id(),
-            new TransactionSearchCriteria(null, null, List.of(FOOD), null, null));
+            user.id(), new TransactionSearchCriteria(null, null, List.of(FOOD), null, null));
 
     assertThat(result).hasSize(1);
     assertThat(result.getFirst().categoryId()).isEqualTo(FOOD);
@@ -151,17 +143,13 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
   @Test
   void search_withKeyword_returnsMatchingTitleOrMemo() {
     User user = saveUser("google-search-8");
-    transactionRepository.save(
-        newTransactionWithTitleMemo(user.id(), "Lunch at cafe", null));
-    transactionRepository.save(
-        newTransactionWithTitleMemo(user.id(), "Dinner", "paid at cafe"));
-    transactionRepository.save(
-        newTransactionWithTitleMemo(user.id(), "Train fare", "commute"));
+    transactionRepository.save(newTransactionWithTitleMemo(user.id(), "Lunch at cafe", null));
+    transactionRepository.save(newTransactionWithTitleMemo(user.id(), "Dinner", "paid at cafe"));
+    transactionRepository.save(newTransactionWithTitleMemo(user.id(), "Train fare", "commute"));
 
     List<Transaction> result =
         transactionSearchRepository.search(
-            user.id(),
-            new TransactionSearchCriteria(null, null, List.of(), null, "cafe"));
+            user.id(), new TransactionSearchCriteria(null, null, List.of(), null, "cafe"));
 
     assertThat(result).hasSize(2);
   }
@@ -169,15 +157,12 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
   @Test
   void search_withKeyword_returnsCaseInsensitiveMatches() {
     User user = saveUser("google-search-9");
-    transactionRepository.save(
-        newTransactionWithTitleMemo(user.id(), "LUNCH", null));
-    transactionRepository.save(
-        newTransactionWithTitleMemo(user.id(), "lunch", null));
+    transactionRepository.save(newTransactionWithTitleMemo(user.id(), "LUNCH", null));
+    transactionRepository.save(newTransactionWithTitleMemo(user.id(), "lunch", null));
 
     List<Transaction> result =
         transactionSearchRepository.search(
-            user.id(),
-            new TransactionSearchCriteria(null, null, List.of(), null, "Lunch"));
+            user.id(), new TransactionSearchCriteria(null, null, List.of(), null, "Lunch"));
 
     assertThat(result).hasSize(2);
   }
@@ -246,8 +231,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
     Transaction feb =
         transactionRepository.save(newTransaction(user.id(), LocalDate.of(2026, 2, 15), FOOD));
 
-    List<Transaction> result =
-        transactionSearchRepository.search(user.id(), emptyCriteria());
+    List<Transaction> result = transactionSearchRepository.search(user.id(), emptyCriteria());
 
     assertThat(result).extracting(Transaction::id).containsExactly(mar.id(), feb.id(), jan.id());
   }
@@ -259,8 +243,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
     transactionRepository.save(newTransaction(user1.id(), LocalDate.of(2026, 1, 10), FOOD));
     transactionRepository.save(newTransaction(user2.id(), LocalDate.of(2026, 1, 11), FOOD));
 
-    List<Transaction> result =
-        transactionSearchRepository.search(user1.id(), emptyCriteria());
+    List<Transaction> result = transactionSearchRepository.search(user1.id(), emptyCriteria());
 
     assertThat(result).hasSize(1);
   }
@@ -303,8 +286,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
         null);
   }
 
-  private Transaction newTransactionWithTitleMemo(
-      UserId userId, String title, String memo) {
+  private Transaction newTransactionWithTitleMemo(UserId userId, String title, String memo) {
     return new Transaction(
         null,
         userId,

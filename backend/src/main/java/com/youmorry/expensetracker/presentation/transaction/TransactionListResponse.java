@@ -13,7 +13,6 @@ public record TransactionListResponse(List<TransactionResponse> items) {
    * @return 支出一覧レスポンス
    */
   public static TransactionListResponse from(List<TransactionResult> results) {
-    return new TransactionListResponse(
-        results.stream().map(TransactionResponse::from).toList());
+    return new TransactionListResponse(results.stream().map(TransactionResponse::from).toList());
   }
 }

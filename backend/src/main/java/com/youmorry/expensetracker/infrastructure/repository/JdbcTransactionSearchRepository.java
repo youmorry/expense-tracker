@@ -13,9 +13,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-/**
- * {@link TransactionSearchRepository} の JDBC 実装。動的クエリ構築に {@link JdbcClient} を使用する。
- */
+/** {@link TransactionSearchRepository} の JDBC 実装。動的クエリ構築に {@link JdbcClient} を使用する。 */
 @Repository
 public class JdbcTransactionSearchRepository implements TransactionSearchRepository {
 

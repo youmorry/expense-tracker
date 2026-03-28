@@ -196,8 +196,7 @@ class TransactionControllerTest {
         .thenReturn(List.of(new TransactionResult(transaction, "Food")));
 
     mockMvc
-        .perform(
-            get("/api/v1/transactions").with(jwt().jwt(j -> j.subject("1"))))
+        .perform(get("/api/v1/transactions").with(jwt().jwt(j -> j.subject("1"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.items").isArray())
         .andExpect(jsonPath("$.items.length()").value(1))
@@ -251,8 +250,7 @@ class TransactionControllerTest {
         .thenReturn(List.of());
 
     mockMvc
-        .perform(
-            get("/api/v1/transactions").with(jwt().jwt(j -> j.subject("1"))))
+        .perform(get("/api/v1/transactions").with(jwt().jwt(j -> j.subject("1"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.items").isArray())
         .andExpect(jsonPath("$.items.length()").value(0));
