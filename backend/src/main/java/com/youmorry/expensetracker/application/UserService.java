@@ -56,7 +56,7 @@ public class UserService {
     } catch (IllegalArgumentException e) {
       throw new ValidationException(
           e.getMessage(),
-          List.of(new FieldError("Invalid ISO 4217 currency code.", "#/currency_code")));
+          List.of(new FieldError("Invalid ISO 4217 currency code.", "currencyCode")));
     }
     var updated = user.changeCurrencyCode(code);
     return userRepository.save(updated);

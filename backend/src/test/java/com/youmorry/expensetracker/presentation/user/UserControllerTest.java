@@ -123,7 +123,7 @@ class UserControllerTest {
         .thenThrow(
             new ValidationException(
                 "Invalid ISO 4217 currency code: INVALID",
-                List.of(new FieldError("Invalid ISO 4217 currency code.", "#/currency_code"))));
+                List.of(new FieldError("Invalid ISO 4217 currency code.", "currencyCode"))));
 
     mockMvc
         .perform(
