@@ -240,6 +240,16 @@ class TransactionControllerTest {
   }
 
   @Test
+  void list_withInvalidCategoryId_returns422() throws Exception {
+    mockMvc
+        .perform(
+            get("/api/v1/transactions")
+                .with(jwt().jwt(j -> j.subject("1")))
+                .param("category_id", "-1"))
+        .andExpect(status().is(422));
+  }
+
+  @Test
   void list_withoutJwt_returns401() throws Exception {
     mockMvc.perform(get("/api/v1/transactions")).andExpect(status().isUnauthorized());
   }

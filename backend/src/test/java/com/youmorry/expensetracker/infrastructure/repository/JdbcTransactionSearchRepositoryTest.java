@@ -246,6 +246,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
     List<Transaction> result = transactionSearchRepository.search(user1.id(), emptyCriteria());
 
     assertThat(result).hasSize(1);
+    assertThat(result.getFirst().userId()).isEqualTo(user1.id());
   }
 
   private TransactionSearchCriteria emptyCriteria() {
