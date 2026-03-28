@@ -146,7 +146,9 @@ class UserControllerTest {
                 .with(jwt().jwt(j -> j.subject("1")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
-        .andExpect(status().is(422));
+        .andExpect(status().is(422))
+        .andExpect(jsonPath("$.errors[0].pointer").value("#/currency_code"))
+        .andExpect(jsonPath("$.errors[0].detail").value("must not be blank"));
 
     verify(userService, never()).updateCurrency(eq(new UserId(1L)), anyString());
   }
