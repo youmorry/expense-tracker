@@ -9,7 +9,6 @@ import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
-import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,7 @@ public class TransactionService {
 
     Money amount;
     try {
-      amount = new Money(new BigDecimal(command.amount()));
+      amount = new Money(command.amount());
     } catch (IllegalArgumentException e) {
       throw new ValidationException(
           e.getMessage(), List.of(new FieldError("Invalid amount.", "#/amount")));
