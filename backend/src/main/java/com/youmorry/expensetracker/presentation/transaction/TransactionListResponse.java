@@ -3,7 +3,11 @@ package com.youmorry.expensetracker.presentation.transaction;
 import com.youmorry.expensetracker.application.TransactionResult;
 import java.util.List;
 
-/** 支出一覧のレスポンス DTO。 */
+/**
+ * 支出一覧のレスポンス DTO。
+ *
+ * @param items 支出レスポンスのリスト
+ */
 public record TransactionListResponse(List<TransactionResponse> items) {
 
   /**
