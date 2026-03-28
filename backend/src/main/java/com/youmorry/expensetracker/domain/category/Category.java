@@ -10,7 +10,12 @@ public record Category(@Id CategoryId id, String name, int displayOrder) {
 
   private static final int NAME_MAX_LENGTH = 50;
 
-  /** 不変条件を検証する。 */
+  /**
+   * 不変条件を検証する。
+   *
+   * @throws NullPointerException name が null の場合
+   * @throws IllegalArgumentException name が空白、50 文字超過、または displayOrder が 0 以下の場合
+   */
   public Category {
     Objects.requireNonNull(name, "name must not be null");
     if (name.isBlank()) {

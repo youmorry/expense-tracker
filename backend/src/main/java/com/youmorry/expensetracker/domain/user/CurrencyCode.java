@@ -28,7 +28,12 @@ public record CurrencyCode(String value) {
   public static final CurrencyCode DKK = new CurrencyCode("DKK");
   public static final CurrencyCode NOK = new CurrencyCode("NOK");
 
-  /** 通貨コードが ISO 4217 に準拠していることを検証する。 */
+  /**
+   * 通貨コードが ISO 4217 に準拠していることを検証する。
+   *
+   * @throws NullPointerException value が null の場合
+   * @throws IllegalArgumentException value が空白、または ISO 4217 に準拠しない場合
+   */
   public CurrencyCode {
     Objects.requireNonNull(value, "Currency code must not be null");
     if (value.isBlank()) {
