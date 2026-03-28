@@ -21,6 +21,11 @@ public class ValidationException extends AppException {
     return errors;
   }
 
-  /** フィールド単位のバリデーションエラー。 */
+  /**
+   * フィールドごとのエラー詳細を表すレコード。
+   *
+   * @param detail エラーの詳細な説明
+   * @param pointer エラーが発生したフィールドを（例: "currencyCode"）
+   */
   public record FieldError(String detail, String pointer) {}
 }
