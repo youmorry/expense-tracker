@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.application;
 
+import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 public record TransactionCreateCommand(
     LocalDate date,
     BigDecimal amount,
-    @Nullable Long categoryId,
+    @Nullable CategoryId categoryId,
     @Nullable NeedWantType needWantType,
     @Nullable String title,
     @Nullable String memo) {

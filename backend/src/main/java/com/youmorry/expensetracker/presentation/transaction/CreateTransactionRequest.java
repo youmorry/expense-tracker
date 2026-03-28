@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.presentation.transaction;
 
 import com.youmorry.expensetracker.application.TransactionCreateCommand;
+import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,7 +14,7 @@ public record CreateTransactionRequest(
     @NotNull LocalDate date,
     @NotNull BigDecimal amount,
     @Nullable Long categoryId,
-    @Nullable String needWantType,
+    @Nullable NeedWantType needWantType,
     @Nullable @Size(max = 200) String title,
     @Nullable @Size(max = 2000) String memo) {
 
@@ -26,8 +27,8 @@ public record CreateTransactionRequest(
     return new TransactionCreateCommand(
         date,
         amount,
-        categoryId,
-        needWantType != null ? NeedWantType.valueOf(needWantType) : null,
+        categoryId != null ? new CategoryId(categoryId) : null,
+        needWantType,
         title,
         memo);
   }

@@ -42,7 +42,7 @@ class TransactionServiceTest {
         new TransactionCreateCommand(
             LocalDate.of(2026, 3, 25),
             new BigDecimal("1200"),
-            1L,
+            new CategoryId(1L),
             NeedWantType.NEED,
             "Lunch",
             "with friends");
@@ -109,7 +109,12 @@ class TransactionServiceTest {
     var category = new Category(categoryId, "Transport", 2);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), new BigDecimal("300"), 2L, null, "Bus", null);
+            LocalDate.of(2026, 3, 25),
+            new BigDecimal("300"),
+            new CategoryId(2L),
+            null,
+            "Bus",
+            null);
     var savedTransaction =
         new Transaction(
             new TransactionId(44L),
@@ -137,7 +142,7 @@ class TransactionServiceTest {
         new TransactionCreateCommand(
             LocalDate.of(2026, 3, 25),
             new BigDecimal("1000"),
-            999L,
+            new CategoryId(999L),
             NeedWantType.NEED,
             "Test",
             null);
@@ -151,7 +156,12 @@ class TransactionServiceTest {
     var userId = new UserId(1L);
     var command =
         new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25), new BigDecimal("-100"), 1L, NeedWantType.NEED, "Test", null);
+            LocalDate.of(2026, 3, 25),
+            new BigDecimal("-100"),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Test",
+            null);
 
     assertThrows(ValidationException.class, () -> transactionService.create(userId, command));
   }

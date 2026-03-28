@@ -44,8 +44,7 @@ public class TransactionService {
    */
   @Transactional
   public TransactionResult create(UserId userId, TransactionCreateCommand command) {
-    var categoryId =
-        command.categoryId() != null ? new CategoryId(command.categoryId()) : UNCATEGORIZED_ID;
+    var categoryId = command.categoryId() != null ? command.categoryId() : UNCATEGORIZED_ID;
     var needWantType = command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
 
     Money amount;
