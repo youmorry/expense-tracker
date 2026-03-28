@@ -73,13 +73,10 @@ public class TransactionController {
     List<CategoryId> categoryIds;
     try {
       categoryIds =
-          categoryId != null
-              ? categoryId.stream().map(CategoryId::new).toList()
-              : List.of();
+          categoryId != null ? categoryId.stream().map(CategoryId::new).toList() : List.of();
     } catch (IllegalArgumentException e) {
       throw new ValidationException(
-          e.getMessage(),
-          List.of(new FieldError("Invalid category ID.", "category_id")));
+          e.getMessage(), List.of(new FieldError("Invalid category ID.", "category_id")));
     }
     var query = new TransactionSearchQuery(from, to, categoryIds, needWantType, keyword);
     var results = transactionService.search(userId, query);
