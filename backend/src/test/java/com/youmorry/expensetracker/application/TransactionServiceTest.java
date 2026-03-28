@@ -14,11 +14,13 @@ import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.Transaction;
 import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
+import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionServiceTest {
 
   @Mock private TransactionRepository transactionRepository;
+  @Mock private TransactionSearchRepository transactionSearchRepository;
   @Mock private CategoryRepository categoryRepository;
   @InjectMocks private TransactionService transactionService;
 
@@ -164,5 +167,48 @@ class TransactionServiceTest {
             null);
 
     assertThrows(ValidationException.class, () -> transactionService.create(userId, command));
+  }
+
+  @Test
+  void search_withQuery_returnsResultList() {
+    var userId = new UserId(1L);
+    var query = new TransactionSearchQuery(null, null, List.of(), null, null);
+    var transaction1 =
+        new Transaction(
+            new TransactionId(1L),
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("500")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    var transaction2 =
+        new Transaction(
+            new TransactionId(2L),
+            userId,
+            LocalDate.of(2026, 3, 24),
+            new Money(new BigDecimal("300")),
+            new CategoryId(2L),
+            NeedWantType.WANT,
+            "Bus",
+            null,
+            Instant.parse("2026-03-24T10:00:00Z"),
+            Instant.parse("2026-03-24T10:00:00Z"));
+    when(transactionSearchRepository.search(userId, query.toCriteria()))
+        .thenReturn(List.of(transaction1, transaction2));
+    when(categoryRepository.findAll())
+        .thenReturn(
+            List.of(
+                new Category(new CategoryId(1L), "Food", 1),
+                new Category(new CategoryId(2L), "Transport", 2)));
+
+    var results = transactionService.search(userId, query);
+
+    assertEquals(2, results.size());
+    assertEquals("Food", results.get(0).categoryName());
+    assertEquals("Transport", results.get(1).categoryName());
   }
 }

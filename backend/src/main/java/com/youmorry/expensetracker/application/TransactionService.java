@@ -1,15 +1,19 @@
 package com.youmorry.expensetracker.application;
 
+import com.youmorry.expensetracker.domain.category.Category;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.category.CategoryRepository;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.Transaction;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
+import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +24,22 @@ public class TransactionService {
   private static final CategoryId UNCATEGORIZED_ID = new CategoryId(11L);
 
   private final TransactionRepository transactionRepository;
+  private final TransactionSearchRepository transactionSearchRepository;
   private final CategoryRepository categoryRepository;
 
   /**
    * コンストラクタ。
    *
    * @param transactionRepository トランザクションリポジトリ
+   * @param transactionSearchRepository 支出検索リポジトリ
    * @param categoryRepository カテゴリリポジトリ
    */
   public TransactionService(
-      TransactionRepository transactionRepository, CategoryRepository categoryRepository) {
+      TransactionRepository transactionRepository,
+      TransactionSearchRepository transactionSearchRepository,
+      CategoryRepository categoryRepository) {
     this.transactionRepository = transactionRepository;
+    this.transactionSearchRepository = transactionSearchRepository;
     this.categoryRepository = categoryRepository;
   }
 
@@ -78,5 +87,23 @@ public class TransactionService {
             null);
     var saved = transactionRepository.save(transaction);
     return new TransactionResult(saved, category.name());
+  }
+
+  /**
+   * 支出を検索条件に基づいて取得する。
+   *
+   * @param userId ユーザー ID
+   * @param query 検索クエリ
+   * @return 検索結果のリスト
+   */
+  @Transactional(readOnly = true)
+  public List<TransactionResult> search(UserId userId, TransactionSearchQuery query) {
+    Map<CategoryId, String> categoryNameMap =
+        categoryRepository.findAll().stream()
+            .collect(Collectors.toMap(Category::id, Category::name));
+
+    return transactionSearchRepository.search(userId, query.toCriteria()).stream()
+        .map(tx -> new TransactionResult(tx, categoryNameMap.get(tx.categoryId())))
+        .toList();
   }
 }
