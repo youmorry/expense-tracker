@@ -12,6 +12,7 @@ import org.springframework.data.convert.WritingConverter;
  *
  * <p>{@code Long ↔ CategoryId}, {@code Long ↔ UserId}, {@code Long ↔ TransactionId} の変換を提供する。
  */
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public final class IdConverters {
 
   private IdConverters() {}

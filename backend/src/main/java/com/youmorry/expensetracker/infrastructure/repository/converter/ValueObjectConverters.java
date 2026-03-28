@@ -8,6 +8,7 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 
 /** Spring Data JDBC 用の値オブジェクトコンバーター。 */
+@SuppressWarnings("checkstyle:MissingJavadocType")
 public final class ValueObjectConverters {
 
   private ValueObjectConverters() {}
