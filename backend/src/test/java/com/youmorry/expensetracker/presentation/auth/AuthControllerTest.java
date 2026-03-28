@@ -99,7 +99,9 @@ class AuthControllerTest {
   void authenticateWithGoogle_withMissingIdToken_returns422() throws Exception {
     mockMvc
         .perform(post("/api/v1/auth/google").contentType(MediaType.APPLICATION_JSON).content("{}"))
-        .andExpect(status().is(422));
+        .andExpect(status().is(422))
+        .andExpect(jsonPath("$.errors[0].pointer").value("#/id_token"))
+        .andExpect(jsonPath("$.errors[0].detail").value("must not be blank"));
   }
 
   @Test
