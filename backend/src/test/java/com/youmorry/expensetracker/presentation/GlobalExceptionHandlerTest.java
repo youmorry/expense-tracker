@@ -42,8 +42,8 @@ class GlobalExceptionHandlerTest {
       throw new ValidationException(
           "One or more fields have validation errors.",
           List.of(
-              new ValidationException.FieldError("must be greater than 0", "#/amount"),
-              new ValidationException.FieldError("must not be null", "#/date")));
+              new ValidationException.FieldError("must be greater than 0", "amount"),
+              new ValidationException.FieldError("must not be null", "date")));
     }
 
     @GetMapping("/test/unauthorized")
