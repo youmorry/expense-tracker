@@ -55,7 +55,7 @@ Google OAuth2 で認証されたユーザーを管理する。
 | id | BIGINT | NO | GENERATED ALWAYS AS IDENTITY | PK | 内部ID |
 | user_id | BIGINT | NO | - | FK → users.id | 所有ユーザー |
 | date | DATE | NO | - | - | 支出日 |
-| amount | DECIMAL(12,4) | NO | - | CHECK (amount > 0) | 金額 |
+| amount | DECIMAL(12,4) | NO | - | - | 金額 |
 | category_id | BIGINT | NO | - | FK → categories.id | カテゴリ |
 | need_want_type | VARCHAR(5) | NO | 'UNSET' | CHECK (need_want_type IN ('NEED', 'WANT', 'UNSET')) | need/want 分類 |
 | title | VARCHAR(200) | YES | NULL | - | 内容 |
@@ -197,8 +197,6 @@ CREATE TABLE transactions (
         FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_transactions_category_id
         FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE RESTRICT,
-    CONSTRAINT ck_transactions_amount_positive
-        CHECK (amount > 0),
     CONSTRAINT ck_transactions_need_want_type
         CHECK (need_want_type IN ('NEED', 'WANT', 'UNSET'))
 );
