@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.domain.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Currency;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,16 +36,16 @@ class LocaleCurrencyMapperTest {
     "nb-NO, NOK",
     "fi-FI, EUR"
   })
-  void toCurrencyCode_withLocaleIncludingRegion_returnsExpectedCurrency(
+  void toCurrency_withLocaleIncludingRegion_returnsExpectedCurrency(
       String localeTag, String expected) {
     Locale locale = Locale.forLanguageTag(localeTag);
 
-    assertEquals(CurrencyCode.valueOf(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(Currency.getInstance(expected), LocaleCurrencyMapper.toCurrency(locale));
   }
 
   @Test
-  void toCurrencyCode_withNullLocale_returnsUsd() {
-    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(null));
+  void toCurrency_withNullLocale_returnsUsd() {
+    assertEquals(Currency.getInstance("USD"), LocaleCurrencyMapper.toCurrency(null));
   }
 
   @ParameterizedTest
@@ -52,25 +53,25 @@ class LocaleCurrencyMapperTest {
     "ja, JPY", "ko, KRW", "zh, CNY", "hi, INR", "th, THB", "vi, VND", "tr, TRY", "ru, RUB",
     "pl, PLN", "sv, SEK", "da, DKK", "nb, NOK"
   })
-  void toCurrencyCode_withMappedLanguageOnlyLocale_returnsEstimatedCurrency(
+  void toCurrency_withMappedLanguageOnlyLocale_returnsEstimatedCurrency(
       String languageTag, String expected) {
     Locale locale = Locale.forLanguageTag(languageTag);
 
-    assertEquals(CurrencyCode.valueOf(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(Currency.getInstance(expected), LocaleCurrencyMapper.toCurrency(locale));
   }
 
   @ParameterizedTest
   @CsvSource({"fr", "es", "pt", "ar", "de", "it", "nl", "en"})
-  void toCurrencyCode_withUnmappedLanguageOnlyLocale_returnsUsd(String languageTag) {
+  void toCurrency_withUnmappedLanguageOnlyLocale_returnsUsd(String languageTag) {
     Locale locale = Locale.forLanguageTag(languageTag);
 
-    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(Currency.getInstance("USD"), LocaleCurrencyMapper.toCurrency(locale));
   }
 
   @Test
-  void toCurrencyCode_withUnknownCountryLocale_returnsUsd() {
+  void toCurrency_withUnknownCountryLocale_returnsUsd() {
     Locale unknown = Locale.forLanguageTag("xx-YY");
 
-    assertEquals(CurrencyCode.USD, LocaleCurrencyMapper.toCurrencyCode(unknown));
+    assertEquals(Currency.getInstance("USD"), LocaleCurrencyMapper.toCurrency(unknown));
   }
 }

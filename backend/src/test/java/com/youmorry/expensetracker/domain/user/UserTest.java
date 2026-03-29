@@ -4,15 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Currency;
 import org.junit.jupiter.api.Test;
 
 class UserTest {
 
   @Test
   void createNew_withValidCurrencyCode_createsUser() {
-    var user = User.createNew("google-123", "user@example.com", "Test User", CurrencyCode.JPY);
+    var user = User.createNew("google-123", "user@example.com", "Test User", Currency.getInstance("JPY"));
 
-    assertEquals(CurrencyCode.JPY, user.currencyCode());
+    assertEquals(Currency.getInstance("JPY"), user.currencyCode());
   }
 
   @Test
@@ -28,7 +29,7 @@ class UserTest {
         NullPointerException.class,
         () ->
             new User(
-                new UserId(1L), null, "user@example.com", "Test User", CurrencyCode.JPY, null));
+                new UserId(1L), null, "user@example.com", "Test User", Currency.getInstance("JPY"), null));
   }
 
   @Test
@@ -37,21 +38,21 @@ class UserTest {
         IllegalArgumentException.class,
         () ->
             new User(
-                new UserId(1L), "  ", "user@example.com", "Test User", CurrencyCode.JPY, null));
+                new UserId(1L), "  ", "user@example.com", "Test User", Currency.getInstance("JPY"), null));
   }
 
   @Test
   void constructor_withNullEmail_throwsNullPointerException() {
     assertThrows(
         NullPointerException.class,
-        () -> new User(new UserId(1L), "google-123", null, "Test User", CurrencyCode.JPY, null));
+        () -> new User(new UserId(1L), "google-123", null, "Test User", Currency.getInstance("JPY"), null));
   }
 
   @Test
   void constructor_withBlankEmail_throwsIllegalArgumentException() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new User(new UserId(1L), "google-123", "  ", "Test User", CurrencyCode.JPY, null));
+        () -> new User(new UserId(1L), "google-123", "  ", "Test User", Currency.getInstance("JPY"), null));
   }
 
   @Test
@@ -60,7 +61,7 @@ class UserTest {
         NullPointerException.class,
         () ->
             new User(
-                new UserId(1L), "google-123", "user@example.com", null, CurrencyCode.JPY, null));
+                new UserId(1L), "google-123", "user@example.com", null, Currency.getInstance("JPY"), null));
   }
 
   @Test
@@ -69,7 +70,7 @@ class UserTest {
         IllegalArgumentException.class,
         () ->
             new User(
-                new UserId(1L), "google-123", "user@example.com", "  ", CurrencyCode.JPY, null));
+                new UserId(1L), "google-123", "user@example.com", "  ", Currency.getInstance("JPY"), null));
   }
 
   @Test
@@ -84,7 +85,7 @@ class UserTest {
                 "google-123",
                 "user@example.com",
                 longName,
-                CurrencyCode.JPY,
+                Currency.getInstance("JPY"),
                 null));
   }
 
@@ -93,7 +94,7 @@ class UserTest {
     var maxName = "a".repeat(100);
 
     var user =
-        new User(new UserId(1L), "google-123", "user@example.com", maxName, CurrencyCode.JPY, null);
+        new User(new UserId(1L), "google-123", "user@example.com", maxName, Currency.getInstance("JPY"), null);
 
     assertEquals(maxName, user.displayName());
   }
@@ -107,20 +108,20 @@ class UserTest {
 
   @Test
   void changeCurrencyCode_withSameCode_returnsSameInstance() {
-    var user = createUser(CurrencyCode.JPY);
+    var user = createUser(Currency.getInstance("JPY"));
 
-    var result = user.changeCurrencyCode(CurrencyCode.JPY);
+    var result = user.changeCurrencyCode(Currency.getInstance("JPY"));
 
     assertSame(user, result);
   }
 
   @Test
   void changeCurrencyCode_withValidCode_returnsUserWithUpdatedCurrency() {
-    var user = createUser(CurrencyCode.JPY);
+    var user = createUser(Currency.getInstance("JPY"));
 
-    var updated = user.changeCurrencyCode(CurrencyCode.USD);
+    var updated = user.changeCurrencyCode(Currency.getInstance("USD"));
 
-    assertEquals(CurrencyCode.USD, updated.currencyCode());
+    assertEquals(Currency.getInstance("USD"), updated.currencyCode());
     assertEquals(user.id(), updated.id());
     assertEquals(user.googleId(), updated.googleId());
     assertEquals(user.email(), updated.email());
@@ -130,12 +131,12 @@ class UserTest {
 
   @Test
   void changeCurrencyCode_withNull_throwsNullPointerException() {
-    var user = createUser(CurrencyCode.JPY);
+    var user = createUser(Currency.getInstance("JPY"));
 
     assertThrows(NullPointerException.class, () -> user.changeCurrencyCode(null));
   }
 
-  private User createUser(CurrencyCode currencyCode) {
+  private User createUser(Currency currencyCode) {
     return new User(
         new UserId(1L), "google-123", "user@example.com", "Test User", currencyCode, null);
   }

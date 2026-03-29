@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.youmorry.expensetracker.application.AuthService;
 import com.youmorry.expensetracker.application.AuthService.AuthResult;
-import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ class AuthControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            CurrencyCode.JPY,
+            Currency.getInstance("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
     when(authService.authenticate(eq("valid-id-token"), eq(Locale.forLanguageTag("ja-JP"))))
@@ -65,7 +65,7 @@ class AuthControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            CurrencyCode.USD,
+            Currency.getInstance("USD"),
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
     when(authService.authenticate(eq("valid-id-token"), eq(Locale.ENGLISH))).thenReturn(authResult);

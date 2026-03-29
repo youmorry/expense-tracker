@@ -9,7 +9,7 @@ import com.youmorry.expensetracker.domain.transaction.Transaction;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchCriteria;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
-import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import java.util.Currency;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
@@ -255,7 +255,7 @@ class JdbcTransactionSearchRepositoryTest extends AbstractRepositoryTest {
 
   private User saveUser(String googleId) {
     return userRepository.save(
-        User.createNew(googleId, googleId + "@example.com", "Test User", CurrencyCode.JPY));
+        User.createNew(googleId, googleId + "@example.com", "Test User", Currency.getInstance("JPY")));
   }
 
   private Transaction newTransaction(UserId userId, LocalDate date, CategoryId categoryId) {
