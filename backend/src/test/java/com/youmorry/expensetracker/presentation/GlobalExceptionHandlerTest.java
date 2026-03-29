@@ -11,6 +11,7 @@ import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,6 +69,9 @@ class GlobalExceptionHandlerTest {
 
     @GetMapping("/test/type-mismatch")
     public void typeMismatch(@RequestParam Integer id) {}
+
+    @GetMapping("/test/query-validation")
+    public void queryValidation(@RequestParam @Min(1) int count) {}
 
     @PostMapping("/test/bean-validation")
     public void beanValidation(@Valid @RequestBody BeanValidationRequest request) {}
@@ -184,6 +188,19 @@ class GlobalExceptionHandlerTest {
         .andExpect(jsonPath("$.title").value("Bad Request"))
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.detail").value("Invalid value for parameter 'id'."));
+  }
+
+  @Test
+  void handleMethodArgumentNotValid_invalidQuery_returns422WithFieldErrors() throws Exception {
+    mockMvc
+        .perform(get("/test/query-validation").param("count", "0"))
+        .andExpect(status().isUnprocessableContent())
+        .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+        .andExpect(jsonPath("$.type").value("/errors/validation-error"))
+        .andExpect(jsonPath("$.title").value("Your request is not valid."))
+        .andExpect(jsonPath("$.status").value(422))
+        .andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.errors[0].pointer").value("#/count"));
   }
 
   @Test
