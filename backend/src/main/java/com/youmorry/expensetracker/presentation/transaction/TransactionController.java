@@ -4,6 +4,7 @@ import com.youmorry.expensetracker.application.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.TransactionService;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
+import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.user.UserId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +50,20 @@ public class TransactionController {
       @AuthenticationPrincipal UserId userId) {
     var result = transactionService.create(userId, request.toCommand());
     return ResponseEntity.status(HttpStatus.CREATED).body(TransactionResponse.from(result));
+  }
+
+  /**
+   * 支出詳細を取得する。
+   *
+   * @param id 支出 ID
+   * @param userId 認証済みユーザー ID
+   * @return 支出詳細
+   */
+  @GetMapping("/{id}")
+  public ResponseEntity<TransactionResponse> getById(
+      @PathVariable long id, @AuthenticationPrincipal UserId userId) {
+    var result = transactionService.findById(userId, new TransactionId(id));
+    return ResponseEntity.ok(TransactionResponse.from(result));
   }
 
   /**
