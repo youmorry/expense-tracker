@@ -4,9 +4,11 @@ import com.youmorry.expensetracker.domain.category.CategoryType;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.Transaction;
+import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
 import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
 import java.util.List;
@@ -72,6 +74,31 @@ public class TransactionService {
             null);
     var saved = transactionRepository.save(transaction);
     return new TransactionResult(saved, categoryType.displayName());
+  }
+
+  /**
+   * 支出を ID で取得する。所有者チェック付き。
+   *
+   * @param userId ユーザー ID
+   * @param transactionId 支出 ID
+   * @return 支出結果
+   * @throws ResourceNotFoundException 支出が存在しない、または他ユーザーの支出の場合
+   */
+  @Transactional(readOnly = true)
+  public TransactionResult findById(UserId userId, TransactionId transactionId) {
+    var transaction = findByIdAndVerifyOwnership(userId, transactionId);
+    return new TransactionResult(
+        transaction, CategoryType.fromId(transaction.categoryId()).displayName());
+  }
+
+  private Transaction findByIdAndVerifyOwnership(UserId userId, TransactionId transactionId) {
+    return transactionRepository
+        .findById(transactionId)
+        .filter(tx -> tx.userId().equals(userId))
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    "Transaction not found: " + transactionId.value()));
   }
 
   /**
