@@ -11,7 +11,8 @@ class CategoryTypeTest {
 
   @Test
   void values_allHaveUniqueIds() {
-    var ids = Arrays.stream(CategoryType.values()).map(CategoryType::id).collect(Collectors.toSet());
+    var ids =
+        Arrays.stream(CategoryType.values()).map(CategoryType::id).collect(Collectors.toSet());
 
     assertEquals(CategoryType.values().length, ids.size());
   }

@@ -32,8 +32,7 @@ class CategoryControllerTest {
   @Test
   void getCategories_withValidJwt_returnsOkWithItems() throws Exception {
     when(categoryService.findAll())
-        .thenReturn(
-            List.of(CategoryType.FOOD, CategoryType.TRANSPORT, CategoryType.UNCATEGORIZED));
+        .thenReturn(List.of(CategoryType.FOOD, CategoryType.TRANSPORT, CategoryType.UNCATEGORIZED));
 
     mockMvc
         .perform(get("/api/v1/categories").with(jwt()))

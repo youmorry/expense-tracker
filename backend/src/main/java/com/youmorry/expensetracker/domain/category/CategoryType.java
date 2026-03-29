@@ -68,9 +68,6 @@ public enum CategoryType {
     return Arrays.stream(values())
         .filter(type -> type.id.equals(id))
         .findFirst()
-        .orElseThrow(
-            () ->
-                new IllegalArgumentException(
-                    "Unknown category id: " + id.value()));
+        .orElseThrow(() -> new IllegalArgumentException("Unknown category id: " + id.value()));
   }
 }
