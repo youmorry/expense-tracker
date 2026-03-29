@@ -37,11 +37,19 @@ classDiagram
         Instant updatedAt
     }
 
-    class Category {
-        <<Entity / AggregateRoot>>
-        CategoryId id
-        String name
-        int displayOrder
+    class CategoryType {
+        <<Enumeration>>
+        FOOD
+        TRANSPORT
+        HOUSING
+        DAILY_GOODS
+        MEDICAL
+        ENTERTAINMENT
+        CLOTHING
+        EDUCATION
+        SOCIAL
+        OTHER
+        UNCATEGORIZED
     }
 
     class CurrencyCode {
@@ -63,7 +71,7 @@ classDiagram
 
     User --> CurrencyCode : currencyCode
     Transaction --> User : userId で参照
-    Transaction --> Category : categoryId で参照
+    Transaction --> CategoryType : categoryId で参照
     Transaction --> Money : amount
     Transaction --> NeedWantType : needWantType
 ```
@@ -118,37 +126,6 @@ Google OAuth2 で認証されたユーザーを表す。
 
 ---
 
-### Category（カテゴリ）
-
-支出を分類するためのマスタデータ。MVP ではプリセットのみ提供し、ユーザーによるカスタマイズは将来対応とする。
-
-| フィールド | 型 | 必須 | 説明 |
-|-----------|-----|------|------|
-| id | CategoryId | ○ | 内部ID（自動採番） |
-| name | String | ○ | カテゴリ名 |
-| displayOrder | int | ○ | 表示順 |
-
-**プリセットカテゴリ**
-
-| 表示順 | 名前 | 想定される用途 |
-|-------|------|--------------|
-| 1 | Food | Groceries, dining out |
-| 2 | Transport | Train, bus, taxi |
-| 3 | Housing | Rent, utilities, internet |
-| 4 | Daily Goods | Consumables, household items |
-| 5 | Medical | Hospital, medicine |
-| 6 | Entertainment | Hobbies, leisure, subscriptions |
-| 7 | Clothing | Apparel, dry cleaning |
-| 8 | Education | Books, seminars, certifications |
-| 9 | Social | Dining with friends, gifts |
-| 10 | Other | Anything not listed above |
-| 11 | Uncategorized | Default when no category is selected |
-
-**ルール**
-- カテゴリはシステム共通（全ユーザーで同じプリセットを使用）
-- 「Uncategorized」は常に存在し、削除できない
-- 将来、ユーザー独自のカテゴリ作成を可能にする拡張を想定
-
 ---
 
 ## 値オブジェクト
@@ -189,6 +166,33 @@ ISO 4217 通貨コードを表す値オブジェクト。
 
 ## 列挙型
 
+### CategoryType（カテゴリ）
+
+支出を分類するためのカテゴリ列挙型。各定数が DB の `categories` テーブルの ID・表示名・表示順に対応する。
+MVP ではプリセットのみ提供し、ユーザーによるカスタマイズは将来対応とする。
+
+| 定数 | ID | 表示名 | 表示順 | 想定される用途 |
+|------|-----|--------|-------|--------------|
+| FOOD | 1 | Food | 1 | Groceries, dining out |
+| TRANSPORT | 2 | Transport | 2 | Train, bus, taxi |
+| HOUSING | 3 | Housing | 3 | Rent, utilities, internet |
+| DAILY_GOODS | 4 | Daily Goods | 4 | Consumables, household items |
+| MEDICAL | 5 | Medical | 5 | Hospital, medicine |
+| ENTERTAINMENT | 6 | Entertainment | 6 | Hobbies, leisure, subscriptions |
+| CLOTHING | 7 | Clothing | 7 | Apparel, dry cleaning |
+| EDUCATION | 8 | Education | 8 | Books, seminars, certifications |
+| SOCIAL | 9 | Social | 9 | Dining with friends, gifts |
+| OTHER | 10 | Other | 10 | Anything not listed above |
+| UNCATEGORIZED | 11 | Uncategorized | 11 | Default when no category is selected |
+
+**ルール**
+- カテゴリはシステム共通（全ユーザーで同じプリセットを使用）
+- 「Uncategorized」は常に存在し、削除できない
+- DB の `categories` テーブルの ID をソースコードに持つ（DB との整合性は Flyway マイグレーションで保証）
+- 将来、ユーザー独自のカテゴリ作成を可能にする拡張を想定
+
+---
+
 ### NeedWantType（need / want 分類）
 
 支出を「必要」か「欲しい」かで分類する。あとから設定することも想定し、未設定状態を明示的に持つ。
@@ -213,7 +217,6 @@ Spring Data JDBC の Aggregate / Repository パターンに沿って、集約を
 |------|---------------|-------------------|
 | User 集約 | User | なし（単体） |
 | Transaction 集約 | Transaction | Money（値オブジェクト） |
-| Category 集約 | Category | なし（単体） |
 
 ### 集約間の参照
 
@@ -223,7 +226,7 @@ Spring Data JDBC の Aggregate / Repository パターンに沿って、集約を
 ```
 Transaction
   ├── userId: UserId         → User 集約への参照
-  └── categoryId: CategoryId → Category 集約への参照
+  └── categoryId: CategoryId → CategoryType 列挙型の ID
 ```
 
 ---
