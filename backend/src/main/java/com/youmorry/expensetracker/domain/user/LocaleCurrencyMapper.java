@@ -55,7 +55,7 @@ public final class LocaleCurrencyMapper {
 
     try {
       Currency currency = Currency.getInstance(resolved);
-      return new CurrencyCode(currency.getCurrencyCode());
+      return CurrencyCode.valueOf(currency.getCurrencyCode());
     } catch (IllegalArgumentException e) {
       return CurrencyCode.USD;
     }

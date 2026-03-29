@@ -28,12 +28,7 @@ class UserTest {
         NullPointerException.class,
         () ->
             new User(
-                new UserId(1L),
-                null,
-                "user@example.com",
-                "Test User",
-                CurrencyCode.JPY,
-                null));
+                new UserId(1L), null, "user@example.com", "Test User", CurrencyCode.JPY, null));
   }
 
   @Test
@@ -42,30 +37,21 @@ class UserTest {
         IllegalArgumentException.class,
         () ->
             new User(
-                new UserId(1L),
-                "  ",
-                "user@example.com",
-                "Test User",
-                CurrencyCode.JPY,
-                null));
+                new UserId(1L), "  ", "user@example.com", "Test User", CurrencyCode.JPY, null));
   }
 
   @Test
   void constructor_withNullEmail_throwsNullPointerException() {
     assertThrows(
         NullPointerException.class,
-        () ->
-            new User(
-                new UserId(1L), "google-123", null, "Test User", CurrencyCode.JPY, null));
+        () -> new User(new UserId(1L), "google-123", null, "Test User", CurrencyCode.JPY, null));
   }
 
   @Test
   void constructor_withBlankEmail_throwsIllegalArgumentException() {
     assertThrows(
         IllegalArgumentException.class,
-        () ->
-            new User(
-                new UserId(1L), "google-123", "  ", "Test User", CurrencyCode.JPY, null));
+        () -> new User(new UserId(1L), "google-123", "  ", "Test User", CurrencyCode.JPY, null));
   }
 
   @Test
@@ -74,12 +60,7 @@ class UserTest {
         NullPointerException.class,
         () ->
             new User(
-                new UserId(1L),
-                "google-123",
-                "user@example.com",
-                null,
-                CurrencyCode.JPY,
-                null));
+                new UserId(1L), "google-123", "user@example.com", null, CurrencyCode.JPY, null));
   }
 
   @Test
@@ -88,12 +69,7 @@ class UserTest {
         IllegalArgumentException.class,
         () ->
             new User(
-                new UserId(1L),
-                "google-123",
-                "user@example.com",
-                "  ",
-                CurrencyCode.JPY,
-                null));
+                new UserId(1L), "google-123", "user@example.com", "  ", CurrencyCode.JPY, null));
   }
 
   @Test
@@ -117,13 +93,7 @@ class UserTest {
     var maxName = "a".repeat(100);
 
     var user =
-        new User(
-            new UserId(1L),
-            "google-123",
-            "user@example.com",
-            maxName,
-            CurrencyCode.JPY,
-            null);
+        new User(new UserId(1L), "google-123", "user@example.com", maxName, CurrencyCode.JPY, null);
 
     assertEquals(maxName, user.displayName());
   }

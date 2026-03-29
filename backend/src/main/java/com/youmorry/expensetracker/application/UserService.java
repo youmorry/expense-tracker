@@ -5,9 +5,6 @@ import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
-import com.youmorry.expensetracker.shared.exception.ValidationException;
-import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,23 +39,14 @@ public class UserService {
    * ユーザーの通貨コードを更新する。
    *
    * @param userId ユーザー ID
-   * @param currencyCode ISO 4217 通貨コード
+   * @param currencyCode 通貨コード
    * @return 更新されたユーザー
    * @throws ResourceNotFoundException ユーザーが存在しない場合
-   * @throws ValidationException 無効な通貨コードの場合
    */
   @Transactional
-  public User updateCurrency(UserId userId, String currencyCode) {
+  public User updateCurrency(UserId userId, CurrencyCode currencyCode) {
     var user = findUserOrThrow(userId);
-    CurrencyCode code;
-    try {
-      code = new CurrencyCode(currencyCode);
-    } catch (IllegalArgumentException e) {
-      throw new ValidationException(
-          e.getMessage(),
-          List.of(new FieldError("Invalid ISO 4217 currency code.", "currencyCode")));
-    }
-    var updated = user.changeCurrencyCode(code);
+    var updated = user.changeCurrencyCode(currencyCode);
     return userRepository.save(updated);
   }
 
