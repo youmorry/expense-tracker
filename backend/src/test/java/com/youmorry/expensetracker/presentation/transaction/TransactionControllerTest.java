@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.presentation.transaction;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,6 +14,7 @@ import com.youmorry.expensetracker.application.TransactionCreateCommand;
 import com.youmorry.expensetracker.application.TransactionResult;
 import com.youmorry.expensetracker.application.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.TransactionService;
+import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
@@ -264,5 +266,54 @@ class TransactionControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.items").isArray())
         .andExpect(jsonPath("$.items.length()").value(0));
+  }
+
+  @Test
+  void getById_withExistingTransaction_returns200WithTransaction() throws Exception {
+    var transaction =
+        new Transaction(
+            new TransactionId(42L),
+            new UserId(1L),
+            LocalDate.of(2026, 2, 23),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            "Company cafeteria",
+            Instant.parse("2026-02-23T10:30:00Z"),
+            Instant.parse("2026-02-23T10:30:00Z"));
+    var result = new TransactionResult(transaction, "Food");
+    when(transactionService.findById(new UserId(1L), new TransactionId(42L))).thenReturn(result);
+
+    mockMvc
+        .perform(
+            get("/api/v1/transactions/42").with(jwt().jwt(j -> j.subject("1"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(42))
+        .andExpect(jsonPath("$.date").value("2026-02-23"))
+        .andExpect(jsonPath("$.amount").value("1200"))
+        .andExpect(jsonPath("$.category_id").value(1))
+        .andExpect(jsonPath("$.category_name").value("Food"))
+        .andExpect(jsonPath("$.need_want_type").value("NEED"))
+        .andExpect(jsonPath("$.title").value("Lunch"))
+        .andExpect(jsonPath("$.memo").value("Company cafeteria"))
+        .andExpect(jsonPath("$.created_at").value("2026-02-23T10:30:00Z"))
+        .andExpect(jsonPath("$.updated_at").value("2026-02-23T10:30:00Z"));
+  }
+
+  @Test
+  void getById_withNonExistentTransaction_returns404() throws Exception {
+    when(transactionService.findById(new UserId(1L), new TransactionId(999L)))
+        .thenThrow(new ResourceNotFoundException("Transaction not found: 999"));
+
+    mockMvc
+        .perform(
+            get("/api/v1/transactions/999").with(jwt().jwt(j -> j.subject("1"))))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void getById_withoutJwt_returns401() throws Exception {
+    mockMvc.perform(get("/api/v1/transactions/42")).andExpect(status().isUnauthorized());
   }
 }
