@@ -61,7 +61,9 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
   - 機能追加: `feature/<説明>`（例: `feature/add-expense-api`）
   - バグ修正: `hotfix/<説明>`（例: `hotfix/fix-date-validation`）
   - 英語・ケバブケースで記述する
-- bash実行時に不要な cd を付けない
+- git コマンド実行時は cd を利用しないこと
+  - OK: `git add backend/aaa.txt`
+  - NG: `cd backend && git add aaa.txt`
 
 ## Commands
 
