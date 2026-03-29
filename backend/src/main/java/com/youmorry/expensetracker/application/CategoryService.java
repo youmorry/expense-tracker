@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.application;
 
-import com.youmorry.expensetracker.domain.category.Category;
-import com.youmorry.expensetracker.domain.category.CategoryRepository;
+import com.youmorry.expensetracker.domain.category.CategoryType;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -9,23 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class CategoryService {
 
-  private final CategoryRepository categoryRepository;
-
   /**
-   * コンストラクタ。
-   *
-   * @param categoryRepository カテゴリリポジトリ
-   */
-  public CategoryService(CategoryRepository categoryRepository) {
-    this.categoryRepository = categoryRepository;
-  }
-
-  /**
-   * カテゴリを display_order 昇順で全件取得する。
+   * カテゴリを displayOrder 昇順で全件取得する。
    *
    * @return カテゴリのリスト
    */
-  public List<Category> findAll() {
-    return categoryRepository.findAll();
+  public List<CategoryType> findAll() {
+    return Arrays.asList(CategoryType.values());
   }
 }

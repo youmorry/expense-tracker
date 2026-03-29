@@ -1,8 +1,6 @@
 package com.youmorry.expensetracker.application;
 
-import com.youmorry.expensetracker.domain.category.Category;
-import com.youmorry.expensetracker.domain.category.CategoryId;
-import com.youmorry.expensetracker.domain.category.CategoryRepository;
+import com.youmorry.expensetracker.domain.category.CategoryType;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.Transaction;
@@ -12,8 +10,6 @@ import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,26 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TransactionService {
 
-  private static final CategoryId UNCATEGORIZED_ID = new CategoryId(11L);
-
   private final TransactionRepository transactionRepository;
   private final TransactionSearchRepository transactionSearchRepository;
-  private final CategoryRepository categoryRepository;
 
   /**
    * コンストラクタ。
    *
    * @param transactionRepository トランザクションリポジトリ
    * @param transactionSearchRepository 支出検索リポジトリ
-   * @param categoryRepository カテゴリリポジトリ
    */
   public TransactionService(
       TransactionRepository transactionRepository,
-      TransactionSearchRepository transactionSearchRepository,
-      CategoryRepository categoryRepository) {
+      TransactionSearchRepository transactionSearchRepository) {
     this.transactionRepository = transactionRepository;
     this.transactionSearchRepository = transactionSearchRepository;
-    this.categoryRepository = categoryRepository;
   }
 
   /**
@@ -53,19 +43,20 @@ public class TransactionService {
    */
   @Transactional
   public TransactionResult create(UserId userId, TransactionCreateCommand command) {
-    var categoryId = command.categoryId() != null ? command.categoryId() : UNCATEGORIZED_ID;
+    var categoryId =
+        command.categoryId() != null ? command.categoryId() : CategoryType.UNCATEGORIZED.id();
     var needWantType = command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
 
     var amount = new Money(command.amount());
 
-    var category =
-        categoryRepository
-            .findById(categoryId)
-            .orElseThrow(
-                () ->
-                    new ValidationException(
-                        "Category not found: " + categoryId.value(),
-                        List.of(new FieldError("Category does not exist.", "categoryId"))));
+    CategoryType categoryType;
+    try {
+      categoryType = CategoryType.fromId(categoryId);
+    } catch (IllegalArgumentException e) {
+      throw new ValidationException(
+          "Category not found: " + categoryId.value(),
+          List.of(new FieldError("Category does not exist.", "categoryId")));
+    }
 
     var transaction =
         new Transaction(
@@ -80,7 +71,7 @@ public class TransactionService {
             null,
             null);
     var saved = transactionRepository.save(transaction);
-    return new TransactionResult(saved, category.name());
+    return new TransactionResult(saved, categoryType.displayName());
   }
 
   /**
@@ -92,12 +83,8 @@ public class TransactionService {
    */
   @Transactional(readOnly = true)
   public List<TransactionResult> search(UserId userId, TransactionSearchQuery query) {
-    Map<CategoryId, String> categoryNameMap =
-        categoryRepository.findAll().stream()
-            .collect(Collectors.toMap(Category::id, Category::name));
-
     return transactionSearchRepository.search(userId, query.toCriteria()).stream()
-        .map(tx -> new TransactionResult(tx, categoryNameMap.get(tx.categoryId())))
+        .map(tx -> new TransactionResult(tx, CategoryType.fromId(tx.categoryId()).displayName()))
         .toList();
   }
 }

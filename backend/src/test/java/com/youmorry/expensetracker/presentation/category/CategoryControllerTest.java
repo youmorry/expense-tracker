@@ -7,8 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.CategoryService;
-import com.youmorry.expensetracker.domain.category.Category;
-import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.category.CategoryType;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -32,12 +31,8 @@ class CategoryControllerTest {
 
   @Test
   void getCategories_withValidJwt_returnsOkWithItems() throws Exception {
-    var categories =
-        List.of(
-            new Category(new CategoryId(1L), "Food", 1),
-            new Category(new CategoryId(2L), "Transport", 2),
-            new Category(new CategoryId(11L), "Uncategorized", 11));
-    when(categoryService.findAll()).thenReturn(categories);
+    when(categoryService.findAll())
+        .thenReturn(List.of(CategoryType.FOOD, CategoryType.TRANSPORT, CategoryType.UNCATEGORIZED));
 
     mockMvc
         .perform(get("/api/v1/categories").with(jwt()))
