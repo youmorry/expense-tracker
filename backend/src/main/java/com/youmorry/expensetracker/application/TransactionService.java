@@ -147,6 +147,19 @@ public class TransactionService {
   }
 
   /**
+   * 支出を削除する。所有者チェック付き。
+   *
+   * @param userId ユーザー ID
+   * @param transactionId 支出 ID
+   * @throws ResourceNotFoundException 支出が存在しない、または他ユーザーの支出の場合
+   */
+  @Transactional
+  public void delete(UserId userId, TransactionId transactionId) {
+    findByIdAndVerifyOwnership(userId, transactionId);
+    transactionRepository.deleteById(transactionId);
+  }
+
+  /**
    * 支出を検索条件に基づいて取得する。
    *
    * @param userId ユーザー ID
