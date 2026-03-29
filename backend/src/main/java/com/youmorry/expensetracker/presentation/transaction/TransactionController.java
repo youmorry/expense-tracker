@@ -5,9 +5,8 @@ import com.youmorry.expensetracker.application.TransactionService;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.user.UserId;
-import com.youmorry.expensetracker.shared.exception.ValidationException;
-import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -66,18 +65,13 @@ public class TransactionController {
   public ResponseEntity<TransactionListResponse> list(
       @RequestParam(required = false) LocalDate from,
       @RequestParam(required = false) LocalDate to,
-      @RequestParam(name = "category_id", required = false) List<Long> categoryId,
+      @RequestParam(name = "category_id", required = false) List<@Min(1) Long> categoryId,
       @RequestParam(name = "need_want_type", required = false) NeedWantType needWantType,
       @RequestParam(required = false) String keyword,
       @AuthenticationPrincipal UserId userId) {
-    List<CategoryId> categoryIds;
-    try {
-      categoryIds =
-          categoryId != null ? categoryId.stream().map(CategoryId::new).toList() : List.of();
-    } catch (IllegalArgumentException e) {
-      throw new ValidationException(
-          e.getMessage(), List.of(new FieldError("Invalid category ID.", "category_id")));
-    }
+    List<CategoryId> categoryIds =
+        categoryId == null ? List.of() : categoryId.stream().map(v -> new CategoryId(v)).toList();
+
     var query = new TransactionSearchQuery(from, to, categoryIds, needWantType, keyword);
     var results = transactionService.search(userId, query);
     return ResponseEntity.ok(TransactionListResponse.from(results));
