@@ -102,6 +102,51 @@ public class TransactionService {
   }
 
   /**
+   * 支出を全量更新する。
+   *
+   * @param userId ユーザー ID
+   * @param transactionId 支出 ID
+   * @param command 更新コマンド
+   * @return 更新結果
+   * @throws ResourceNotFoundException 支出が存在しない、または他ユーザーの支出の場合
+   * @throws ValidationException カテゴリが存在しない場合
+   */
+  @Transactional
+  public TransactionResult update(
+      UserId userId, TransactionId transactionId, TransactionUpdateCommand command) {
+    var existing = findByIdAndVerifyOwnership(userId, transactionId);
+
+    var categoryId =
+        command.categoryId() != null ? command.categoryId() : CategoryType.UNCATEGORIZED.id();
+    var needWantType = command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
+    var amount = new Money(command.amount());
+
+    CategoryType categoryType;
+    try {
+      categoryType = CategoryType.fromId(categoryId);
+    } catch (IllegalArgumentException e) {
+      throw new ValidationException(
+          "Category not found: " + categoryId.value(),
+          List.of(new FieldError("Category does not exist.", "categoryId")));
+    }
+
+    var updated =
+        new Transaction(
+            existing.id(),
+            userId,
+            command.date(),
+            amount,
+            categoryId,
+            needWantType,
+            command.title(),
+            command.memo(),
+            existing.createdAt(),
+            null);
+    var saved = transactionRepository.save(updated);
+    return new TransactionResult(saved, categoryType.displayName());
+  }
+
+  /**
    * 支出を検索条件に基づいて取得する。
    *
    * @param userId ユーザー ID
