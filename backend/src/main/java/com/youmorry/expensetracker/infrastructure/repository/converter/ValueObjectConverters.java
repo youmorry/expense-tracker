@@ -1,8 +1,8 @@
 package com.youmorry.expensetracker.infrastructure.repository.converter;
 
 import com.youmorry.expensetracker.domain.transaction.Money;
-import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import java.math.BigDecimal;
+import java.util.Currency;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -34,22 +34,22 @@ public final class ValueObjectConverters {
   }
 
   @ReadingConverter
-  public enum StringToCurrencyCode implements Converter<String, CurrencyCode> {
+  public enum StringToCurrency implements Converter<String, Currency> {
     INSTANCE;
 
     @Override
-    public CurrencyCode convert(String source) {
-      return CurrencyCode.valueOf(source);
+    public Currency convert(String source) {
+      return Currency.getInstance(source);
     }
   }
 
   @WritingConverter
-  public enum CurrencyCodeToString implements Converter<CurrencyCode, String> {
+  public enum CurrencyToString implements Converter<Currency, String> {
     INSTANCE;
 
     @Override
-    public String convert(CurrencyCode source) {
-      return source.name();
+    public String convert(Currency source) {
+      return source.getCurrencyCode();
     }
   }
 }

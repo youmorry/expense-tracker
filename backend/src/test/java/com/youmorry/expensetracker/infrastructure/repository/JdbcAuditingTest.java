@@ -7,7 +7,6 @@ import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.Transaction;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
-import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
@@ -15,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Currency;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
@@ -32,7 +32,8 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
 
     User saved =
         userRepository.save(
-            User.createNew("google-audit-1", "audit@example.com", "Audit User", CurrencyCode.JPY));
+            User.createNew(
+                "google-audit-1", "audit@example.com", "Audit User", Currency.getInstance("JPY")));
 
     assertThat(saved.createdAt()).isNotNull();
     assertThat(saved.createdAt()).isAfterOrEqualTo(before);
@@ -44,10 +45,13 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
     User saved =
         userRepository.save(
             User.createNew(
-                "google-audit-2", "audit2@example.com", "Audit User 2", CurrencyCode.USD));
+                "google-audit-2",
+                "audit2@example.com",
+                "Audit User 2",
+                Currency.getInstance("USD")));
     Instant originalCreatedAt = saved.createdAt();
 
-    User updated = userRepository.save(saved.changeCurrencyCode(CurrencyCode.EUR));
+    User updated = userRepository.save(saved.changeCurrencyCode(Currency.getInstance("EUR")));
 
     assertThat(updated.createdAt()).isEqualTo(originalCreatedAt);
   }
@@ -92,7 +96,8 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
 
   private User saveUser(String googleId) {
     return userRepository.save(
-        User.createNew(googleId, googleId + "@example.com", "Audit User", CurrencyCode.JPY));
+        User.createNew(
+            googleId, googleId + "@example.com", "Audit User", Currency.getInstance("JPY")));
   }
 
   private Transaction newTransaction(UserId userId) {

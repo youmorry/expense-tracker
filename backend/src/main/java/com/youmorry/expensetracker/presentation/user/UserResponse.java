@@ -18,7 +18,7 @@ public record UserResponse(
         user.id().value(),
         user.email(),
         user.displayName(),
-        user.currencyCode().name(),
+        user.currencyCode().getCurrencyCode(),
         user.createdAt());
   }
 }

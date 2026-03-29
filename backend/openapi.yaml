@@ -399,8 +399,8 @@ components:
   schemas:
     CurrencyCode:
       type: string
-      description: 'ISO 4217 通貨コード'
-      enum: [JPY, USD, EUR, GBP, AUD, CAD, BRL, KRW, CNY, TWD, THB, VND, IDR, MYR, INR, RUB, TRY, PLN, SEK, DKK, NOK]
+      description: 'ISO 4217 通貨コード（例: JPY, USD, EUR）'
+      example: 'JPY'
 
     NeedWantType:
       type: string

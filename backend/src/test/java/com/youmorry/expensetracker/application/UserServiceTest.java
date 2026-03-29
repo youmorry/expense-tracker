@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            CurrencyCode.JPY,
+            Currency.getInstance("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
@@ -63,15 +63,15 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            CurrencyCode.JPY,
+            Currency.getInstance("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
-    var updatedUser = existingUser.changeCurrencyCode(CurrencyCode.USD);
+    var updatedUser = existingUser.changeCurrencyCode(Currency.getInstance("USD"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(updatedUser)).thenReturn(updatedUser);
 
-    var result = userService.updateCurrency(userId, CurrencyCode.USD);
+    var result = userService.updateCurrency(userId, Currency.getInstance("USD"));
 
-    assertEquals(CurrencyCode.USD, result.currencyCode());
+    assertEquals(Currency.getInstance("USD"), result.currencyCode());
     verify(userRepository).save(updatedUser);
   }
 
@@ -84,12 +84,12 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            CurrencyCode.JPY,
+            Currency.getInstance("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(existingUser)).thenReturn(existingUser);
 
-    var result = userService.updateCurrency(userId, CurrencyCode.JPY);
+    var result = userService.updateCurrency(userId, Currency.getInstance("JPY"));
 
     assertEquals(existingUser, result);
     verify(userRepository).save(existingUser);
@@ -102,7 +102,7 @@ class UserServiceTest {
 
     assertThrows(
         ResourceNotFoundException.class,
-        () -> userService.updateCurrency(userId, CurrencyCode.USD));
+        () -> userService.updateCurrency(userId, Currency.getInstance("USD")));
   }
 
   // --- deleteAccount ---
@@ -116,7 +116,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            CurrencyCode.JPY,
+            Currency.getInstance("JPY"),
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
