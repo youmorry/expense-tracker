@@ -43,7 +43,7 @@ class AuthServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(oauthTokenVerifier.verify("valid-token")).thenReturn(userInfo);
     when(userRepository.findByGoogleId("google-123")).thenReturn(Optional.of(existingUser));
@@ -66,7 +66,7 @@ class AuthServiceTest {
             "google-new",
             "new@gmail.com",
             "New User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(oauthTokenVerifier.verify("new-token")).thenReturn(userInfo);
     when(userRepository.findByGoogleId("google-new")).thenReturn(Optional.empty());
@@ -90,7 +90,7 @@ class AuthServiceTest {
             "google-en",
             "en@gmail.com",
             "EN User",
-            new CurrencyCode("USD"),
+            CurrencyCode.USD,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(oauthTokenVerifier.verify("en-token")).thenReturn(userInfo);
     when(userRepository.findByGoogleId("google-en")).thenReturn(Optional.empty());
@@ -100,7 +100,7 @@ class AuthServiceTest {
 
     var result = authService.authenticate("en-token", Locale.forLanguageTag("en-US"));
 
-    assertEquals(new CurrencyCode("USD"), result.user().currencyCode());
+    assertEquals(CurrencyCode.USD, result.user().currencyCode());
   }
 
   @Test
@@ -112,7 +112,7 @@ class AuthServiceTest {
             "google-lang",
             "lang@gmail.com",
             "Lang User",
-            new CurrencyCode("USD"),
+            CurrencyCode.USD,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(oauthTokenVerifier.verify("lang-token")).thenReturn(userInfo);
     when(userRepository.findByGoogleId("google-lang")).thenReturn(Optional.empty());
@@ -122,7 +122,7 @@ class AuthServiceTest {
 
     var result = authService.authenticate("lang-token", Locale.ENGLISH);
 
-    assertEquals(new CurrencyCode("USD"), result.user().currencyCode());
+    assertEquals(CurrencyCode.USD, result.user().currencyCode());
   }
 
   @Test

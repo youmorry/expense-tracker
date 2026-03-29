@@ -39,7 +39,7 @@ public final class ValueObjectConverters {
 
     @Override
     public CurrencyCode convert(String source) {
-      return new CurrencyCode(source);
+      return CurrencyCode.valueOf(source);
     }
   }
 
@@ -49,7 +49,7 @@ public final class ValueObjectConverters {
 
     @Override
     public String convert(CurrencyCode source) {
-      return source.value();
+      return source.name();
     }
   }
 }

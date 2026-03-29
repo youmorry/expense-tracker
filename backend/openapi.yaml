@@ -397,6 +397,11 @@ components:
             $ref: '#/components/schemas/ProblemDetail'
 
   schemas:
+    CurrencyCode:
+      type: string
+      description: 'ISO 4217 通貨コード'
+      enum: [JPY, USD, EUR, GBP, AUD, CAD, BRL, KRW, CNY, TWD, THB, VND, IDR, MYR, INR, RUB, TRY, PLN, SEK, DKK, NOK]
+
     NeedWantType:
       type: string
       description: '支出の NEED/WANT 分類'
@@ -420,11 +425,7 @@ components:
       required: [currency_code]
       properties:
         currency_code:
-          type: string
-          minLength: 3
-          maxLength: 3
-          description: 'ISO 4217 通貨コード'
-          example: 'JPY'
+          $ref: '#/components/schemas/CurrencyCode'
 
     TransactionRequest:
       type: object
@@ -492,11 +493,7 @@ components:
           description: '表示名'
           example: '山田太郎'
         currency_code:
-          type: string
-          minLength: 3
-          maxLength: 3
-          description: '通貨コード（ISO 4217）'
-          example: 'JPY'
+          $ref: '#/components/schemas/CurrencyCode'
         created_at:
           type: string
           format: date-time

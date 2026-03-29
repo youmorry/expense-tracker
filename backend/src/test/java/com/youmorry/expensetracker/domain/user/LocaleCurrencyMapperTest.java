@@ -39,7 +39,7 @@ class LocaleCurrencyMapperTest {
       String localeTag, String expected) {
     Locale locale = Locale.forLanguageTag(localeTag);
 
-    assertEquals(new CurrencyCode(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(CurrencyCode.valueOf(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
   }
 
   @Test
@@ -56,7 +56,7 @@ class LocaleCurrencyMapperTest {
       String languageTag, String expected) {
     Locale locale = Locale.forLanguageTag(languageTag);
 
-    assertEquals(new CurrencyCode(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
+    assertEquals(CurrencyCode.valueOf(expected), LocaleCurrencyMapper.toCurrencyCode(locale));
   }
 
   @ParameterizedTest

@@ -36,7 +36,7 @@ class AuthControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
     when(authService.authenticate(eq("valid-id-token"), eq(Locale.forLanguageTag("ja-JP"))))
@@ -65,7 +65,7 @@ class AuthControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("USD"),
+            CurrencyCode.USD,
             Instant.parse("2026-01-01T00:00:00Z"));
     var authResult = new AuthResult("jwt-token-value", user);
     when(authService.authenticate(eq("valid-id-token"), eq(Locale.ENGLISH))).thenReturn(authResult);

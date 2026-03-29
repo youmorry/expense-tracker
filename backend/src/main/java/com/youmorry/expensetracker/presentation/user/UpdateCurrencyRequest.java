@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.presentation.user;
 
-import jakarta.validation.constraints.NotBlank;
+import com.youmorry.expensetracker.domain.user.CurrencyCode;
+import jakarta.validation.constraints.NotNull;
 
 /** 通貨コード更新リクエスト。 */
-public record UpdateCurrencyRequest(@NotBlank String currencyCode) {}
+public record UpdateCurrencyRequest(@NotNull CurrencyCode currencyCode) {}
