@@ -3,6 +3,7 @@ package com.youmorry.expensetracker.application;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -358,5 +359,64 @@ class TransactionServiceTest {
     assertThrows(
         ValidationException.class,
         () -> transactionService.update(userId, transactionId, command));
+  }
+
+  @Test
+  void delete_withExistingTransaction_deletesSuccessfully() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+    doNothing().when(transactionRepository).deleteById(transactionId);
+
+    transactionService.delete(userId, transactionId);
+
+    verify(transactionRepository).deleteById(transactionId);
+  }
+
+  @Test
+  void delete_withNonExistentTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(999L);
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> transactionService.delete(userId, transactionId));
+  }
+
+  @Test
+  void delete_withOtherUsersTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var otherUserId = new UserId(2L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            otherUserId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> transactionService.delete(userId, transactionId));
   }
 }
