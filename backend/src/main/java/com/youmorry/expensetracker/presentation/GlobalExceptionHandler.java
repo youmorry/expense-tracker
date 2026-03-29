@@ -173,12 +173,4 @@ public class GlobalExceptionHandler {
   private String toSnakeCase(String camelCase) {
     return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, camelCase);
   }
-
-  private String toPointer(String path) {
-    // find.categoryId[0] → categoryId[0]
-    String field = path.contains(".") ? path.substring(path.indexOf('.') + 1) : path;
-
-    // categoryId[0] → #/category_id/0
-    return "#/" + toSnakeCase(field).replaceAll("\\[(\\d+)]", "/$1");
-  }
 }
