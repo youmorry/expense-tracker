@@ -16,6 +16,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /** アプリケーション全体の例外を捕捉し、RFC 9457 Problem Details 形式のレスポンスに変換するグローバル例外ハンドラ。 */
@@ -49,28 +50,48 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(status).contentType(PROBLEM_JSON).body(problem);
   }
 
-  /** Bean Validation（{@code @Valid}）によるバリデーションエラーを処理する。 */
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ProblemDetail> handleValidation(
-      MethodArgumentNotValidException ex, HttpServletRequest request) {
+  /** バリデーションエラーを処理する。 */
+  @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
+  public ResponseEntity<ProblemDetail> handleValidation(Exception ex, HttpServletRequest request) {
     log.warn("Validation error: method={}, URI={}", request.getMethod(), request.getRequestURI());
+
+    List<Map<String, String>> errors;
+    if (ex instanceof MethodArgumentNotValidException mex) {
+      errors =
+          mex.getBindingResult().getFieldErrors().stream()
+              .map(
+                  fe ->
+                      Map.of(
+                          "detail",
+                          fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "invalid value",
+                          "pointer",
+                          "#/" + toSnakeCase(fe.getField())))
+              .toList();
+    } else if (ex instanceof HandlerMethodValidationException hmvex) {
+      errors =
+          hmvex.getParameterValidationResults().stream()
+              .flatMap(
+                  r ->
+                      r.getResolvableErrors().stream()
+                          .map(
+                              err ->
+                                  Map.of(
+                                      "detail",
+                                      err.getDefaultMessage(),
+                                      "pointer",
+                                      "#/"
+                                          + toSnakeCase(
+                                              r.getMethodParameter().getParameterName()))))
+              .toList();
+    } else {
+      errors = List.of();
+    }
 
     ProblemDetail problem = ProblemDetail.forStatus(422);
     problem.setType(URI.create("/errors/validation-error"));
     problem.setTitle("Your request is not valid.");
     problem.setDetail("One or more fields have validation errors.");
     problem.setInstance(URI.create(request.getRequestURI()));
-
-    List<Map<String, String>> errors =
-        ex.getBindingResult().getFieldErrors().stream()
-            .map(
-                fe ->
-                    Map.of(
-                        "detail",
-                        fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "invalid value",
-                        "pointer",
-                        "#/" + toSnakeCase(fe.getField())))
-            .toList();
     problem.setProperty("errors", errors);
 
     return ResponseEntity.status(422).contentType(PROBLEM_JSON).body(problem);
@@ -151,5 +172,13 @@ public class GlobalExceptionHandler {
 
   private String toSnakeCase(String camelCase) {
     return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, camelCase);
+  }
+
+  private String toPointer(String path) {
+    // find.categoryId[0] → categoryId[0]
+    String field = path.contains(".") ? path.substring(path.indexOf('.') + 1) : path;
+
+    // categoryId[0] → #/category_id/0
+    return "#/" + toSnakeCase(field).replaceAll("\\[(\\d+)]", "/$1");
   }
 }
