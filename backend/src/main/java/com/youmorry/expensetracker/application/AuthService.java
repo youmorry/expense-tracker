@@ -3,10 +3,10 @@ package com.youmorry.expensetracker.application;
 import com.youmorry.expensetracker.application.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.port.OauthTokenVerifier;
 import com.youmorry.expensetracker.application.port.OauthUserInfo;
-import com.youmorry.expensetracker.domain.user.CurrencyCode;
 import com.youmorry.expensetracker.domain.user.LocaleCurrencyMapper;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserRepository;
+import java.util.Currency;
 import java.util.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +62,7 @@ public class AuthService {
   }
 
   private User createNewUser(OauthUserInfo userInfo, Locale locale) {
-    CurrencyCode currencyCode = LocaleCurrencyMapper.toCurrencyCode(locale);
+    Currency currencyCode = LocaleCurrencyMapper.toCurrency(locale);
     User newUser =
         User.createNew(userInfo.subject(), userInfo.email(), userInfo.name(), currencyCode);
     return userRepository.save(newUser);

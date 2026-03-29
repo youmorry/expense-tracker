@@ -30,6 +30,8 @@ public final class LocaleCurrencyMapper {
 
   private LocaleCurrencyMapper() {}
 
+  private static final Currency USD = Currency.getInstance("USD");
+
   /**
    * 指定された {@link Locale} を ISO 4217 通貨コードに変換する。
    *
@@ -39,25 +41,24 @@ public final class LocaleCurrencyMapper {
    * @param locale ロケール（例: {@code Locale.of("ja", "JP")}）。null 可
    * @return 推定された通貨コード
    */
-  public static CurrencyCode toCurrencyCode(@Nullable Locale locale) {
+  public static Currency toCurrency(@Nullable Locale locale) {
     if (locale == null) {
-      return CurrencyCode.USD;
+      return USD;
     }
 
     Locale resolved = locale;
     if (locale.getCountry().isEmpty()) {
       String country = LANGUAGE_TO_COUNTRY.get(locale.getLanguage());
       if (country == null) {
-        return CurrencyCode.USD;
+        return USD;
       }
       resolved = Locale.of(locale.getLanguage(), country);
     }
 
     try {
-      Currency currency = Currency.getInstance(resolved);
-      return CurrencyCode.valueOf(currency.getCurrencyCode());
+      return Currency.getInstance(resolved);
     } catch (IllegalArgumentException e) {
-      return CurrencyCode.USD;
+      return USD;
     }
   }
 }

@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.domain.user;
 
 import java.time.Instant;
+import java.util.Currency;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,7 +27,7 @@ public record User(
     String googleId,
     String email,
     String displayName,
-    CurrencyCode currencyCode,
+    Currency currencyCode,
     @CreatedDate @Nullable Instant createdAt) {
 
   private static final int DISPLAY_NAME_MAX_LENGTH = 100;
@@ -70,7 +71,7 @@ public record User(
    * @return 新規ユーザー
    */
   public static User createNew(
-      String googleId, String email, String displayName, CurrencyCode currencyCode) {
+      String googleId, String email, String displayName, Currency currencyCode) {
     return new User(null, googleId, email, displayName, currencyCode, null);
   }
 
@@ -81,7 +82,7 @@ public record User(
    * @return 通貨コードが更新されたユーザー
    * @throws NullPointerException newCurrencyCode が null の場合
    */
-  public User changeCurrencyCode(CurrencyCode newCurrencyCode) {
+  public User changeCurrencyCode(Currency newCurrencyCode) {
     Objects.requireNonNull(newCurrencyCode, "Currency code must not be null");
     if (currencyCode.equals(newCurrencyCode)) {
       return this;

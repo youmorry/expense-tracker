@@ -18,7 +18,8 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void save_newUser_assignsId() {
-    User newUser = User.createNew("google-123", "test@example.com", "Test User", Currency.getInstance("JPY"));
+    User newUser =
+        User.createNew("google-123", "test@example.com", "Test User", Currency.getInstance("JPY"));
 
     User saved = userRepository.save(newUser);
 
@@ -29,7 +30,8 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
   void findById_existingId_returnsUser() {
     User saved =
         userRepository.save(
-            User.createNew("google-456", "user@example.com", "Found User", Currency.getInstance("USD")));
+            User.createNew(
+                "google-456", "user@example.com", "Found User", Currency.getInstance("USD")));
 
     Optional<User> found = userRepository.findById(saved.id());
 
@@ -46,7 +48,8 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
   @Test
   void findByGoogleId_existingGoogleId_returnsUser() {
     userRepository.save(
-        User.createNew("google-789", "google@example.com", "Google User", Currency.getInstance("EUR")));
+        User.createNew(
+            "google-789", "google@example.com", "Google User", Currency.getInstance("EUR")));
 
     Optional<User> found = userRepository.findByGoogleId("google-789");
 
@@ -65,7 +68,8 @@ class JdbcUserRepositoryTest extends AbstractRepositoryTest {
   void deleteById_existingUser_removesUser() {
     User saved =
         userRepository.save(
-            User.createNew("google-delete", "delete@example.com", "Delete User", Currency.getInstance("GBP")));
+            User.createNew(
+                "google-delete", "delete@example.com", "Delete User", Currency.getInstance("GBP")));
 
     userRepository.deleteById(saved.id());
 

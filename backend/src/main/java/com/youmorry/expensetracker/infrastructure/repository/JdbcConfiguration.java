@@ -28,8 +28,8 @@ public class JdbcConfiguration extends AbstractJdbcConfiguration {
         IdConverters.TransactionIdToLong.INSTANCE,
         ValueObjectConverters.BigDecimalToMoney.INSTANCE,
         ValueObjectConverters.MoneyToBigDecimal.INSTANCE,
-        ValueObjectConverters.StringToCurrencyCode.INSTANCE,
-        ValueObjectConverters.CurrencyCodeToString.INSTANCE);
+        ValueObjectConverters.StringToCurrency.INSTANCE,
+        ValueObjectConverters.CurrencyToString.INSTANCE);
   }
 
   @Bean

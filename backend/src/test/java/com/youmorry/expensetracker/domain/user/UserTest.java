@@ -11,7 +11,8 @@ class UserTest {
 
   @Test
   void createNew_withValidCurrencyCode_createsUser() {
-    var user = User.createNew("google-123", "user@example.com", "Test User", Currency.getInstance("JPY"));
+    var user =
+        User.createNew("google-123", "user@example.com", "Test User", Currency.getInstance("JPY"));
 
     assertEquals(Currency.getInstance("JPY"), user.currencyCode());
   }
@@ -29,7 +30,12 @@ class UserTest {
         NullPointerException.class,
         () ->
             new User(
-                new UserId(1L), null, "user@example.com", "Test User", Currency.getInstance("JPY"), null));
+                new UserId(1L),
+                null,
+                "user@example.com",
+                "Test User",
+                Currency.getInstance("JPY"),
+                null));
   }
 
   @Test
@@ -38,21 +44,40 @@ class UserTest {
         IllegalArgumentException.class,
         () ->
             new User(
-                new UserId(1L), "  ", "user@example.com", "Test User", Currency.getInstance("JPY"), null));
+                new UserId(1L),
+                "  ",
+                "user@example.com",
+                "Test User",
+                Currency.getInstance("JPY"),
+                null));
   }
 
   @Test
   void constructor_withNullEmail_throwsNullPointerException() {
     assertThrows(
         NullPointerException.class,
-        () -> new User(new UserId(1L), "google-123", null, "Test User", Currency.getInstance("JPY"), null));
+        () ->
+            new User(
+                new UserId(1L),
+                "google-123",
+                null,
+                "Test User",
+                Currency.getInstance("JPY"),
+                null));
   }
 
   @Test
   void constructor_withBlankEmail_throwsIllegalArgumentException() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new User(new UserId(1L), "google-123", "  ", "Test User", Currency.getInstance("JPY"), null));
+        () ->
+            new User(
+                new UserId(1L),
+                "google-123",
+                "  ",
+                "Test User",
+                Currency.getInstance("JPY"),
+                null));
   }
 
   @Test
@@ -61,7 +86,12 @@ class UserTest {
         NullPointerException.class,
         () ->
             new User(
-                new UserId(1L), "google-123", "user@example.com", null, Currency.getInstance("JPY"), null));
+                new UserId(1L),
+                "google-123",
+                "user@example.com",
+                null,
+                Currency.getInstance("JPY"),
+                null));
   }
 
   @Test
@@ -70,7 +100,12 @@ class UserTest {
         IllegalArgumentException.class,
         () ->
             new User(
-                new UserId(1L), "google-123", "user@example.com", "  ", Currency.getInstance("JPY"), null));
+                new UserId(1L),
+                "google-123",
+                "user@example.com",
+                "  ",
+                Currency.getInstance("JPY"),
+                null));
   }
 
   @Test
@@ -94,7 +129,13 @@ class UserTest {
     var maxName = "a".repeat(100);
 
     var user =
-        new User(new UserId(1L), "google-123", "user@example.com", maxName, Currency.getInstance("JPY"), null);
+        new User(
+            new UserId(1L),
+            "google-123",
+            "user@example.com",
+            maxName,
+            Currency.getInstance("JPY"),
+            null);
 
     assertEquals(maxName, user.displayName());
   }
