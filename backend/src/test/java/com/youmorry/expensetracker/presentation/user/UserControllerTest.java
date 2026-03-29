@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.presentation.user;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,10 +19,7 @@ import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import com.youmorry.expensetracker.infrastructure.web.WebMvcConfig;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
-import com.youmorry.expensetracker.shared.exception.ValidationException;
-import com.youmorry.expensetracker.shared.exception.ValidationException.FieldError;
 import java.time.Instant;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -54,7 +51,7 @@ class UserControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userService.getMe(userId)).thenReturn(user);
 
@@ -100,9 +97,9 @@ class UserControllerTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("USD"),
+            CurrencyCode.USD,
             Instant.parse("2026-01-01T00:00:00Z"));
-    when(userService.updateCurrency(userId, "USD")).thenReturn(updatedUser);
+    when(userService.updateCurrency(userId, CurrencyCode.USD)).thenReturn(updatedUser);
 
     mockMvc
         .perform(
@@ -114,28 +111,20 @@ class UserControllerTest {
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.currency_code").value("USD"));
 
-    verify(userService).updateCurrency(userId, "USD");
+    verify(userService).updateCurrency(userId, CurrencyCode.USD);
   }
 
   @Test
-  void updateCurrency_withInvalidCurrencyCode_returns422() throws Exception {
-    when(userService.updateCurrency(new UserId(1L), "INVALID"))
-        .thenThrow(
-            new ValidationException(
-                "Invalid ISO 4217 currency code: INVALID",
-                List.of(new FieldError("Invalid ISO 4217 currency code.", "currencyCode"))));
-
+  void updateCurrency_withInvalidCurrencyCode_returns400() throws Exception {
     mockMvc
         .perform(
             patch("/api/v1/users/me/currency")
                 .with(jwt().jwt(j -> j.subject("1")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"currency_code\": \"INVALID\"}"))
-        .andExpect(status().is(422))
-        .andExpect(jsonPath("$.type").value("/errors/validation-error"))
-        .andExpect(jsonPath("$.errors[0].pointer").value("#/currency_code"));
+        .andExpect(status().isBadRequest());
 
-    verify(userService).updateCurrency(new UserId(1L), "INVALID");
+    verify(userService, never()).updateCurrency(eq(new UserId(1L)), any(CurrencyCode.class));
   }
 
   @Test
@@ -148,9 +137,9 @@ class UserControllerTest {
                 .content("{}"))
         .andExpect(status().is(422))
         .andExpect(jsonPath("$.errors[0].pointer").value("#/currency_code"))
-        .andExpect(jsonPath("$.errors[0].detail").value("must not be blank"));
+        .andExpect(jsonPath("$.errors[0].detail").value("must not be null"));
 
-    verify(userService, never()).updateCurrency(eq(new UserId(1L)), anyString());
+    verify(userService, never()).updateCurrency(eq(new UserId(1L)), any(CurrencyCode.class));
   }
 
   // --- DELETE /api/v1/users/me ---

@@ -10,7 +10,6 @@ import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
-import com.youmorry.expensetracker.shared.exception.ValidationException;
 import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
@@ -64,15 +63,15 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
-    var updatedUser = existingUser.changeCurrencyCode(new CurrencyCode("USD"));
+    var updatedUser = existingUser.changeCurrencyCode(CurrencyCode.USD);
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(updatedUser)).thenReturn(updatedUser);
 
-    var result = userService.updateCurrency(userId, "USD");
+    var result = userService.updateCurrency(userId, CurrencyCode.USD);
 
-    assertEquals(new CurrencyCode("USD"), result.currencyCode());
+    assertEquals(CurrencyCode.USD, result.currencyCode());
     verify(userRepository).save(updatedUser);
   }
 
@@ -85,31 +84,15 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(existingUser)).thenReturn(existingUser);
 
-    var result = userService.updateCurrency(userId, "JPY");
+    var result = userService.updateCurrency(userId, CurrencyCode.JPY);
 
     assertEquals(existingUser, result);
     verify(userRepository).save(existingUser);
-  }
-
-  @Test
-  void updateCurrency_withInvalidCode_throwsValidationException() {
-    var userId = new UserId(1L);
-    var existingUser =
-        new User(
-            userId,
-            "google-123",
-            "test@gmail.com",
-            "Test User",
-            new CurrencyCode("JPY"),
-            Instant.parse("2026-01-01T00:00:00Z"));
-    when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-
-    assertThrows(ValidationException.class, () -> userService.updateCurrency(userId, "INVALID"));
   }
 
   @Test
@@ -117,7 +100,9 @@ class UserServiceTest {
     var userId = new UserId(999L);
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-    assertThrows(ResourceNotFoundException.class, () -> userService.updateCurrency(userId, "USD"));
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> userService.updateCurrency(userId, CurrencyCode.USD));
   }
 
   // --- deleteAccount ---
@@ -131,7 +116,7 @@ class UserServiceTest {
             "google-123",
             "test@gmail.com",
             "Test User",
-            new CurrencyCode("JPY"),
+            CurrencyCode.JPY,
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
