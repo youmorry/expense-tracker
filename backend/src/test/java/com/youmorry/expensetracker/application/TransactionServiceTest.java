@@ -242,4 +242,121 @@ class TransactionServiceTest {
         ResourceNotFoundException.class,
         () -> transactionService.findById(userId, transactionId));
   }
+
+  @Test
+  void update_withValidCommand_returnsUpdatedTransactionResult() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var existing =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            "with friends",
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(existing));
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26),
+            new BigDecimal("1500"),
+            new CategoryId(2L),
+            NeedWantType.WANT,
+            "Dinner",
+            "at restaurant");
+    var savedTransaction =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 26),
+            new Money(new BigDecimal("1500")),
+            new CategoryId(2L),
+            NeedWantType.WANT,
+            "Dinner",
+            "at restaurant",
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-26T10:00:00Z"));
+    when(transactionRepository.save(any(Transaction.class))).thenReturn(savedTransaction);
+
+    var result = transactionService.update(userId, transactionId, command);
+
+    assertEquals(savedTransaction, result.transaction());
+    assertEquals("Transport", result.categoryName());
+  }
+
+  @Test
+  void update_withNonExistentTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(999L);
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26), new BigDecimal("1500"), null, null, null, null);
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> transactionService.update(userId, transactionId, command));
+  }
+
+  @Test
+  void update_withOtherUsersTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var otherUserId = new UserId(2L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            otherUserId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26), new BigDecimal("1500"), null, null, null, null);
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> transactionService.update(userId, transactionId, command));
+  }
+
+  @Test
+  void update_withInvalidCategoryId_throwsValidationException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var existing =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(existing));
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26),
+            new BigDecimal("1500"),
+            new CategoryId(999L),
+            NeedWantType.NEED,
+            "Test",
+            null);
+
+    assertThrows(
+        ValidationException.class,
+        () -> transactionService.update(userId, transactionId, command));
+  }
 }
