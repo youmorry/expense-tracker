@@ -240,7 +240,7 @@ POST /api/v1/transactions
 | フィールド | 型 | 必須 | デフォルト | バリデーション |
 |-----------|-----|------|-----------|--------------|
 | date | string | ○ | - | ISO 8601 日付形式 |
-| amount | string | ○ | - | 正の数値。通貨に応じた小数桁数 |
+| amount | string | ○ | - | 数値。通貨に応じた小数桁数 |
 | category_id | number | - | Uncategorized の ID | 存在するカテゴリ ID |
 | need_want_type | string | - | `"UNSET"` | `NEED` \| `WANT` \| `UNSET` |
 | title | string | - | 省略 | 最大200文字 |
@@ -565,11 +565,7 @@ Content-Type: application/problem+json
   "instance": "/api/v1/transactions",
   "errors": [
     {
-      "detail": "must be greater than 0",
-      "pointer": "#/amount"
-    },
-    {
-      "detail": "must be a valid date in ISO 8601 format",
+      "detail": "must not be null",
       "pointer": "#/date"
     }
   ]
@@ -647,7 +643,7 @@ Content-Type: application/problem+json
 | 401 Unauthorized | 認証エラー | JWT なし・期限切れ・不正 |
 | 403 Forbidden | 認可エラー | 他ユーザーのリソースへのアクセス（通常は 404 で隠す） |
 | 404 Not Found | リソース不在 | 存在しない ID、他ユーザーの ID 指定 |
-| 422 Unprocessable Content | バリデーションエラー | フィールドの値が不正（金額が負、無効な通貨コード等） |
+| 422 Unprocessable Content | バリデーションエラー | フィールドの値が不正（無効な通貨コード等） |
 | 500 Internal Server Error | サーバーエラー | 予期しないエラー |
 
 ---

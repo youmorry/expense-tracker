@@ -19,12 +19,12 @@ class MoneyTest {
   }
 
   @Test
-  void constructor_withZeroValue_throwsIllegalArgumentException() {
-    assertThrows(IllegalArgumentException.class, () -> new Money(BigDecimal.ZERO));
+  void constructor_withZeroValue_createsMoney() {
+    assertDoesNotThrow(() -> new Money(BigDecimal.ZERO));
   }
 
   @Test
-  void constructor_withNegativeValue_throwsIllegalArgumentException() {
-    assertThrows(IllegalArgumentException.class, () -> new Money(new BigDecimal("-1")));
+  void constructor_withNegativeValue_createsMoney() {
+    assertDoesNotThrow(() -> new Money(new BigDecimal("-1")));
   }
 }

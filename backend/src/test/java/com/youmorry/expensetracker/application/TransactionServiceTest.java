@@ -155,21 +155,6 @@ class TransactionServiceTest {
   }
 
   @Test
-  void create_withNegativeAmount_throwsValidationException() {
-    var userId = new UserId(1L);
-    var command =
-        new TransactionCreateCommand(
-            LocalDate.of(2026, 3, 25),
-            new BigDecimal("-100"),
-            new CategoryId(1L),
-            NeedWantType.NEED,
-            "Test",
-            null);
-
-    assertThrows(ValidationException.class, () -> transactionService.create(userId, command));
-  }
-
-  @Test
   void search_withQuery_returnsResultList() {
     var userId = new UserId(1L);
     var query = new TransactionSearchQuery(null, null, List.of(), null, null);
