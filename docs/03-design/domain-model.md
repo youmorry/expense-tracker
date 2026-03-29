@@ -19,7 +19,7 @@ classDiagram
         String googleId
         String email
         String displayName
-        CurrencyCode currencyCode
+        Currency currencyCode
         Instant createdAt
     }
 
@@ -52,31 +52,6 @@ classDiagram
         UNCATEGORIZED
     }
 
-    class CurrencyCode {
-        <<Enumeration>>
-        JPY
-        USD
-        EUR
-        GBP
-        AUD
-        CAD
-        BRL
-        KRW
-        CNY
-        TWD
-        THB
-        VND
-        IDR
-        MYR
-        INR
-        RUB
-        TRY
-        PLN
-        SEK
-        DKK
-        NOK
-    }
-
     class Money {
         <<ValueObject>>
         BigDecimal value
@@ -89,7 +64,7 @@ classDiagram
         UNSET
     }
 
-    User --> CurrencyCode : currencyCode
+    User --> "java.util.Currency" : currencyCode
     Transaction --> User : userId で参照
     Transaction --> CategoryType : categoryId で参照
     Transaction --> Money : amount
@@ -110,7 +85,7 @@ Google OAuth2 で認証されたユーザーを表す。
 | googleId | String | ○ | Google アカウントの識別子（sub クレーム） |
 | email | String | ○ | メールアドレス |
 | displayName | String | ○ | 表示名 |
-| currencyCode | CurrencyCode | ○ | 使用通貨（ISO 4217 コード。例: `JPY`, `USD`） |
+| currencyCode | java.util.Currency | ○ | 使用通貨（ISO 4217 コード。例: `JPY`, `USD`） |
 | createdAt | Instant | ○ | 登録日時 |
 
 **ルール**
@@ -213,39 +188,15 @@ MVP ではプリセットのみ提供し、ユーザーによるカスタマイ�
 
 ---
 
-### CurrencyCode（通貨コード）
+### 通貨コード（currencyCode）
 
-ユーザーが使用する通貨を表す列挙型。ISO 4217 通貨コードに準拠する。
-
-| 定数 | 通貨名 | 地域 |
-|------|--------|------|
-| JPY | 日本円 | 日本 |
-| USD | 米ドル | アメリカ |
-| EUR | ユーロ | ユーロ圏 |
-| GBP | 英ポンド | イギリス |
-| AUD | 豪ドル | オーストラリア |
-| CAD | カナダドル | カナダ |
-| BRL | ブラジルレアル | ブラジル |
-| KRW | 韓国ウォン | 韓国 |
-| CNY | 中国人民元 | 中国 |
-| TWD | 新台湾ドル | 台湾 |
-| THB | タイバーツ | タイ |
-| VND | ベトナムドン | ベトナム |
-| IDR | インドネシアルピア | インドネシア |
-| MYR | マレーシアリンギット | マレーシア |
-| INR | インドルピー | インド |
-| RUB | ロシアルーブル | ロシア |
-| TRY | トルコリラ | トルコ |
-| PLN | ポーランドズウォティ | ポーランド |
-| SEK | スウェーデンクローナ | スウェーデン |
-| DKK | デンマーククローネ | デンマーク |
-| NOK | ノルウェークローネ | ノルウェー |
+ユーザーが使用する通貨を表す。Java 標準の `java.util.Currency`（ISO 4217 準拠）を使用する。
 
 **ルール**
 - 初回ログイン時にブラウザの `Accept-Language` ヘッダーから通貨を推定して自動設定する
 - ユーザーは設定画面から変更可能
-- JSON リクエスト��は enum 名（例: `"JPY"`）で指定する
-- 新しい通貨のサポートは enum 定数の追加で対応する
+- JSON リクエストでは ISO 4217 通貨コード（例: `"JPY"`）で指定する
+- ISO 4217 に含まれるすべての通貨を受け付ける
 
 ---
 
