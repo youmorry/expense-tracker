@@ -39,7 +39,8 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
     saveTransaction(user.id(), FOOD, "500");
     saveTransaction(user.id(), TRANSPORT, "200");
 
-    List<CategoryBreakdown> result = analyticsRepository.findCategoryBreakdown(user.id(), null, null);
+    List<CategoryBreakdown> result =
+        analyticsRepository.findCategoryBreakdown(user.id(), null, null);
 
     assertThat(result).isNotEmpty();
     CategoryBreakdown food = findByCategory(result, FOOD);
@@ -69,13 +70,16 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
   void findCategoryBreakdown_withNoTransactions_returnsZeroAmountForAllCategories() {
     User user = saveUser("google-analytics-3");
 
-    List<CategoryBreakdown> result = analyticsRepository.findCategoryBreakdown(user.id(), null, null);
+    List<CategoryBreakdown> result =
+        analyticsRepository.findCategoryBreakdown(user.id(), null, null);
 
     assertThat(result).isNotEmpty();
-    assertThat(result).allSatisfy(b -> {
-      assertThat(b.amount()).isEqualByComparingTo(BigDecimal.ZERO);
-      assertThat(b.transactionCount()).isEqualTo(0);
-    });
+    assertThat(result)
+        .allSatisfy(
+            b -> {
+              assertThat(b.amount()).isEqualByComparingTo(BigDecimal.ZERO);
+              assertThat(b.transactionCount()).isEqualTo(0);
+            });
   }
 
   @Test
@@ -85,7 +89,8 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
     saveTransaction(user1.id(), FOOD, "1000");
     saveTransaction(user2.id(), FOOD, "9999");
 
-    List<CategoryBreakdown> result = analyticsRepository.findCategoryBreakdown(user1.id(), null, null);
+    List<CategoryBreakdown> result =
+        analyticsRepository.findCategoryBreakdown(user1.id(), null, null);
 
     CategoryBreakdown food = findByCategory(result, FOOD);
     assertThat(food.amount()).isEqualByComparingTo(new BigDecimal("1000"));
@@ -97,18 +102,19 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
     saveTransaction(user.id(), TRANSPORT, "300");
     saveTransaction(user.id(), FOOD, "1000");
 
-    List<CategoryBreakdown> result = analyticsRepository.findCategoryBreakdown(user.id(), null, null);
+    List<CategoryBreakdown> result =
+        analyticsRepository.findCategoryBreakdown(user.id(), null, null);
 
-    List<CategoryBreakdown> nonZero = result.stream()
-        .filter(b -> b.amount().compareTo(BigDecimal.ZERO) > 0)
-        .toList();
+    List<CategoryBreakdown> nonZero =
+        result.stream().filter(b -> b.amount().compareTo(BigDecimal.ZERO) > 0).toList();
     assertThat(nonZero.getFirst().categoryId()).isEqualTo(FOOD);
     assertThat(nonZero.get(1).categoryId()).isEqualTo(TRANSPORT);
   }
 
   private User saveUser(String googleId) {
     return userRepository.save(
-        User.createNew(googleId, googleId + "@example.com", "Test User", Currency.getInstance("JPY")));
+        User.createNew(
+            googleId, googleId + "@example.com", "Test User", Currency.getInstance("JPY")));
   }
 
   private void saveTransaction(UserId userId, CategoryId categoryId, String amount) {
@@ -131,7 +137,8 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
             null));
   }
 
-  private CategoryBreakdown findByCategory(List<CategoryBreakdown> breakdowns, CategoryId categoryId) {
+  private CategoryBreakdown findByCategory(
+      List<CategoryBreakdown> breakdowns, CategoryId categoryId) {
     return breakdowns.stream()
         .filter(b -> b.categoryId().equals(categoryId))
         .findFirst()
