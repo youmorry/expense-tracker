@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,6 +84,20 @@ public class TransactionController {
     var result =
         transactionService.update(userId, new TransactionId(id), request.toCommand());
     return ResponseEntity.ok(TransactionResponse.from(result));
+  }
+
+  /**
+   * 支出を削除する。
+   *
+   * @param id 支出 ID
+   * @param userId 認証済みユーザー ID
+   * @return 204 No Content
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(
+      @PathVariable long id, @AuthenticationPrincipal UserId userId) {
+    transactionService.delete(userId, new TransactionId(id));
+    return ResponseEntity.noContent().build();
   }
 
   /**
