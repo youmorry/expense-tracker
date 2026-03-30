@@ -3,6 +3,7 @@ package com.youmorry.expensetracker.domain.analytics;
 import com.youmorry.expensetracker.domain.user.UserId;
 import java.time.LocalDate;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /** 分析・集計クエリを担うリポジトリインターフェース。 */
 public interface AnalyticsRepository {
@@ -17,5 +18,6 @@ public interface AnalyticsRepository {
    * @param to 集計終了日（null の場合は制限なし）
    * @return カテゴリ別集計のリスト
    */
-  List<CategoryBreakdown> findCategoryBreakdown(UserId userId, LocalDate from, LocalDate to);
+  List<CategoryBreakdown> findCategoryBreakdown(
+      UserId userId, @Nullable LocalDate from, @Nullable LocalDate to);
 }

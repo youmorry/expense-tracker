@@ -6,6 +6,7 @@ import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.user.UserId;
 import java.time.LocalDate;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -32,7 +33,7 @@ public class JdbcAnalyticsRepository implements AnalyticsRepository {
    */
   @Override
   public List<CategoryBreakdown> findCategoryBreakdown(
-      UserId userId, LocalDate from, LocalDate to) {
+      UserId userId, @Nullable LocalDate from, @Nullable LocalDate to) {
     var sql =
         new StringBuilder(
             """
