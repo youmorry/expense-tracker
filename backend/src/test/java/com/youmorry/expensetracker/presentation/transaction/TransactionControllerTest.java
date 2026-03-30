@@ -335,7 +335,16 @@ class TransactionControllerTest {
             Instant.parse("2026-03-26T10:00:00Z"));
     var result = new TransactionResult(transaction, "Transport");
     when(transactionService.update(
-            eq(new UserId(1L)), eq(new TransactionId(42L)), any(TransactionUpdateCommand.class)))
+            eq(new UserId(1L)),
+            eq(new TransactionId(42L)),
+            eq(
+                new TransactionUpdateCommand(
+                    LocalDate.of(2026, 3, 26),
+                    new BigDecimal("1500"),
+                    new CategoryId(2L),
+                    NeedWantType.WANT,
+                    "Dinner",
+                    "at restaurant"))))
         .thenReturn(result);
 
     mockMvc
