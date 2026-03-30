@@ -1,6 +1,5 @@
 package com.youmorry.expensetracker.presentation.analytics;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
@@ -60,9 +59,7 @@ class AnalyticsControllerTest {
   void getCategoryBreakdown_withDateParams_returns200WithResult() throws Exception {
     var result = buildResult();
     when(analyticsService.getCategoryBreakdown(
-            eq(new UserId(1L)),
-            eq(LocalDate.of(2026, 1, 1)),
-            eq(LocalDate.of(2026, 3, 31))))
+            eq(new UserId(1L)), eq(LocalDate.of(2026, 1, 1)), eq(LocalDate.of(2026, 3, 31))))
         .thenReturn(result);
 
     mockMvc
@@ -79,11 +76,7 @@ class AnalyticsControllerTest {
   private CategoryAnalyticsResult buildResult() {
     var item =
         new CategoryAnalyticsResult.Item(
-            new CategoryId(1L),
-            "Food",
-            new BigDecimal("45000"),
-            28,
-            new BigDecimal("34.6"));
+            new CategoryId(1L), "Food", new BigDecimal("45000"), 28, new BigDecimal("34.6"));
     return new CategoryAnalyticsResult(new BigDecimal("130000"), List.of(item));
   }
 }
