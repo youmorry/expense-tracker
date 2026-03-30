@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.method.ParameterErrors;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -71,17 +72,28 @@ public class GlobalExceptionHandler {
       errors =
           hmvex.getParameterValidationResults().stream()
               .flatMap(
-                  r ->
-                      r.getResolvableErrors().stream()
+                  r -> {
+                    if (r instanceof ParameterErrors pe) {
+                      return pe.getFieldErrors().stream()
                           .map(
-                              err ->
+                              fe ->
                                   Map.of(
                                       "detail",
-                                      err.getDefaultMessage(),
+                                      fe.getDefaultMessage() != null
+                                          ? fe.getDefaultMessage()
+                                          : "invalid value",
                                       "pointer",
-                                      "#/"
-                                          + toSnakeCase(
-                                              r.getMethodParameter().getParameterName()))))
+                                      "#/" + toSnakeCase(fe.getField())));
+                    }
+                    return r.getResolvableErrors().stream()
+                        .map(
+                            err ->
+                                Map.of(
+                                    "detail",
+                                    err.getDefaultMessage(),
+                                    "pointer",
+                                    "#/" + toSnakeCase(r.getMethodParameter().getParameterName())));
+                  })
               .toList();
     } else {
       errors = List.of();

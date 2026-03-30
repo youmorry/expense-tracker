@@ -63,7 +63,7 @@ public class TransactionController {
    */
   @GetMapping("/{id}")
   public ResponseEntity<TransactionResponse> getById(
-      @PathVariable long id, @AuthenticationPrincipal UserId userId) {
+      @PathVariable @Min(1) long id, @AuthenticationPrincipal UserId userId) {
     var result = transactionService.findById(userId, new TransactionId(id));
     return ResponseEntity.ok(TransactionResponse.from(result));
   }
@@ -78,7 +78,7 @@ public class TransactionController {
    */
   @PutMapping("/{id}")
   public ResponseEntity<TransactionResponse> update(
-      @PathVariable long id,
+      @PathVariable @Min(1) long id,
       @Valid @RequestBody UpdateTransactionRequest request,
       @AuthenticationPrincipal UserId userId) {
     var result = transactionService.update(userId, new TransactionId(id), request.toCommand());
@@ -94,7 +94,7 @@ public class TransactionController {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(
-      @PathVariable long id, @AuthenticationPrincipal UserId userId) {
+      @PathVariable @Min(1) long id, @AuthenticationPrincipal UserId userId) {
     transactionService.delete(userId, new TransactionId(id));
     return ResponseEntity.noContent().build();
   }
