@@ -7,8 +7,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
-
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.category.CategoryType;
 import com.youmorry.expensetracker.domain.transaction.Money;
@@ -18,6 +16,7 @@ import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
 import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -216,8 +215,7 @@ class TransactionServiceTest {
     when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
 
     assertThrows(
-        ResourceNotFoundException.class,
-        () -> transactionService.findById(userId, transactionId));
+        ResourceNotFoundException.class, () -> transactionService.findById(userId, transactionId));
   }
 
   @Test
@@ -240,8 +238,7 @@ class TransactionServiceTest {
     when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
 
     assertThrows(
-        ResourceNotFoundException.class,
-        () -> transactionService.findById(userId, transactionId));
+        ResourceNotFoundException.class, () -> transactionService.findById(userId, transactionId));
   }
 
   @Test
@@ -357,8 +354,7 @@ class TransactionServiceTest {
             null);
 
     assertThrows(
-        ValidationException.class,
-        () -> transactionService.update(userId, transactionId, command));
+        ValidationException.class, () -> transactionService.update(userId, transactionId, command));
   }
 
   @Test
@@ -392,8 +388,7 @@ class TransactionServiceTest {
     when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
 
     assertThrows(
-        ResourceNotFoundException.class,
-        () -> transactionService.delete(userId, transactionId));
+        ResourceNotFoundException.class, () -> transactionService.delete(userId, transactionId));
   }
 
   @Test
@@ -416,7 +411,6 @@ class TransactionServiceTest {
     when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
 
     assertThrows(
-        ResourceNotFoundException.class,
-        () -> transactionService.delete(userId, transactionId));
+        ResourceNotFoundException.class, () -> transactionService.delete(userId, transactionId));
   }
 }

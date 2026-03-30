@@ -96,9 +96,7 @@ public class TransactionService {
         .findById(transactionId)
         .filter(tx -> tx.userId().equals(userId))
         .orElseThrow(
-            () ->
-                new ResourceNotFoundException(
-                    "Transaction not found: " + transactionId.value()));
+            () -> new ResourceNotFoundException("Transaction not found: " + transactionId.value()));
   }
 
   /**

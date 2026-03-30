@@ -2,23 +2,22 @@ package com.youmorry.expensetracker.presentation.transaction;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.TransactionCreateCommand;
 import com.youmorry.expensetracker.application.TransactionResult;
-import com.youmorry.expensetracker.application.TransactionUpdateCommand;
 import com.youmorry.expensetracker.application.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.TransactionService;
-import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
+import com.youmorry.expensetracker.application.TransactionUpdateCommand;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
@@ -27,6 +26,7 @@ import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import com.youmorry.expensetracker.infrastructure.web.WebMvcConfig;
+import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -290,8 +290,7 @@ class TransactionControllerTest {
     when(transactionService.findById(new UserId(1L), new TransactionId(42L))).thenReturn(result);
 
     mockMvc
-        .perform(
-            get("/api/v1/transactions/42").with(jwt().jwt(j -> j.subject("1"))))
+        .perform(get("/api/v1/transactions/42").with(jwt().jwt(j -> j.subject("1"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(42))
         .andExpect(jsonPath("$.date").value("2026-02-23"))
@@ -311,8 +310,7 @@ class TransactionControllerTest {
         .thenThrow(new ResourceNotFoundException("Transaction not found: 999"));
 
     mockMvc
-        .perform(
-            get("/api/v1/transactions/999").with(jwt().jwt(j -> j.subject("1"))))
+        .perform(get("/api/v1/transactions/999").with(jwt().jwt(j -> j.subject("1"))))
         .andExpect(status().isNotFound());
   }
 
@@ -337,9 +335,7 @@ class TransactionControllerTest {
             Instant.parse("2026-03-26T10:00:00Z"));
     var result = new TransactionResult(transaction, "Transport");
     when(transactionService.update(
-            eq(new UserId(1L)),
-            eq(new TransactionId(42L)),
-            any(TransactionUpdateCommand.class)))
+            eq(new UserId(1L)), eq(new TransactionId(42L)), any(TransactionUpdateCommand.class)))
         .thenReturn(result);
 
     mockMvc
@@ -389,9 +385,7 @@ class TransactionControllerTest {
   @Test
   void update_withNonExistentTransaction_returns404() throws Exception {
     when(transactionService.update(
-            eq(new UserId(1L)),
-            eq(new TransactionId(999L)),
-            any(TransactionUpdateCommand.class)))
+            eq(new UserId(1L)), eq(new TransactionId(999L)), any(TransactionUpdateCommand.class)))
         .thenThrow(new ResourceNotFoundException("Transaction not found: 999"));
 
     mockMvc
@@ -430,8 +424,7 @@ class TransactionControllerTest {
     doNothing().when(transactionService).delete(new UserId(1L), new TransactionId(42L));
 
     mockMvc
-        .perform(
-            delete("/api/v1/transactions/42").with(jwt().jwt(j -> j.subject("1"))))
+        .perform(delete("/api/v1/transactions/42").with(jwt().jwt(j -> j.subject("1"))))
         .andExpect(status().isNoContent());
   }
 
@@ -442,8 +435,7 @@ class TransactionControllerTest {
         .delete(new UserId(1L), new TransactionId(999L));
 
     mockMvc
-        .perform(
-            delete("/api/v1/transactions/999").with(jwt().jwt(j -> j.subject("1"))))
+        .perform(delete("/api/v1/transactions/999").with(jwt().jwt(j -> j.subject("1"))))
         .andExpect(status().isNotFound());
   }
 

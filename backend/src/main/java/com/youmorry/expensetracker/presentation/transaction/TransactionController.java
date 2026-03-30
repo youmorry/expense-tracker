@@ -81,8 +81,7 @@ public class TransactionController {
       @PathVariable long id,
       @Valid @RequestBody UpdateTransactionRequest request,
       @AuthenticationPrincipal UserId userId) {
-    var result =
-        transactionService.update(userId, new TransactionId(id), request.toCommand());
+    var result = transactionService.update(userId, new TransactionId(id), request.toCommand());
     return ResponseEntity.ok(TransactionResponse.from(result));
   }
 
