@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.infrastructure.repository;
 
 import com.youmorry.expensetracker.domain.analytics.AnalyticsRepository;
 import com.youmorry.expensetracker.domain.analytics.CategoryBreakdown;
+import com.youmorry.expensetracker.domain.analytics.NeedWantBreakdown;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.user.UserId;
 import java.time.LocalDate;
@@ -70,5 +71,11 @@ public class JdbcAnalyticsRepository implements AnalyticsRepository {
                     rs.getBigDecimal("total_amount"),
                     rs.getLong("transaction_count")))
         .list();
+  }
+
+  @Override
+  public List<NeedWantBreakdown> findNeedWantBreakdown(
+      UserId userId, @Nullable LocalDate from, @Nullable LocalDate to) {
+    throw new UnsupportedOperationException("not yet implemented");
   }
 }
