@@ -20,4 +20,17 @@ public interface AnalyticsRepository {
    */
   List<CategoryBreakdown> findCategoryBreakdown(
       UserId userId, @Nullable LocalDate from, @Nullable LocalDate to);
+
+  /**
+   * 指定されたユーザーの need/want/unset 別集計を取得する。
+   *
+   * <p>NEED / WANT / UNSET の 3 種類は該当データが 0 件でも結果に含まれる。
+   *
+   * @param userId ユーザー ID
+   * @param from 集計開始日（null の場合は制限なし）
+   * @param to 集計終了日（null の場合は制限なし）
+   * @return need/want/unset 別集計のリスト
+   */
+  List<NeedWantBreakdown> findNeedWantBreakdown(
+      UserId userId, @Nullable LocalDate from, @Nullable LocalDate to);
 }
