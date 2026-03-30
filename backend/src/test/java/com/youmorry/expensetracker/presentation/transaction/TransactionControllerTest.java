@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -421,5 +423,32 @@ class TransactionControllerTest {
                     }
                     """))
         .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void delete_withExistingTransaction_returns204() throws Exception {
+    doNothing().when(transactionService).delete(new UserId(1L), new TransactionId(42L));
+
+    mockMvc
+        .perform(
+            delete("/api/v1/transactions/42").with(jwt().jwt(j -> j.subject("1"))))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void delete_withNonExistentTransaction_returns404() throws Exception {
+    doThrow(new ResourceNotFoundException("Transaction not found: 999"))
+        .when(transactionService)
+        .delete(new UserId(1L), new TransactionId(999L));
+
+    mockMvc
+        .perform(
+            delete("/api/v1/transactions/999").with(jwt().jwt(j -> j.subject("1"))))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void delete_withoutJwt_returns401() throws Exception {
+    mockMvc.perform(delete("/api/v1/transactions/42")).andExpect(status().isUnauthorized());
   }
 }
