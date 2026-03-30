@@ -13,9 +13,13 @@ import java.util.Objects;
  */
 public record NeedWantBreakdown(NeedWantType type, BigDecimal amount, long transactionCount) {
 
-  /** 各フィールドが null でないことを検証する。 */
+  /** 不変条件を検証する。 */
   public NeedWantBreakdown {
     Objects.requireNonNull(type, "type must not be null");
     Objects.requireNonNull(amount, "amount must not be null");
+    if (transactionCount < 0) {
+      throw new IllegalArgumentException(
+          "transactionCount must be non-negative, but was: " + transactionCount);
+    }
   }
 }
