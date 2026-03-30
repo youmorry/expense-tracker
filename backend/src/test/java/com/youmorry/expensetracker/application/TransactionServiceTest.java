@@ -3,6 +3,7 @@ package com.youmorry.expensetracker.application;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,11 +16,13 @@ import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
 import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -179,5 +182,235 @@ class TransactionServiceTest {
     assertEquals(2, results.size());
     assertEquals("Food", results.get(0).categoryName());
     assertEquals("Transport", results.get(1).categoryName());
+  }
+
+  @Test
+  void findById_withExistingTransaction_returnsTransactionResult() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            "with friends",
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+
+    var result = transactionService.findById(userId, transactionId);
+
+    assertEquals(transaction, result.transaction());
+    assertEquals("Food", result.categoryName());
+  }
+
+  @Test
+  void findById_withNonExistentTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(999L);
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> transactionService.findById(userId, transactionId));
+  }
+
+  @Test
+  void findById_withOtherUsersTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var otherUserId = new UserId(2L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            otherUserId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> transactionService.findById(userId, transactionId));
+  }
+
+  @Test
+  void update_withValidCommand_returnsUpdatedTransactionResult() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var existing =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            "with friends",
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(existing));
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26),
+            new BigDecimal("1500"),
+            new CategoryId(2L),
+            NeedWantType.WANT,
+            "Dinner",
+            "at restaurant");
+    var savedTransaction =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 26),
+            new Money(new BigDecimal("1500")),
+            new CategoryId(2L),
+            NeedWantType.WANT,
+            "Dinner",
+            "at restaurant",
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-26T10:00:00Z"));
+    when(transactionRepository.save(any(Transaction.class))).thenReturn(savedTransaction);
+
+    var result = transactionService.update(userId, transactionId, command);
+
+    assertEquals(savedTransaction, result.transaction());
+    assertEquals("Transport", result.categoryName());
+  }
+
+  @Test
+  void update_withNonExistentTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(999L);
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26), new BigDecimal("1500"), null, null, null, null);
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> transactionService.update(userId, transactionId, command));
+  }
+
+  @Test
+  void update_withOtherUsersTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var otherUserId = new UserId(2L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            otherUserId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26), new BigDecimal("1500"), null, null, null, null);
+
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> transactionService.update(userId, transactionId, command));
+  }
+
+  @Test
+  void update_withInvalidCategoryId_throwsValidationException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var existing =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(existing));
+    var command =
+        new TransactionUpdateCommand(
+            LocalDate.of(2026, 3, 26),
+            new BigDecimal("1500"),
+            new CategoryId(999L),
+            NeedWantType.NEED,
+            "Test",
+            null);
+
+    assertThrows(
+        ValidationException.class, () -> transactionService.update(userId, transactionId, command));
+  }
+
+  @Test
+  void delete_withExistingTransaction_deletesSuccessfully() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            userId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+    doNothing().when(transactionRepository).deleteById(transactionId);
+
+    transactionService.delete(userId, transactionId);
+
+    verify(transactionRepository).deleteById(transactionId);
+  }
+
+  @Test
+  void delete_withNonExistentTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var transactionId = new TransactionId(999L);
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> transactionService.delete(userId, transactionId));
+  }
+
+  @Test
+  void delete_withOtherUsersTransaction_throwsResourceNotFoundException() {
+    var userId = new UserId(1L);
+    var otherUserId = new UserId(2L);
+    var transactionId = new TransactionId(42L);
+    var transaction =
+        new Transaction(
+            transactionId,
+            otherUserId,
+            LocalDate.of(2026, 3, 25),
+            new Money(new BigDecimal("1200")),
+            new CategoryId(1L),
+            NeedWantType.NEED,
+            "Lunch",
+            null,
+            Instant.parse("2026-03-25T10:00:00Z"),
+            Instant.parse("2026-03-25T10:00:00Z"));
+    when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+
+    assertThrows(
+        ResourceNotFoundException.class, () -> transactionService.delete(userId, transactionId));
   }
 }

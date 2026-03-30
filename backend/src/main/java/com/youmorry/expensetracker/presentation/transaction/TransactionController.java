@@ -4,6 +4,7 @@ import com.youmorry.expensetracker.application.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.TransactionService;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
+import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.user.UserId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -12,8 +13,11 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +52,51 @@ public class TransactionController {
       @AuthenticationPrincipal UserId userId) {
     var result = transactionService.create(userId, request.toCommand());
     return ResponseEntity.status(HttpStatus.CREATED).body(TransactionResponse.from(result));
+  }
+
+  /**
+   * 支出詳細を取得する。
+   *
+   * @param id 支出 ID
+   * @param userId 認証済みユーザー ID
+   * @return 支出詳細
+   */
+  @GetMapping("/{id}")
+  public ResponseEntity<TransactionResponse> getById(
+      @PathVariable @Min(1) long id, @AuthenticationPrincipal UserId userId) {
+    var result = transactionService.findById(userId, new TransactionId(id));
+    return ResponseEntity.ok(TransactionResponse.from(result));
+  }
+
+  /**
+   * 支出を更新する（全量更新）。
+   *
+   * @param id 支出 ID
+   * @param request 支出更新リクエスト
+   * @param userId 認証済みユーザー ID
+   * @return 更新された支出
+   */
+  @PutMapping("/{id}")
+  public ResponseEntity<TransactionResponse> update(
+      @PathVariable @Min(1) long id,
+      @Valid @RequestBody UpdateTransactionRequest request,
+      @AuthenticationPrincipal UserId userId) {
+    var result = transactionService.update(userId, new TransactionId(id), request.toCommand());
+    return ResponseEntity.ok(TransactionResponse.from(result));
+  }
+
+  /**
+   * 支出を削除する。
+   *
+   * @param id 支出 ID
+   * @param userId 認証済みユーザー ID
+   * @return 204 No Content
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(
+      @PathVariable @Min(1) long id, @AuthenticationPrincipal UserId userId) {
+    transactionService.delete(userId, new TransactionId(id));
+    return ResponseEntity.noContent().build();
   }
 
   /**
