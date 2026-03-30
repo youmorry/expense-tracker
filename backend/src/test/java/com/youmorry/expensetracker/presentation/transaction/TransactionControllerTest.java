@@ -7,11 +7,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.TransactionCreateCommand;
 import com.youmorry.expensetracker.application.TransactionResult;
+import com.youmorry.expensetracker.application.TransactionUpdateCommand;
 import com.youmorry.expensetracker.application.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.TransactionService;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
@@ -315,5 +317,109 @@ class TransactionControllerTest {
   @Test
   void getById_withoutJwt_returns401() throws Exception {
     mockMvc.perform(get("/api/v1/transactions/42")).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void update_withValidRequest_returns200WithUpdatedTransaction() throws Exception {
+    var transaction =
+        new Transaction(
+            new TransactionId(42L),
+            new UserId(1L),
+            LocalDate.of(2026, 3, 26),
+            new Money(new BigDecimal("1500")),
+            new CategoryId(2L),
+            NeedWantType.WANT,
+            "Dinner",
+            "at restaurant",
+            Instant.parse("2026-02-23T10:30:00Z"),
+            Instant.parse("2026-03-26T10:00:00Z"));
+    var result = new TransactionResult(transaction, "Transport");
+    when(transactionService.update(
+            eq(new UserId(1L)),
+            eq(new TransactionId(42L)),
+            any(TransactionUpdateCommand.class)))
+        .thenReturn(result);
+
+    mockMvc
+        .perform(
+            put("/api/v1/transactions/42")
+                .with(jwt().jwt(j -> j.subject("1")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "date": "2026-03-26",
+                      "amount": "1500",
+                      "category_id": 2,
+                      "need_want_type": "WANT",
+                      "title": "Dinner",
+                      "memo": "at restaurant"
+                    }
+                    """))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(42))
+        .andExpect(jsonPath("$.date").value("2026-03-26"))
+        .andExpect(jsonPath("$.amount").value("1500"))
+        .andExpect(jsonPath("$.category_id").value(2))
+        .andExpect(jsonPath("$.category_name").value("Transport"))
+        .andExpect(jsonPath("$.need_want_type").value("WANT"))
+        .andExpect(jsonPath("$.title").value("Dinner"))
+        .andExpect(jsonPath("$.memo").value("at restaurant"));
+  }
+
+  @Test
+  void update_withMissingDate_returns422() throws Exception {
+    mockMvc
+        .perform(
+            put("/api/v1/transactions/42")
+                .with(jwt().jwt(j -> j.subject("1")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "amount": "1500"
+                    }
+                    """))
+        .andExpect(status().is(422))
+        .andExpect(jsonPath("$.errors[?(@.pointer == '#/date')]").exists());
+  }
+
+  @Test
+  void update_withNonExistentTransaction_returns404() throws Exception {
+    when(transactionService.update(
+            eq(new UserId(1L)),
+            eq(new TransactionId(999L)),
+            any(TransactionUpdateCommand.class)))
+        .thenThrow(new ResourceNotFoundException("Transaction not found: 999"));
+
+    mockMvc
+        .perform(
+            put("/api/v1/transactions/999")
+                .with(jwt().jwt(j -> j.subject("1")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "date": "2026-03-26",
+                      "amount": "1500"
+                    }
+                    """))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void update_withoutJwt_returns401() throws Exception {
+    mockMvc
+        .perform(
+            put("/api/v1/transactions/42")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "date": "2026-03-26",
+                      "amount": "1500"
+                    }
+                    """))
+        .andExpect(status().isUnauthorized());
   }
 }
