@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +64,24 @@ public class TransactionController {
   public ResponseEntity<TransactionResponse> getById(
       @PathVariable long id, @AuthenticationPrincipal UserId userId) {
     var result = transactionService.findById(userId, new TransactionId(id));
+    return ResponseEntity.ok(TransactionResponse.from(result));
+  }
+
+  /**
+   * 支出を更新する（全量更新）。
+   *
+   * @param id 支出 ID
+   * @param request 支出更新リクエスト
+   * @param userId 認証済みユーザー ID
+   * @return 更新された支出
+   */
+  @PutMapping("/{id}")
+  public ResponseEntity<TransactionResponse> update(
+      @PathVariable long id,
+      @Valid @RequestBody UpdateTransactionRequest request,
+      @AuthenticationPrincipal UserId userId) {
+    var result =
+        transactionService.update(userId, new TransactionId(id), request.toCommand());
     return ResponseEntity.ok(TransactionResponse.from(result));
   }
 
