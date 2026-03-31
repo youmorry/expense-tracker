@@ -27,6 +27,23 @@ public class AnalyticsController {
   }
 
   /**
+   * need/want 別集計を取得する。
+   *
+   * @param from 集計開始日（省略可）
+   * @param to 集計終了日（省略可）
+   * @param userId 認証済みユーザー ID
+   * @return need/want 別集計レスポンス
+   */
+  @GetMapping("/need-want")
+  public ResponseEntity<NeedWantAnalyticsResponse> getNeedWantBreakdown(
+      @RequestParam(required = false) LocalDate from,
+      @RequestParam(required = false) LocalDate to,
+      @AuthenticationPrincipal UserId userId) {
+    var result = analyticsService.getNeedWantBreakdown(userId, from, to);
+    return ResponseEntity.ok(NeedWantAnalyticsResponse.from(result));
+  }
+
+  /**
    * カテゴリ別集計を取得する。
    *
    * @param from 集計開始日（省略可）
