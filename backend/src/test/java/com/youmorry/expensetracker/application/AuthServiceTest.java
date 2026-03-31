@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.youmorry.expensetracker.application.auth.AuthService;
 import com.youmorry.expensetracker.application.auth.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;
 import com.youmorry.expensetracker.application.auth.port.OauthUserInfo;

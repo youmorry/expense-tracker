@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.application;
+package com.youmorry.expensetracker.application.auth;
 
 import com.youmorry.expensetracker.application.auth.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;

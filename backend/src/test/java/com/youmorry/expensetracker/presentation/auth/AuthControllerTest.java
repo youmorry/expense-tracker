@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.youmorry.expensetracker.application.AuthService;
-import com.youmorry.expensetracker.application.AuthService.AuthResult;
+import com.youmorry.expensetracker.application.auth.AuthService;
+import com.youmorry.expensetracker.application.auth.AuthService.AuthResult;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;

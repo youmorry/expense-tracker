@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.presentation.auth;
 
-import com.youmorry.expensetracker.application.AuthService;
-import com.youmorry.expensetracker.application.AuthService.AuthResult;
+import com.youmorry.expensetracker.application.auth.AuthService;
+import com.youmorry.expensetracker.application.auth.AuthService.AuthResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
