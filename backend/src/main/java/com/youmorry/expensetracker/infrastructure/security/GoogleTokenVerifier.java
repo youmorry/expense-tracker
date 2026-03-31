@@ -2,8 +2,8 @@ package com.youmorry.expensetracker.infrastructure.security;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.youmorry.expensetracker.application.port.OauthTokenVerifier;
-import com.youmorry.expensetracker.application.port.OauthUserInfo;
+import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;
+import com.youmorry.expensetracker.application.auth.port.OauthUserInfo;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;

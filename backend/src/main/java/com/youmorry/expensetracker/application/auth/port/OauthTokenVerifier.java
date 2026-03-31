@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.application.port;
+package com.youmorry.expensetracker.application.auth.port;
 
 /**
  * OAuth ID トークンを検証し、ユーザー情報を取得するポート。

@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.application.port;
+package com.youmorry.expensetracker.application.auth.port;
 
 /**
  * OAuth ID トークンから取得したユーザー情報を保持する。

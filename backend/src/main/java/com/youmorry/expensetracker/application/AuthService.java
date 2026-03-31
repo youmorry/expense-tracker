@@ -1,8 +1,8 @@
 package com.youmorry.expensetracker.application;
 
-import com.youmorry.expensetracker.application.port.JwtTokenGenerator;
-import com.youmorry.expensetracker.application.port.OauthTokenVerifier;
-import com.youmorry.expensetracker.application.port.OauthUserInfo;
+import com.youmorry.expensetracker.application.auth.port.JwtTokenGenerator;
+import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;
+import com.youmorry.expensetracker.application.auth.port.OauthUserInfo;
 import com.youmorry.expensetracker.domain.user.LocaleCurrencyMapper;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserRepository;
