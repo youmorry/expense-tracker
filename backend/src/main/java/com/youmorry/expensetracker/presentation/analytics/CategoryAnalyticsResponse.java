@@ -3,7 +3,6 @@ package com.youmorry.expensetracker.presentation.analytics;
 import com.youmorry.expensetracker.application.analytics.CategoryAnalyticsResult;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * カテゴリ別集計のレスポンス DTO。
@@ -12,16 +11,6 @@ import java.util.Objects;
  * @param categories カテゴリ別内訳
  */
 public record CategoryAnalyticsResponse(String totalAmount, List<CategoryItem> categories) {
-
-  /**
-   * 不変条件を検証する。
-   *
-   * @throws NullPointerException totalAmount または categories が null の場合
-   */
-  public CategoryAnalyticsResponse {
-    Objects.requireNonNull(totalAmount, "totalAmount must not be null");
-    Objects.requireNonNull(categories, "categories must not be null");
-  }
 
   /**
    * {@link CategoryAnalyticsResult} からレスポンス DTO を生成する。
@@ -44,27 +33,11 @@ public record CategoryAnalyticsResponse(String totalAmount, List<CategoryItem> c
    * @param transactionCount 支出件数
    */
   public record CategoryItem(
-      Long categoryId,
+      long categoryId,
       String categoryName,
       String amount,
       BigDecimal percentage,
       long transactionCount) {
-
-    /**
-     * 不変条件を検証する。
-     *
-     * @throws NullPointerException categoryName、amount または percentage が null の場合
-     * @throws IllegalArgumentException transactionCount が負の場合
-     */
-    public CategoryItem {
-      Objects.requireNonNull(categoryName, "categoryName must not be null");
-      Objects.requireNonNull(amount, "amount must not be null");
-      Objects.requireNonNull(percentage, "percentage must not be null");
-      if (transactionCount < 0) {
-        throw new IllegalArgumentException(
-            "transactionCount must not be negative, but was: " + transactionCount);
-      }
-    }
 
     static CategoryItem from(CategoryAnalyticsResult.Item item) {
       return new CategoryItem(
