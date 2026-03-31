@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.presentation.transaction;
 
-import com.youmorry.expensetracker.application.TransactionCreateCommand;
+import com.youmorry.expensetracker.application.transaction.TransactionCreateCommand;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import jakarta.validation.constraints.NotNull;

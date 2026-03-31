@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.presentation.transaction;
 
-import com.youmorry.expensetracker.application.TransactionResult;
+import com.youmorry.expensetracker.application.transaction.TransactionResult;
 import java.util.List;
 
 /**

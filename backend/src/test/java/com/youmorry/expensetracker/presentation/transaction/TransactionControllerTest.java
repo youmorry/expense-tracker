@@ -13,11 +13,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.youmorry.expensetracker.application.TransactionCreateCommand;
-import com.youmorry.expensetracker.application.TransactionResult;
-import com.youmorry.expensetracker.application.TransactionSearchQuery;
-import com.youmorry.expensetracker.application.TransactionService;
-import com.youmorry.expensetracker.application.TransactionUpdateCommand;
+import com.youmorry.expensetracker.application.transaction.TransactionCreateCommand;
+import com.youmorry.expensetracker.application.transaction.TransactionResult;
+import com.youmorry.expensetracker.application.transaction.TransactionSearchQuery;
+import com.youmorry.expensetracker.application.transaction.TransactionService;
+import com.youmorry.expensetracker.application.transaction.TransactionUpdateCommand;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;

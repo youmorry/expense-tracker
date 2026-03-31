@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.application;
+package com.youmorry.expensetracker.application.transaction;
 
 import com.youmorry.expensetracker.domain.category.CategoryType;
 import com.youmorry.expensetracker.domain.transaction.Money;

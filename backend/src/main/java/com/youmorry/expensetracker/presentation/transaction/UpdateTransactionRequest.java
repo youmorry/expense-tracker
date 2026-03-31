@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.presentation.transaction;
 
-import com.youmorry.expensetracker.application.TransactionUpdateCommand;
+import com.youmorry.expensetracker.application.transaction.TransactionUpdateCommand;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import jakarta.validation.constraints.Min;

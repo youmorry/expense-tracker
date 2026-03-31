@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.application;
+package com.youmorry.expensetracker.application.transaction;
 
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
@@ -8,7 +8,7 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * 支出更新のコマンド。
+ * 支出登録のコマンド。
  *
  * @param date 支出日
  * @param amount 金額
@@ -17,7 +17,7 @@ import org.jspecify.annotations.Nullable;
  * @param title タイトル
  * @param memo メモ
  */
-public record TransactionUpdateCommand(
+public record TransactionCreateCommand(
     LocalDate date,
     BigDecimal amount,
     @Nullable CategoryId categoryId,
@@ -26,7 +26,7 @@ public record TransactionUpdateCommand(
     @Nullable String memo) {
 
   /** 必須フィールドの不変条件を検証する。 */
-  public TransactionUpdateCommand {
+  public TransactionCreateCommand {
     Objects.requireNonNull(date, "date must not be null");
     Objects.requireNonNull(amount, "amount must not be null");
   }
