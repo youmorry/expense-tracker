@@ -4,6 +4,7 @@ import com.youmorry.expensetracker.domain.analytics.AnalyticsRepository;
 import com.youmorry.expensetracker.domain.analytics.CategoryBreakdown;
 import com.youmorry.expensetracker.domain.analytics.NeedWantBreakdown;
 import com.youmorry.expensetracker.domain.category.CategoryId;
+import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.user.UserId;
 import java.time.LocalDate;
 import java.util.List;
@@ -73,9 +74,47 @@ public class JdbcAnalyticsRepository implements AnalyticsRepository {
         .list();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>VALUES 句で NEED / WANT / UNSET の 3 行を生成し LEFT JOIN することで、 該当データが 0 件の type も結果に含める。
+   */
   @Override
   public List<NeedWantBreakdown> findNeedWantBreakdown(
       UserId userId, @Nullable LocalDate from, @Nullable LocalDate to) {
-    throw new UnsupportedOperationException("not yet implemented");
+    var sql =
+        new StringBuilder(
+            """
+            SELECT v.type,
+                   COALESCE(SUM(t.amount), 0) AS total_amount,
+                   COUNT(t.id) AS transaction_count
+            FROM (VALUES ('NEED'), ('WANT'), ('UNSET')) AS v(type)
+            LEFT JOIN transactions t
+              ON t.need_want_type = v.type
+              AND t.user_id = :userId
+            """);
+    var params = new MapSqlParameterSource("userId", userId.value());
+
+    if (from != null) {
+      sql.append("  AND t.date >= :from\n");
+      params.addValue("from", from);
+    }
+    if (to != null) {
+      sql.append("  AND t.date <= :to\n");
+      params.addValue("to", to);
+    }
+
+    sql.append("GROUP BY v.type");
+
+    return jdbcClient
+        .sql(sql.toString())
+        .paramSource(params)
+        .query(
+            (rs, rowNum) ->
+                new NeedWantBreakdown(
+                    NeedWantType.valueOf(rs.getString("type")),
+                    rs.getBigDecimal("total_amount"),
+                    rs.getLong("transaction_count")))
+        .list();
   }
 }
