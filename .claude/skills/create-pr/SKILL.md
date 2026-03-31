@@ -1,6 +1,8 @@
 ---
 name: create-pr
-description: プロジェクトの規約に従って GitHub Pull Request を作成する
+description: >
+  Pull Request の作成を依頼されたときに使用する。
+  プロジェクトの規約に従って GitHub Pull Request の作成を行う。
 argument-hint: "[base-branch]"
 ---
 
