@@ -216,8 +216,16 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
       UserId userId, CategoryId categoryId, String amount, NeedWantType type, LocalDate date) {
     transactionRepository.save(
         new Transaction(
-            null, userId, date, new Money(new BigDecimal(amount)), categoryId, type, null, null,
-            null, null));
+            null,
+            userId,
+            date,
+            new Money(new BigDecimal(amount)),
+            categoryId,
+            type,
+            null,
+            null,
+            null,
+            null));
   }
 
   private CategoryBreakdown findByCategory(
