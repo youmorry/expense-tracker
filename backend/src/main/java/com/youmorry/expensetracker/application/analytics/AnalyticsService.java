@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.application.analytics;
 
 import com.youmorry.expensetracker.domain.analytics.AnalyticsRepository;
 import com.youmorry.expensetracker.domain.analytics.CategoryBreakdown;
+import com.youmorry.expensetracker.domain.analytics.NeedWantBreakdown;
 import com.youmorry.expensetracker.domain.user.UserId;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-/** カテゴリ別集計のユースケースを実装する。 */
+/** 分析集計のユースケースを実装する。 */
 @Service
 public class AnalyticsService {
 
@@ -50,6 +51,31 @@ public class AnalyticsService {
         breakdown.amount(),
         breakdown.transactionCount(),
         percentage);
+  }
+
+  /**
+   * need/want 別集計を取得する。
+   *
+   * @param userId ユーザー ID
+   * @param from 集計開始日（null の場合は制限なし）
+   * @param to 集計終了日（null の場合は制限なし）
+   * @return need/want 別集計結果
+   */
+  public NeedWantAnalyticsResult getNeedWantBreakdown(
+      UserId userId, @Nullable LocalDate from, @Nullable LocalDate to) {
+    var breakdowns = analyticsRepository.findNeedWantBreakdown(userId, from, to);
+    var totalAmount =
+        breakdowns.stream().map(NeedWantBreakdown::amount).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    var items = breakdowns.stream().map(b -> toNeedWantItem(b, totalAmount)).toList();
+    return new NeedWantAnalyticsResult(totalAmount, items);
+  }
+
+  private NeedWantAnalyticsResult.Item toNeedWantItem(
+      NeedWantBreakdown breakdown, BigDecimal totalAmount) {
+    var percentage = calculatePercentage(breakdown.amount(), totalAmount);
+    return new NeedWantAnalyticsResult.Item(
+        breakdown.type(), breakdown.amount(), breakdown.transactionCount(), percentage);
   }
 
   private BigDecimal calculatePercentage(BigDecimal amount, BigDecimal totalAmount) {
