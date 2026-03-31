@@ -1,12 +1,13 @@
 package com.youmorry.expensetracker.presentation.analytics;
 
 import com.youmorry.expensetracker.application.analytics.NeedWantAnalyticsResult;
+import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * need/want 別集計のレスポンス DTO。
+ * {@link NeedWantType}ごとの集計レスポンス。
  *
  * @param totalAmount 全区分の合計金額（文字列）
  * @param breakdown need/want 別内訳
@@ -35,7 +36,7 @@ public record NeedWantAnalyticsResponse(String totalAmount, List<BreakdownItem> 
   }
 
   /**
-   * need/want 別内訳の1項目。
+   * {@link NeedWantType}ごとの集計レスポンスの項目。
    *
    * @param type need/want 区分
    * @param amount 合計金額（文字列）

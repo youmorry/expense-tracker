@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * need/want 別集計結果を表す値オブジェクト。
+ * {@link NeedWantType}の集計結果。
  *
  * @param type need/want 区分
  * @param amount 合計金額

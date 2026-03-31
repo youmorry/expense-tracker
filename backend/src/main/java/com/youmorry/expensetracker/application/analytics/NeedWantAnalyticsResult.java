@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * need/want 別集計の結果オブジェクト。
+ * {@link NeedWantType}ごとの集計結果。
  *
  * @param totalAmount 全区分の合計金額
  * @param breakdown need/want 別の内訳（percentage を含む）
@@ -20,7 +20,7 @@ public record NeedWantAnalyticsResult(BigDecimal totalAmount, List<Item> breakdo
   }
 
   /**
-   * need/want 別内訳の1項目。
+   * {@link NeedWantType}ごとの集計結果の項目。
    *
    * @param type need/want 区分
    * @param amount 合計金額

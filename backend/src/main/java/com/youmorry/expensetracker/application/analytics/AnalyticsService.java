@@ -54,7 +54,7 @@ public class AnalyticsService {
   }
 
   /**
-   * need/want 別集計を取得する。
+   * {@link NeedWantType}ごとの集計を取得する。
    *
    * @param userId ユーザー ID
    * @param from 集計開始日（null の場合は制限なし）
