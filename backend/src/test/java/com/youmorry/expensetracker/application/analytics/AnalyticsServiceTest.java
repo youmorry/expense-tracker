@@ -68,7 +68,7 @@ class AnalyticsServiceTest {
   }
 
   @Test
-  void getNeedWantBreakdown_returnsBreakdownWithPercentage() {
+  void getNeedWantBreakdown_withBreakdowns_returnsCorrectPercentages() {
     var userId = new UserId(1L);
     var from = LocalDate.of(2026, 1, 1);
     var to = LocalDate.of(2026, 3, 31);
@@ -100,7 +100,7 @@ class AnalyticsServiceTest {
   }
 
   @Test
-  void getNeedWantBreakdown_returnsZeroPercentage_whenTotalIsZero() {
+  void getNeedWantBreakdown_withZeroTotalAmount_returnsZeroPercentage() {
     var userId = new UserId(1L);
     var breakdowns =
         List.of(
