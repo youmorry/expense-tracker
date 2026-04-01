@@ -439,7 +439,8 @@ components:
           example: '2026-02-23'
         amount:
           type: string
-          description: '金額（文字列型で精度を保持）'
+          pattern: '^\-?(0|[1-9]\d*)(\.\d+)?$'
+          description: '金額（数値を文字列型で精度を保持）'
           example: '1200'
         category_id:
           type: integer
@@ -546,7 +547,8 @@ components:
           example: '2026-02-23'
         amount:
           type: string
-          description: '金額（文字列型で精度を保持）'
+          pattern: '^\-?(0|[1-9]\d*)(\.\d+)?$'
+          description: '金額（数値を文字列型で精度を保持）'
           example: '1200'
         category_id:
           type: integer
