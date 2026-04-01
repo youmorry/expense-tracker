@@ -439,8 +439,8 @@ components:
           example: '2026-02-23'
         amount:
           type: string
-          pattern: '^(0|[1-9]\d*)(\.\d+)?$'
-          description: '金額（正の数、文字列型で精度を保持）'
+          pattern: '^\-?(0|[1-9]\d*)(\.\d+)?$'
+          description: '金額（数値を文字列型で精度を保持）'
           example: '1200'
         category_id:
           type: integer
@@ -547,7 +547,8 @@ components:
           example: '2026-02-23'
         amount:
           type: string
-          description: '金額（文字列型で精度を保持）'
+          pattern: '^\-?(0|[1-9]\d*)(\.\d+)?$'
+          description: '金額（数値を文字列型で精度を保持）'
           example: '1200'
         category_id:
           type: integer
@@ -611,7 +612,6 @@ components:
           example: '45000'
         percentage:
           type: number
-          format: double
           description: '構成比（小数第 1 位）'
           example: 34.6
         transaction_count:
@@ -648,7 +648,6 @@ components:
           example: '80000'
         percentage:
           type: number
-          format: double
           description: '構成比（小数第 1 位）'
           example: 61.5
         transaction_count:
