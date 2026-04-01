@@ -3,6 +3,7 @@ package com.youmorry.expensetracker.presentation.transaction;
 import com.youmorry.expensetracker.application.transaction.TransactionCreateCommand;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 public record CreateTransactionRequest(
     @NotNull LocalDate date,
     @NotNull BigDecimal amount,
-    @Nullable Long categoryId,
+    @Nullable @Min(1) Long categoryId,
     @Nullable NeedWantType needWantType,
     @Nullable @Size(max = 200) String title,
     @Nullable @Size(max = 2000) String memo) {
