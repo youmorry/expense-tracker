@@ -148,7 +148,8 @@ backend/src/main/resources/db/migration/
 ├── V1__create_users.sql
 ├── V2__create_categories.sql
 ├── V3__create_transactions.sql
-└── V4__insert_preset_categories.sql
+├── V4__insert_preset_categories.sql
+└── V5__drop_amount_positive_check.sql
 ```
 
 ### V1__create_users.sql

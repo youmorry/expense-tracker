@@ -482,7 +482,7 @@ GET /api/v1/analytics/category
 | categories[].transaction_count | number | 該当する支出の件数 |
 
 **ルール**
-- 金額 0 のカテゴリは含めない（screen-flow.md の仕様に準拠）
+- 金額 0 のカテゴリも含む（全カテゴリを返す）
 - categories は amount の降順でソート
 - percentage の合計は丸め誤差により 100.0 と一致しない場合がある
 
