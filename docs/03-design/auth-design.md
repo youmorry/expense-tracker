@@ -24,7 +24,7 @@ sequenceDiagram
     FE->>BE: 5. POST /api/v1/auth/google<br>{ id_token: "..." }<br>Accept-Language: ja-JP,...
     BE->>Google: 6. ID トークン検証（公開鍵で署名検証）
     Google-->>BE: 検証結果
-    Note over BE: 7. ユーザー検索/作成<br>(新規: Accept-Language→通貨推定)
+    Note over BE: 7. ユーザー検索/作成
     Note over BE: 8. JWT 生成（HS256）
     BE-->>FE: 9. { access_token, user }
     Note over FE: 10. JWT をメモリに保持
