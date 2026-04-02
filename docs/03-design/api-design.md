@@ -49,16 +49,15 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6...
 |---|---------|------|------|------|
 | 1 | POST | `/api/v1/auth/google` | 🔓不要 | Google 認証・JWT 発行 |
 | 2 | GET | `/api/v1/users/me` | 🔒必要 | 自分のユーザー情報取得 |
-| 3 | PATCH | `/api/v1/users/me/currency` | 🔒必要 | 通貨コード更新 |
-| 4 | DELETE | `/api/v1/users/me` | 🔒必要 | アカウント削除 |
-| 5 | GET | `/api/v1/categories` | 🔒必要 | カテゴリ一覧取得 |
-| 6 | POST | `/api/v1/transactions` | 🔒必要 | 支出登録 |
-| 7 | GET | `/api/v1/transactions` | 🔒必要 | 支出一覧取得 |
-| 8 | GET | `/api/v1/transactions/{id}` | 🔒必要 | 支出詳細取得 |
-| 9 | PUT | `/api/v1/transactions/{id}` | 🔒必要 | 支出更新 |
-| 10 | DELETE | `/api/v1/transactions/{id}` | 🔒必要 | 支出削除 |
-| 11 | GET | `/api/v1/analytics/category` | 🔒必要 | カテゴリ別集計 |
-| 12 | GET | `/api/v1/analytics/need-want` | 🔒必要 | need/want 比率 |
+| 3 | DELETE | `/api/v1/users/me` | 🔒必要 | アカウント削除 |
+| 4 | GET | `/api/v1/categories` | 🔒必要 | カテゴリ一覧取得 |
+| 5 | POST | `/api/v1/transactions` | 🔒必要 | 支出登録 |
+| 6 | GET | `/api/v1/transactions` | 🔒必要 | 支出一覧取得 |
+| 7 | GET | `/api/v1/transactions/{id}` | 🔒必要 | 支出詳細取得 |
+| 8 | PUT | `/api/v1/transactions/{id}` | 🔒必要 | 支出更新 |
+| 9 | DELETE | `/api/v1/transactions/{id}` | 🔒必要 | 支出削除 |
+| 10 | GET | `/api/v1/analytics/category` | 🔒必要 | カテゴリ別集計 |
+| 11 | GET | `/api/v1/analytics/need-want` | 🔒必要 | need/want 比率 |
 
 ---
 
@@ -95,7 +94,6 @@ POST /api/v1/auth/google
     "id": 1,
     "email": "user@gmail.com",
     "display_name": "Yuto",
-    "currency_code": "JPY",
     "created_at": "2026-02-23T10:30:00Z"
   }
 }
@@ -105,7 +103,6 @@ POST /api/v1/auth/google
 |-----------|-----|------|
 | access_token | string | JWT アクセストークン |
 | user | object | ユーザー情報 |
-| user.currency_code | string | 通貨コード。新規ユーザーの場合は `Accept-Language` ヘッダーから自動設定 |
 
 **レスポンス 401 Unauthorized**
 
@@ -129,53 +126,13 @@ GET /api/v1/users/me
   "id": 1,
   "email": "user@gmail.com",
   "display_name": "Yuto",
-  "currency_code": "JPY",
   "created_at": "2026-02-23T10:30:00Z"
 }
 ```
 
 ---
 
-### 3. 通貨コード更新
-
-ユーザーの使用通貨を更新する。初回設定および設定画面からの変更で使用する。
-
-```
-PATCH /api/v1/users/me/currency
-```
-🔒認証必要
-
-**リクエスト**
-
-```json
-{
-  "currency_code": "JPY"
-}
-```
-
-| フィールド | 型 | 必須 | バリデーション |
-|-----------|-----|------|--------------|
-| currency_code | string | ○ | ISO 4217 の有効な3文字コード |
-
-**レスポンス 200 OK**
-
-```json
-{
-  "id": 1,
-  "email": "user@gmail.com",
-  "display_name": "Yuto",
-  "currency_code": "JPY",
-  "created_at": "2026-02-23T10:30:00Z"
-}
-```
-
-**レスポンス 422 Unprocessable Content**
-
-無効な通貨コードの場合。
-
----
-
-### 4. アカウント削除
+### 3. アカウント削除
 
 ユーザーアカウントと関連するすべての支出記録を削除する（CASCADE）。
 
@@ -190,7 +147,7 @@ DELETE /api/v1/users/me
 
 ---
 
-### 5. カテゴリ一覧取得
+### 4. カテゴリ一覧取得
 
 プリセットカテゴリの一覧を表示順で返す。
 
@@ -216,7 +173,7 @@ GET /api/v1/categories
 
 ---
 
-### 6. 支出登録
+### 5. 支出登録
 
 新しい支出を登録する。
 
@@ -268,7 +225,7 @@ POST /api/v1/transactions
 
 ---
 
-### 7. 支出一覧取得
+### 6. 支出一覧取得
 
 ユーザーの支出を期間・フィルター条件で取得する。指定条件に合致する全件を返す。
 
@@ -336,7 +293,7 @@ GET /api/v1/transactions
 
 ---
 
-### 8. 支出詳細取得
+### 7. 支出詳細取得
 
 指定した ID の支出を取得する。
 
@@ -377,7 +334,7 @@ GET /api/v1/transactions/{id}
 
 ---
 
-### 9. 支出更新
+### 8. 支出更新
 
 指定した ID の支出を更新する。リクエストボディに含まれるフィールドですべて上書きする（全量更新）。
 
@@ -410,7 +367,7 @@ PUT /api/v1/transactions/{id}
 
 ---
 
-### 10. 支出削除
+### 9. 支出削除
 
 指定した ID の支出を物理削除する。
 
@@ -429,7 +386,7 @@ DELETE /api/v1/transactions/{id}
 
 ---
 
-### 11. カテゴリ別集計
+### 10. カテゴリ別集計
 
 指定期間のカテゴリ別支出額と割合を返す。
 
@@ -488,7 +445,7 @@ GET /api/v1/analytics/category
 
 ---
 
-### 12. need/want 比率
+### 11. need/want 比率
 
 指定期間の need/want/unset 別の支出額と割合を返す。
 
@@ -643,7 +600,7 @@ Content-Type: application/problem+json
 | 401 Unauthorized | 認証エラー | JWT なし・期限切れ・不正 |
 | 403 Forbidden | 認可エラー | 他ユーザーのリソースへのアクセス（通常は 404 で隠す） |
 | 404 Not Found | リソース不在 | 存在しない ID、他ユーザーの ID 指定 |
-| 422 Unprocessable Content | バリデーションエラー | フィールドの値が不正（無効な通貨コード等） |
+| 422 Unprocessable Content | バリデーションエラー | フィールドの値が不正 |
 | 500 Internal Server Error | サーバーエラー | 予期しないエラー |
 
 ---
@@ -657,7 +614,6 @@ interface User {
   id: number;
   email: string;
   display_name: string;
-  currency_code: string;   // 常に設定済み（新規ユーザーは Accept-Language から自動設定）
   created_at: string;      // ISO 8601
 }
 ```
@@ -754,8 +710,6 @@ Java 側では `BigDecimal`、TypeScript 側ではパース時に適切な処理
 - 登録モーダルと編集モーダルは同じフォームを使用するため、FE は常に全フィールドを送信する
 - 部分更新（PATCH）は「送信されなかったフィールドは変更しない」というロジックが必要で、実装が複雑になる
 - フィールド数が少ない（6項目）ため、全量更新のオーバーヘッドは無視できる
-
-ただし、通貨コードの更新は単一フィールドの更新のため PATCH を使用する（エンドポイント3）。
 
 ### ページネーションを採用しない理由
 

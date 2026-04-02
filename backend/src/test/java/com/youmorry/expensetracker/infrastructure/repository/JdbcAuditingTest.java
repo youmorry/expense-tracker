@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Currency;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
@@ -31,9 +30,7 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
     Instant before = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     User saved =
-        userRepository.save(
-            User.createNew(
-                "google-audit-1", "audit@example.com", "Audit User", Currency.getInstance("JPY")));
+        userRepository.save(User.createNew("google-audit-1", "audit@example.com", "Audit User"));
 
     assertThat(saved.createdAt()).isNotNull();
     assertThat(saved.createdAt()).isAfterOrEqualTo(before);
@@ -43,15 +40,17 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
   @Test
   void save_existingEntity_doesNotChangeCreatedAt() {
     User saved =
-        userRepository.save(
-            User.createNew(
-                "google-audit-2",
-                "audit2@example.com",
-                "Audit User 2",
-                Currency.getInstance("USD")));
+        userRepository.save(User.createNew("google-audit-2", "audit2@example.com", "Audit User 2"));
     Instant originalCreatedAt = saved.createdAt();
 
-    User updated = userRepository.save(saved.changeCurrencyCode(Currency.getInstance("EUR")));
+    User updated =
+        userRepository.save(
+            new User(
+                saved.id(),
+                saved.googleId(),
+                saved.email(),
+                saved.displayName(),
+                saved.createdAt()));
 
     assertThat(updated.createdAt()).isEqualTo(originalCreatedAt);
   }
@@ -95,9 +94,7 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
   }
 
   private User saveUser(String googleId) {
-    return userRepository.save(
-        User.createNew(
-            googleId, googleId + "@example.com", "Audit User", Currency.getInstance("JPY")));
+    return userRepository.save(User.createNew(googleId, googleId + "@example.com", "Audit User"));
   }
 
   private Transaction newTransaction(UserId userId) {

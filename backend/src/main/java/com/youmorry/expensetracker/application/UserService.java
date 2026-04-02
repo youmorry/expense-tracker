@@ -4,11 +4,10 @@ import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
-import java.util.Currency;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** ユーザー情報の取得・更新・削除のユースケースを実装する。 */
+/** ユーザー情報の取得・削除のユースケースを実装する。 */
 @Service
 public class UserService {
 
@@ -33,21 +32,6 @@ public class UserService {
   @Transactional(readOnly = true)
   public User getMe(UserId userId) {
     return findUserOrThrow(userId);
-  }
-
-  /**
-   * ユーザーの通貨コードを更新する。
-   *
-   * @param userId ユーザー ID
-   * @param currencyCode 通貨コード
-   * @return 更新されたユーザー
-   * @throws ResourceNotFoundException ユーザーが存在しない場合
-   */
-  @Transactional
-  public User updateCurrency(UserId userId, Currency currencyCode) {
-    var user = findUserOrThrow(userId);
-    var updated = user.changeCurrencyCode(currencyCode);
-    return userRepository.save(updated);
   }
 
   /**

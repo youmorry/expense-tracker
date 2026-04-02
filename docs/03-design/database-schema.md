@@ -19,14 +19,12 @@ Google OAuth2 で認証されたユーザーを管理する。
 | google_id | VARCHAR(255) | NO | - | UNIQUE | Google sub クレーム |
 | email | VARCHAR(255) | NO | - | - | メールアドレス |
 | display_name | VARCHAR(100) | NO | - | - | 表示名 |
-| currency_code | CHAR(3) | NO | - | - | ISO 4217 通貨コード |
 | created_at | TIMESTAMPTZ | NO | CURRENT_TIMESTAMP | - | 登録日時（UTC） |
 
 **補足**
 - google_id: Google の sub クレームは最大255文字の文字列
 - email: RFC 5321 の実用的な上限として255文字を設定
 - display_name: Google アカウントの表示名。100文字で実用上十分
-- currency_code: ISO 4217 は3文字固定のため CHAR(3)。新規ユーザー作成時に `Accept-Language` ヘッダーの locale から自動設定する
 
 ---
 
@@ -149,7 +147,8 @@ backend/src/main/resources/db/migration/
 ├── V2__create_categories.sql
 ├── V3__create_transactions.sql
 ├── V4__insert_preset_categories.sql
-└── V5__drop_amount_positive_check.sql
+├── V5__drop_amount_positive_check.sql
+└── V6__drop_currency_code_from_users.sql
 ```
 
 ### V1__create_users.sql
@@ -160,7 +159,6 @@ CREATE TABLE users (
     google_id     VARCHAR(255) NOT NULL,
     email         VARCHAR(255) NOT NULL,
     display_name  VARCHAR(100) NOT NULL,
-    currency_code CHAR(3)      NOT NULL,
     created_at    TIMESTAMPTZ  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT uk_users_google_id UNIQUE (google_id)
@@ -238,8 +236,6 @@ DECIMAL(12,4) の選定根拠:
 |------|-----|------|
 | スケール（小数桁） | 4 | ISO 4217 の最大小数桁数に対応（CLF: 4桁） |
 | 精度（全体桁数） | 12 | 整数部8桁で最大 99,999,999。個人の家計管理として十分 |
-
-通貨ごとの小数桁数バリデーションはアプリケーション層で実施する。DB 側は最大桁数で統一的に受け入れることで、スキーマの通貨依存を排除する。
 
 ### TIMESTAMPTZ の使い方
 
