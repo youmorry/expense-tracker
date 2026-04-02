@@ -19,7 +19,6 @@ classDiagram
         String googleId
         String email
         String displayName
-        Currency currencyCode
         Instant createdAt
     }
 
@@ -64,7 +63,6 @@ classDiagram
         UNSET
     }
 
-    User --> "java.util.Currency" : currencyCode
     Transaction --> User : userId で参照
     Transaction --> CategoryType : categoryId で参照
     Transaction --> Money : amount
@@ -85,14 +83,12 @@ Google OAuth2 で認証されたユーザーを表す。
 | googleId | String | ○ | Google アカウントの識別子（sub クレーム） |
 | email | String | ○ | メールアドレス |
 | displayName | String | ○ | 表示名 |
-| currencyCode | java.util.Currency | ○ | 使用通貨（ISO 4217 コード。例: `JPY`, `USD`） |
 | createdAt | Instant | ○ | 登録日時 |
 
 **ルール**
 - googleId はシステム内で一意
 - 初回ログイン時に自動作成される（明示的なユーザー登録画面は持たない）
-- currencyCode は初回ログイン時にブラウザの `Accept-Language` ヘッダーから通貨を推定して自動設定する
-- currencyCode は後から変更可能。変更は表示記号・フォーマットの切り替えのみで、既存データの換算は行わない
+- 通貨コードはフロントエンドで管理する（localStorage 等）
 
 ---
 
@@ -136,11 +132,11 @@ Google OAuth2 で認証されたユーザーを表す。
 **ルール**
 - null 不可
 - 通貨ごとの小数桁数は ISO 4217 に準拠する（例: JPY → 0桁、USD → 2桁）
-- バリデーション時はユーザーの currencyCode に基づいて許容する小数桁数を判定する
+- バリデーション時はフロントエンドのユーザー設定に基づいて許容する小数桁数を判定する
 
 **設計判断**
 - `BigDecimal` を使い浮動小数点の誤差を回避する
-- 通貨情報は User.currencyCode で管理し、Money は純粋な金額値として保つ。これにより Transaction ごとに通貨を持つ必要がなく、モデルがシンプルになる
+- 通貨情報はフロントエンドで管理し、Money は純粋な金額値として保つ。これにより Transaction ごとに通貨を持つ必要がなく、モデルがシンプルになる
 - 将来、Transaction 単位で通貨を持つ必要が生じた場合は `Money(value, currency)` へ拡張可能
 
 ---
@@ -185,18 +181,6 @@ MVP ではプリセットのみ提供し、ユーザーによるカスタマイ�
 | UNSET | 未設定（デフォルト） |
 
 > 分析画面では UNSET の件数・金額を表示し、ユーザーに分類の振り返りを促す。
-
----
-
-### 通貨コード（currencyCode）
-
-ユーザーが使用する通貨を表す。Java 標準の `java.util.Currency`（ISO 4217 準拠）を使用する。
-
-**ルール**
-- 初回ログイン時にブラウザの `Accept-Language` ヘッダーから通貨を推定して自動設定する
-- ユーザーは設定画面から変更可能
-- JSON リクエストでは ISO 4217 通貨コード（例: `"JPY"`）で指定する
-- ISO 4217 に含まれるすべての通貨を受け付ける
 
 ---
 
@@ -263,10 +247,11 @@ public record CategoryId(long value) {}
 予算管理は支出記録の習慣化が定着した後のステップと位置づけ、MVP のスコープ外とした。
 将来フェーズでの追加を想定し、Transaction に budget 関連のフィールドは含めていない。
 
-### 通貨を User に持たせる理由
+### 通貨をフロントエンドで管理する理由
 
-通貨情報を Transaction ではなく User に持たせることで、以下のメリットがある。
+通貨コードは表示用のプリファレンスであり、バックエンドでは金額の数値のみを扱う。
 
-- Transaction のモデルがシンプルに保てる（全レコードに通貨カラムが不要）
-- 「このユーザーの支出はすべて同じ通貨」という前提により、集計処理がシンプルになる
-- 通貨変更は表示フォーマットの切り替えのみという要件と整合する
+- 通貨コード一覧（ISO 4217）はフロントエンドの定数として保持する
+- ユーザーの通貨設定はフロントエンド（localStorage 等）に保存する
+- デバイス依存になるが、パーソナルアプリかつ通貨設定は頻繁に変わらないため影響は小さい
+- デバイス間同期が必要になった時点でバックエンド保存に切り替え可能

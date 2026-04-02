@@ -87,8 +87,6 @@ Bean Validation では検証できないビジネスルール違反。Service �
 | ルール | エラーメッセージ | pointer |
 |--------|---------------|---------|
 | 存在しないカテゴリ ID | `category not found` | `#/category_id` |
-| 無効な通貨コード | `invalid currency code` | `#/currency_code` |
-| 金額の小数桁数が通貨に対して不正 | `too many decimal places for {currency}` | `#/amount` |
 
 #### 認証エラー（401）
 
@@ -185,7 +183,6 @@ API クライアント（fetch ラッパー）でレスポンスステータス�
 | `#/need_want_type` | need_want_type |
 | `#/title` | title |
 | `#/memo` | memo |
-| `#/currency_code` | currency_code |
 
 ### トースト通知
 
@@ -226,7 +223,6 @@ API クライアント（fetch ラッパー）でレスポンスステータス�
 | `#/need_want_type` | Enum 値 | `must be one of: NEED, WANT, UNSET` |
 | `#/title` | 文字数上限 | `must be at most 200 characters` |
 | `#/memo` | 文字数上限 | `must be at most 2000 characters` |
-| `#/currency_code` | 形式 | `invalid currency code` |
 | `#/id_token` | 必須 | `must not be null` |
 
 ### リソース操作
@@ -276,7 +272,6 @@ FE バリデーションは UX 向上が目的であり、BE バリデーショ�
 | 文字数上限 | ○ | ○ | FE で入力制限 |
 | 通貨に応じた小数桁数 | ○ | ○ | FE はユーザーの通貨設定を参照 |
 | カテゴリ ID の存在チェック | - | ○ | FE はプリセットから選択するため不要 |
-| 通貨コードの存在チェック | - | ○ | FE は選択リストから選ぶため不要 |
 | リソースの所有者チェック | - | ○ | サーバーサイドのみで実施 |
 
 ---

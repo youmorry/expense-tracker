@@ -33,7 +33,7 @@ paths:
       tags: [Auth]
       operationId: authenticateWithGoogle
       summary: 'Google 認証・JWT 発行'
-      description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。新規ユーザーの通貨コードは Accept-Language ヘッダーから推定する。'
+      description: 'Google ID トークンを検証し、JWT アクセストークンを発行する。ユーザーが存在しない場合は自動作成する。'
       security: []
       requestBody:
         required: true
@@ -88,34 +88,6 @@ paths:
           description: '削除成功'
         "401":
           $ref: '#/components/responses/Unauthorized'
-        "500":
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/v1/users/me/currency:
-    patch:
-      tags: [Users]
-      operationId: updateCurrencyCode
-      summary: '通貨コード更新'
-      description: 'ユーザーの通貨コードを更新する。'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateCurrencyRequest'
-      responses:
-        "200":
-          description: '更新成功'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        "400":
-          $ref: '#/components/responses/BadRequest'
-        "401":
-          $ref: '#/components/responses/Unauthorized'
-        "422":
-          $ref: '#/components/responses/ValidationError'
         "500":
           $ref: '#/components/responses/InternalServerError'
 
@@ -397,11 +369,6 @@ components:
             $ref: '#/components/schemas/ProblemDetail'
 
   schemas:
-    CurrencyCode:
-      type: string
-      description: 'ISO 4217 通貨コード（例: JPY, USD, EUR）'
-      example: 'JPY'
-
     NeedWantType:
       type: string
       description: '支出の NEED/WANT 分類'
@@ -418,14 +385,6 @@ components:
           pattern: '^[^\s]+$'
           description: 'OAuth2 ID トークン'
           example: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...'
-
-    UpdateCurrencyRequest:
-      type: object
-      description: '通貨コード更新リクエスト'
-      required: [currency_code]
-      properties:
-        currency_code:
-          $ref: '#/components/schemas/CurrencyCode'
 
     TransactionRequest:
       type: object
@@ -476,7 +435,7 @@ components:
     UserResponse:
       type: object
       description: 'ユーザー情報'
-      required: [id, email, display_name, currency_code, created_at]
+      required: [id, email, display_name, created_at]
       properties:
         id:
           type: integer
@@ -492,8 +451,6 @@ components:
           type: string
           description: '表示名'
           example: '山田太郎'
-        currency_code:
-          $ref: '#/components/schemas/CurrencyCode'
         created_at:
           type: string
           format: date-time

@@ -16,7 +16,6 @@ erDiagram
         VARCHAR google_id UK "NOT NULL / Google sub クレーム"
         VARCHAR email "NOT NULL"
         VARCHAR display_name "NOT NULL"
-        CHAR(3) currency_code "NOT NULL / ISO 4217"
         TIMESTAMPTZ created_at "NOT NULL"
     }
 
@@ -70,7 +69,7 @@ erDiagram
 
 | ドメインモデル | DB カラム | 変換方針 |
 |--------------|----------|---------|
-| Money（value: BigDecimal） | transactions.amount（DECIMAL） | 値オブジェクトをカラムに展開。通貨情報は users.currency_code で管理 |
+| Money（value: BigDecimal） | transactions.amount（DECIMAL） | 値オブジェクトをカラムに展開。通貨情報はフロントエンドで管理 |
 
 ### 列挙型の格納
 
