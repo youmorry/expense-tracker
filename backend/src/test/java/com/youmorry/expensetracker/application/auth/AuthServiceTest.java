@@ -82,7 +82,6 @@ class AuthServiceTest {
     when(oauthTokenVerifier.verify(anyString()))
         .thenThrow(new UnauthorizedException("The Google ID token is invalid."));
 
-    assertThrows(
-        UnauthorizedException.class, () -> authService.authenticate("invalid-token"));
+    assertThrows(UnauthorizedException.class, () -> authService.authenticate("invalid-token"));
   }
 }

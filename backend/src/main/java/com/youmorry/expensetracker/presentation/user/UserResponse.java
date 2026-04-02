@@ -4,8 +4,7 @@ import com.youmorry.expensetracker.domain.user.User;
 import java.time.Instant;
 
 /** ユーザー情報のレスポンス DTO。 */
-public record UserResponse(
-    Long id, String email, String displayName, String currencyCode, Instant createdAt) {
+public record UserResponse(Long id, String email, String displayName, Instant createdAt) {
 
   /**
    * User エンティティからレスポンスを生成する。
@@ -14,11 +13,6 @@ public record UserResponse(
    * @return ユーザーレスポンス
    */
   public static UserResponse from(User user) {
-    return new UserResponse(
-        user.id().value(),
-        user.email(),
-        user.displayName(),
-        user.currencyCode().getCurrencyCode(),
-        user.createdAt());
+    return new UserResponse(user.id().value(), user.email(), user.displayName(), user.createdAt());
   }
 }

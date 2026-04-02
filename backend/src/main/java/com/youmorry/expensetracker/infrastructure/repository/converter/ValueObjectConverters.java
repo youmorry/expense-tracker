@@ -2,7 +2,6 @@ package com.youmorry.expensetracker.infrastructure.repository.converter;
 
 import com.youmorry.expensetracker.domain.transaction.Money;
 import java.math.BigDecimal;
-import java.util.Currency;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -30,26 +29,6 @@ public final class ValueObjectConverters {
     @Override
     public BigDecimal convert(Money source) {
       return source.value();
-    }
-  }
-
-  @ReadingConverter
-  public enum StringToCurrency implements Converter<String, Currency> {
-    INSTANCE;
-
-    @Override
-    public Currency convert(String source) {
-      return Currency.getInstance(source);
-    }
-  }
-
-  @WritingConverter
-  public enum CurrencyToString implements Converter<Currency, String> {
-    INSTANCE;
-
-    @Override
-    public String convert(Currency source) {
-      return source.getCurrencyCode();
     }
   }
 }

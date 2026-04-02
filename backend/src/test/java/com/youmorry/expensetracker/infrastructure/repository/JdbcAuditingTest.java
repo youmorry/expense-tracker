@@ -30,8 +30,7 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
     Instant before = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     User saved =
-        userRepository.save(
-            User.createNew("google-audit-1", "audit@example.com", "Audit User"));
+        userRepository.save(User.createNew("google-audit-1", "audit@example.com", "Audit User"));
 
     assertThat(saved.createdAt()).isNotNull();
     assertThat(saved.createdAt()).isAfterOrEqualTo(before);
@@ -41,8 +40,7 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
   @Test
   void save_existingEntity_doesNotChangeCreatedAt() {
     User saved =
-        userRepository.save(
-            User.createNew("google-audit-2", "audit2@example.com", "Audit User 2"));
+        userRepository.save(User.createNew("google-audit-2", "audit2@example.com", "Audit User 2"));
     Instant originalCreatedAt = saved.createdAt();
 
     User updated =
@@ -96,8 +94,7 @@ class JdbcAuditingTest extends AbstractRepositoryTest {
   }
 
   private User saveUser(String googleId) {
-    return userRepository.save(
-        User.createNew(googleId, googleId + "@example.com", "Audit User"));
+    return userRepository.save(User.createNew(googleId, googleId + "@example.com", "Audit User"));
   }
 
   private Transaction newTransaction(UserId userId) {

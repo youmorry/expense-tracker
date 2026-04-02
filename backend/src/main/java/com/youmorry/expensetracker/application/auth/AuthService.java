@@ -3,11 +3,8 @@ package com.youmorry.expensetracker.application.auth;
 import com.youmorry.expensetracker.application.auth.port.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;
 import com.youmorry.expensetracker.application.auth.port.OauthUserInfo;
-import com.youmorry.expensetracker.domain.user.LocaleCurrencyMapper;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserRepository;
-import java.util.Currency;
-import java.util.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,28 +40,23 @@ public class AuthService {
    * 極めて少ないため許容している。将来マルチユーザー化する場合は {@code TransactionTemplate} で DB 操作のみにトランザクション範囲を絞ること。
    *
    * @param idToken OAuth ID トークン文字列
-   * @param locale Accept-Language ヘッダーから解決されたロケール
    * @return 認証結果（アクセストークンとユーザー情報）
    * @throws com.youmorry.expensetracker.shared.exception.UnauthorizedException トークン検証失敗時
    * @see <a href="https://github.com/youmorry/expense-tracker/issues/34">Issue #34</a>
    */
   @Transactional
-  public AuthResult authenticate(String idToken, Locale locale) {
+  public AuthResult authenticate(String idToken) {
     OauthUserInfo userInfo = oauthTokenVerifier.verify(idToken);
 
     User user =
-        userRepository
-            .findByGoogleId(userInfo.subject())
-            .orElseGet(() -> createNewUser(userInfo, locale));
+        userRepository.findByGoogleId(userInfo.subject()).orElseGet(() -> createNewUser(userInfo));
 
     String accessToken = jwtTokenGenerator.generateToken(user.id(), user.email());
     return new AuthResult(accessToken, user);
   }
 
-  private User createNewUser(OauthUserInfo userInfo, Locale locale) {
-    Currency currencyCode = LocaleCurrencyMapper.toCurrency(locale);
-    User newUser =
-        User.createNew(userInfo.subject(), userInfo.email(), userInfo.name(), currencyCode);
+  private User createNewUser(OauthUserInfo userInfo) {
+    User newUser = User.createNew(userInfo.subject(), userInfo.email(), userInfo.name());
     return userRepository.save(newUser);
   }
 

@@ -1,7 +1,6 @@
 package com.youmorry.expensetracker.domain.user;
 
 import java.time.Instant;
-import java.util.Currency;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,7 +17,6 @@ import org.springframework.data.relational.core.mapping.Table;
  * @param googleId Google ユーザーの一意識別子
  * @param email メールアドレス
  * @param displayName 表示名
- * @param currencyCode 通貨コード
  * @param createdAt 作成日時（永続化時に設定）
  */
 @Table("users")
@@ -27,7 +25,6 @@ public record User(
     String googleId,
     String email,
     String displayName,
-    Currency currencyCode,
     @CreatedDate @Nullable Instant createdAt) {
 
   private static final int DISPLAY_NAME_MAX_LENGTH = 100;
@@ -35,7 +32,7 @@ public record User(
   /**
    * 不変条件を検証する。
    *
-   * @throws NullPointerException googleId, email, displayName, currencyCode が null の場合
+   * @throws NullPointerException googleId, email, displayName が null の場合
    * @throws IllegalArgumentException googleId, email, displayName が空白、または displayName が 100 文字超過の場合
    */
   public User {
@@ -58,7 +55,6 @@ public record User(
               + " characters, but was: "
               + displayName.length());
     }
-    Objects.requireNonNull(currencyCode, "currencyCode must not be null");
   }
 
   /**
@@ -67,26 +63,9 @@ public record User(
    * @param googleId Google ユーザーの一意識別子
    * @param email メールアドレス
    * @param displayName 表示名
-   * @param currencyCode 通貨コード
    * @return 新規ユーザー
    */
-  public static User createNew(
-      String googleId, String email, String displayName, Currency currencyCode) {
-    return new User(null, googleId, email, displayName, currencyCode, null);
-  }
-
-  /**
-   * 通貨コードを変更した新しいユーザーを返す。
-   *
-   * @param newCurrencyCode 通貨コード
-   * @return 通貨コードが更新されたユーザー
-   * @throws NullPointerException newCurrencyCode が null の場合
-   */
-  public User changeCurrencyCode(Currency newCurrencyCode) {
-    Objects.requireNonNull(newCurrencyCode, "Currency code must not be null");
-    if (currencyCode.equals(newCurrencyCode)) {
-      return this;
-    }
-    return new User(id, googleId, email, displayName, newCurrencyCode, createdAt);
+  public static User createNew(String googleId, String email, String displayName) {
+    return new User(null, googleId, email, displayName, null);
   }
 }

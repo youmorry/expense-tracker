@@ -15,7 +15,6 @@ import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.domain.user.UserRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Currency;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,9 +181,7 @@ class JdbcAnalyticsRepositoryTest extends AbstractRepositoryTest {
   }
 
   private User saveUser(String googleId) {
-    return userRepository.save(
-        User.createNew(
-            googleId, googleId + "@example.com", "Test User", Currency.getInstance("JPY")));
+    return userRepository.save(User.createNew(googleId, googleId + "@example.com", "Test User"));
   }
 
   private void saveTransaction(UserId userId, CategoryId categoryId, String amount) {
