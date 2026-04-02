@@ -1,0 +1,6 @@
+app:
+  auth:
+    local:
+      subject: dev-user-001
+      email: dev@example.com
+      name: Dev User
