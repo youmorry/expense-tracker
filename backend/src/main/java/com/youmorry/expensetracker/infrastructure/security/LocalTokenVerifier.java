@@ -23,14 +23,14 @@ public class LocalTokenVerifier implements OauthTokenVerifier {
   /**
    * コンストラクタ。起動時に WARNING ログを出力し、本番誤用を防止する。
    *
-   * @param subject OAuth subject（デフォルト: dev-user-001）
-   * @param email メールアドレス（デフォルト: dev@example.com）
-   * @param name 表示名（デフォルト: Dev User）
+   * @param subject OAuth subject
+   * @param email メールアドレス
+   * @param name 表示名
    */
   public LocalTokenVerifier(
-      @Value("${app.auth.local.subject:dev-user-001}") String subject,
-      @Value("${app.auth.local.email:dev@example.com}") String email,
-      @Value("${app.auth.local.name:Dev User}") String name) {
+      @Value("${app.auth.local.subject}") String subject,
+      @Value("${app.auth.local.email}") String email,
+      @Value("${app.auth.local.name}") String name) {
     this.fixedUserInfo = new OauthUserInfo(subject, email, name);
     log.warn(">>> LocalTokenVerifier is active. OAuth token verification is DISABLED. <<<");
   }
