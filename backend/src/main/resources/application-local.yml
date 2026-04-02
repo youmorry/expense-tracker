@@ -1,5 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/expense_tracker
+    username: postgres
+    password: postgres
+
 app:
   auth:
+    google-client-id: dummy-client-id
+    jwt-secret: ZGV2LXNlY3JldC1rZXktYXQtbGVhc3QtMzItYnl0ZXMh
+    jwt-issuer: https://expense-tracker.example.com
+    jwt-expiration-hours: 24
     local:
       subject: dev-user-001
       email: dev@example.com

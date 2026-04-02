@@ -5,9 +5,9 @@ spring:
   profiles:
     default: local
   datasource:
-    url: jdbc:postgresql://localhost:5432/expense_tracker
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
   flyway:
     enabled: true
   jackson:
@@ -16,8 +16,8 @@ spring:
 
 app:
   auth:
-    google-client-id: ${GOOGLE_CLIENT_ID:dummy-client-id}
+    google-client-id: ${GOOGLE_CLIENT_ID}
     # Base64-encoded secret key (generate with: openssl rand -base64 32)
-    jwt-secret: ${JWT_SECRET:ZGV2LXNlY3JldC1rZXktYXQtbGVhc3QtMzItYnl0ZXMh}
-    jwt-issuer: ${JWT_ISSUER:https://expense-tracker.example.com}
-    jwt-expiration-hours: ${JWT_EXPIRATION_HOURS:24}
+    jwt-secret: ${JWT_SECRET}
+    jwt-issuer: ${JWT_ISSUER}
+    jwt-expiration-hours: ${JWT_EXPIRATION_HOURS}
