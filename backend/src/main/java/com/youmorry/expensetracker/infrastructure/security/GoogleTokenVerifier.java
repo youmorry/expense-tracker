@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /** Google ID トークンを JWKS で検証し、ユーザー情報を取得する {@link OauthTokenVerifier} の実装。 */
 @Component
+@Profile("!local")
 public class GoogleTokenVerifier implements OauthTokenVerifier {
 
   private static final Logger log = LoggerFactory.getLogger(GoogleTokenVerifier.class);
