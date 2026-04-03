@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
     importOptions = ImportOption.DoNotIncludeTests.class)
 class ArchitectureTest {
 
-  // 3a. レイヤー依存ルール
+  // レイヤー依存ルール
   @ArchTest
   static final ArchRule layerDependencies =
       layeredArchitecture()
@@ -42,7 +42,7 @@ class ArchitectureTest {
           .whereLayer("Presentation")
           .mayNotBeAccessedByAnyLayer();
 
-  // 3b. shared パッケージの制約: domain は shared に依存しない
+  // shared パッケージの制約: domain は shared に依存しない
   @ArchTest
   static final ArchRule domainShouldNotDependOnShared =
       noClasses()
@@ -52,7 +52,7 @@ class ArchitectureTest {
           .dependOnClassesThat()
           .resideInAPackage("..shared..");
 
-  // 3b. shared パッケージの制約: shared は他の層に依存しない
+  // shared パッケージの制約: shared は他の層に依存しない
   @ArchTest
   static final ArchRule sharedShouldNotDependOnAnyLayer =
       noClasses()
@@ -63,7 +63,7 @@ class ArchitectureTest {
           .resideInAnyPackage(
               "..domain..", "..application..", "..infrastructure..", "..presentation..");
 
-  // 3c. ドメイン純粋性: domain は Spring Data 以外の Spring に依存しない
+  // ドメイン純粋性: domain は Spring Data 以外の Spring に依存しない
   @ArchTest
   static final ArchRule domainShouldNotDependOnSpring =
       noClasses()
@@ -74,7 +74,7 @@ class ArchitectureTest {
               resideInAPackage("org.springframework..")
                   .and(not(resideInAPackage("org.springframework.data.."))));
 
-  // 3d. コントローラーからリポジトリへの直接アクセス禁止
+  // コントローラーからリポジトリへの直接アクセス禁止
   @ArchTest
   static final ArchRule controllersShouldNotAccessRepositories =
       noClasses()
@@ -84,7 +84,7 @@ class ArchitectureTest {
           .dependOnClassesThat()
           .haveSimpleNameEndingWith("Repository");
 
-  // 3e. 例外階層: shared.exception 内の例外クラスは AppException を継承すること
+  // 例外階層: shared.exception 内の例外クラスは AppException を継承すること
   @ArchTest
   static final ArchRule exceptionsShouldExtendAppException =
       classes()
@@ -97,7 +97,7 @@ class ArchitectureTest {
           .should()
           .beAssignableTo(AppException.class);
 
-  // 3f. @RestController 付きクラスは *Controller で命名し presentation パッケージに配置
+  // @RestController 付きクラスは *Controller で命名し presentation パッケージに配置
   @ArchTest
   static final ArchRule restControllerNamingAndPlacement =
       classes()
@@ -108,7 +108,7 @@ class ArchitectureTest {
           .andShould()
           .resideInAPackage("..presentation..");
 
-  // 3f. @Service 付きクラスは *Service で命名し application パッケージに配置
+  // @Service 付きクラスは *Service で命名し application パッケージに配置
   @ArchTest
   static final ArchRule serviceNamingAndPlacement =
       classes()
@@ -119,7 +119,7 @@ class ArchitectureTest {
           .andShould()
           .resideInAPackage("..application..");
 
-  // 3g. 循環依存禁止
+  // 循環依存禁止
   @ArchTest
   static final ArchRule noCyclicDependencies =
       slices().matching("com.youmorry.expensetracker.(*)..").should().beFreeOfCycles();
