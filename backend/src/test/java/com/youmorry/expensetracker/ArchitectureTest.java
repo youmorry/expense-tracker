@@ -121,6 +121,14 @@ class ArchitectureTest {
           .andShould()
           .resideInAPackage("..application..");
 
+  // application 層に port サブパッケージを持たない（ヘキサゴナル用語を排除し、レイヤードと整合させる）
+  @ArchTest
+  static final ArchRule applicationShouldNotHavePortPackage =
+      noClasses()
+          .should()
+          .resideInAPackage("..application..port..")
+          .as("application 層に port サブパッケージを配置しない");
+
   // 循環依存禁止
   @ArchTest
   static final ArchRule noCyclicDependencies =
