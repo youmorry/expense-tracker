@@ -1,8 +1,5 @@
 package com.youmorry.expensetracker.application.auth;
 
-import com.youmorry.expensetracker.application.auth.port.JwtTokenGenerator;
-import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;
-import com.youmorry.expensetracker.application.auth.port.OauthUserInfo;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserRepository;
 import org.springframework.stereotype.Service;
