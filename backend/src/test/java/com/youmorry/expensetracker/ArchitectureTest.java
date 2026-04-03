@@ -72,7 +72,11 @@ class ArchitectureTest {
           .should()
           .dependOnClassesThat(
               resideInAPackage("org.springframework..")
-                  .and(not(resideInAPackage("org.springframework.data.."))));
+                  .and(not(resideInAPackage("org.springframework.data.annotation..")))
+                  .and(
+                      not(
+                          resideInAPackage(
+                              "org.springframework.data.relational.core.mapping.."))));
 
   // コントローラーからリポジトリへの直接アクセス禁止
   @ArchTest
