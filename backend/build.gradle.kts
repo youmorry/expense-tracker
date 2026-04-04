@@ -33,8 +33,8 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
-    implementation("com.google.guava:guava:33.4.0-jre")
-    implementation("com.google.api-client:google-api-client:2.7.2")
+    implementation("com.google.guava:guava:33.5.0-jre")
+    implementation("com.google.api-client:google-api-client:2.9.0")
     implementation("org.jspecify:jspecify:1.0.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
