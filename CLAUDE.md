@@ -69,7 +69,11 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 - `gh` する場合は `--repo` は必要ないため使わないこと
   - OK `gh issue view 1`
   - NG `gh issue view 1 --repo /path/to/repo`
-- プロジェクトルートは `$(git rev-parse --show-toplevel)` で取得できる
+
+- `git` 操作ではパスを `-C` で指定すること
+  - `git rev-parse --show-toplevel` でリポジトリルートを取得する
+  - OK `git -C /path/to/repo add add-file.java`
+  - NG `cd /path/to/work && git add add add-file.java`
 
 ### よく使うコマンド
 
