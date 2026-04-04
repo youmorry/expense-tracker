@@ -5,15 +5,25 @@ import com.youmorry.expensetracker.application.auth.OauthTokenVerifier;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.testutil.SharedPostgresContainer;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Base64;
+import javax.crypto.spec.SecretKeySpec;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +50,12 @@ abstract class AbstractIntegrationTest {
 
   @MockitoBean protected OauthTokenVerifier oauthTokenVerifier;
 
+  @Value("${app.auth.jwt-secret}")
+  private String jwtSecret;
+
+  @Value("${app.auth.jwt-issuer}")
+  private String jwtIssuer;
+
   @BeforeEach
   void cleanDatabase() {
     jdbcTemplate.execute("TRUNCATE TABLE transactions, users CASCADE");
@@ -59,6 +75,24 @@ abstract class AbstractIntegrationTest {
         jdbcTemplate.queryForObject(
             "SELECT id FROM users WHERE google_id = ?", Long.class, googleId);
     return new UserId(id);
+  }
+
+  /** 有効期限切れの JWT トークンを生成する。セキュリティテスト用。 */
+  protected String generateExpiredToken(UserId userId, String email) {
+    SecretKeySpec key =
+        new SecretKeySpec(Base64.getDecoder().decode(jwtSecret), "HmacSHA256");
+    NimbusJwtEncoder encoder = NimbusJwtEncoder.withSecretKey(key).build();
+    Instant now = Instant.now();
+    JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
+    JwtClaimsSet claims =
+        JwtClaimsSet.builder()
+            .issuer(jwtIssuer)
+            .subject(String.valueOf(userId.value()))
+            .claim("email", email)
+            .issuedAt(now.minus(2, ChronoUnit.HOURS))
+            .expiresAt(now.minus(1, ChronoUnit.HOURS))
+            .build();
+    return "Bearer " + encoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
   }
 
   /** スケール（小数桁数）を無視して金額を数値比較する Hamcrest マッチャー。 */
