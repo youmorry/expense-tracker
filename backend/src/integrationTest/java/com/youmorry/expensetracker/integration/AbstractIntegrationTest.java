@@ -4,6 +4,10 @@ import com.youmorry.expensetracker.application.auth.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.auth.OauthTokenVerifier;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.testutil.SharedPostgresContainer;
+import java.math.BigDecimal;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +36,7 @@ abstract class AbstractIntegrationTest {
 
   @Autowired protected JwtTokenGenerator jwtTokenGenerator;
 
-  @Autowired private JdbcTemplate jdbcTemplate;
+  @Autowired protected JdbcTemplate jdbcTemplate;
 
   @MockitoBean protected OauthTokenVerifier oauthTokenVerifier;
 
@@ -43,5 +47,32 @@ abstract class AbstractIntegrationTest {
 
   protected String generateToken(UserId userId, String email) {
     return "Bearer " + jwtTokenGenerator.generateToken(userId, email);
+  }
+
+  protected UserId insertUser(String googleId, String email, String displayName) {
+    jdbcTemplate.update(
+        "INSERT INTO users (google_id, email, display_name) VALUES (?, ?, ?)",
+        googleId,
+        email,
+        displayName);
+    var id =
+        jdbcTemplate.queryForObject(
+            "SELECT id FROM users WHERE google_id = ?", Long.class, googleId);
+    return new UserId(id);
+  }
+
+  /** スケール（小数桁数）を無視して金額を数値比較する Hamcrest マッチャー。 */
+  protected static Matcher<String> amountEqualTo(String expected) {
+    return new TypeSafeMatcher<>() {
+      @Override
+      protected boolean matchesSafely(String actual) {
+        return new BigDecimal(actual).compareTo(new BigDecimal(expected)) == 0;
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("amount numerically equal to ").appendValue(expected);
+      }
+    };
   }
 }
