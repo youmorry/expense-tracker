@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.application.auth.port;
+package com.youmorry.expensetracker.application.auth;
 
 import com.youmorry.expensetracker.domain.user.UserId;
 

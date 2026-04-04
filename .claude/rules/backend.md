@@ -27,6 +27,12 @@ com.youmorry.expensetracker/
 - domain 層は他の層に依存しない（依存性逆転）
 - Controller から Repository を直接呼ばない（必ず application 層を経由）
 
+### インターフェースの配置規約
+
+- **Repository インターフェース** → `domain/` に配置する（リポジトリはドメイン概念のため）
+- **それ以外のインフラ抽象**（認証ポート等） → `application/` の該当ユースケースパッケージに配置する
+- ヘキサゴナルアーキテクチャの `port` パッケージは使用しない（レイヤードアーキテクチャとの整合性を保つため）
+
 ### application 層の設計指針
 
 - CQRS（Command Query Responsibility Segregation）を採用する

@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.infrastructure.security;
 
-import com.youmorry.expensetracker.application.auth.port.OauthTokenVerifier;
-import com.youmorry.expensetracker.application.auth.port.OauthUserInfo;
+import com.youmorry.expensetracker.application.auth.OauthTokenVerifier;
+import com.youmorry.expensetracker.application.auth.OauthUserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
