@@ -28,7 +28,7 @@ jobs:
         run: ./gradlew spotlessCheck
 
       - name: Check style (Checkstyle)
-        run: ./gradlew checkstyleMain checkstyleTest
+        run: ./gradlew checkstyleMain checkstyleTest checkstyleIntegrationTest
 
       - name: Compile
         run: ./gradlew classes testClasses integrationTestClasses
