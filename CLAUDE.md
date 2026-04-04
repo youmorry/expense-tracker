@@ -90,7 +90,7 @@ docker compose up                        # ローカル DB・モックサーバ�
 ./gradlew test --tests "com.youmorry.expensetracker.SomeTest"           # クラス単位
 ./gradlew test --tests "com.youmorry.expensetracker.SomeTest.method"    # メソッド単位
 ./gradlew build                          # ビルド
-./gradlew checkstyleMain checkstyleTest  # Checkstyle
+./gradlew checkstyleMain checkstyleTest checkstyleIntegrationTest  # Checkstyle
 ./gradlew spotlessCheck                  # Spotless チェック
 ./gradlew spotlessApply                  # Spotless 自動修正
 
