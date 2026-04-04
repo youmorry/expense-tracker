@@ -52,20 +52,34 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 
 ## Conventions
 
-- 言語: コードは英語
+- 言語: コード（識別子・メソッド名等）は英語。コメント・Javadoc は日本語可
 - ブランチ戦略: GitHub Flow
   - `main` は常にデプロイ可能な状態を維持する
   - `main` から feature/hotfix ブランチを切り、PR でマージする
-  - マージ後のブランチは削除する
 - ブランチ命名:
   - 機能追加: `feature/<説明>`（例: `feature/add-expense-api`）
   - バグ修正: `hotfix/<説明>`（例: `hotfix/fix-date-validation`）
   - 英語・ケバブケースで記述する
-- git コマンド実行時は cd を利用しないこと
-  - OK: `git add backend/aaa.txt`
-  - NG: `cd backend && git add aaa.txt`
 
 ## Commands
+
+### Bash操作のルール
+
+- ファイル操作は絶対パスを優先すること
+- 可能な限り `$$, |, $()` などを避け、不要なユーザー承認を避けること
+- `gh` する場合は `--repo` は必要ないため使わないこと
+  - OK `gh issue view 1`
+  - NG `gh issue view 1 --repo /path/to/repo`
+- `git` 操作では `cd` しないこと
+  - OK `git add /path/to/repo/add-file.java`
+  - NG `cd /path/to/repo && git add add-file.java`
+- `cd` が必要な場合は事前に `cd` してから後続のコマンドを実行すること
+  - OK
+    1. `cd /path/to/work`
+    2. `./gradlew build`
+  - NG `cd /path/to/work && ./gradlew build`
+
+### よく使うコマンド
 
 ```bash
 docker compose up                        # ローカル DB・モックサーバー・Scalar 起動

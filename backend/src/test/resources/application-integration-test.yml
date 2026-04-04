@@ -1,0 +1,6 @@
+app:
+  auth:
+    google-client-id: test-google-client-id
+    jwt-secret: dGVzdC1zZWNyZXQta2V5LWF0LWxlYXN0LTMyLWJ5dGVzIQ==
+    jwt-issuer: https://expense-tracker-test.example.com
+    jwt-expiration-hours: 1
