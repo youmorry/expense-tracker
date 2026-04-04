@@ -68,4 +68,20 @@ class UserIntegrationTest extends AbstractIntegrationTest {
             "SELECT COUNT(*) FROM transactions WHERE user_id = ?", Integer.class, userId.value());
     assertThat(txCount).isZero();
   }
+
+  @Test
+  void getMe_withDeletedUser_returns404() throws Exception {
+    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    var token = generateToken(userId, "user1@example.com");
+
+    // アカウント削除
+    mockMvc
+        .perform(delete("/api/v1/users/me").header("Authorization", token))
+        .andExpect(status().isNoContent());
+
+    // 削除済みユーザーのトークンでアクセス → 404
+    mockMvc
+        .perform(get("/api/v1/users/me").header("Authorization", token))
+        .andExpect(status().isNotFound());
+  }
 }
