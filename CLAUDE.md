@@ -66,14 +66,18 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 ### Bash操作のルール
 
 - ファイル操作は絶対パスを優先すること
+- 可能な限り `$$, |, $()` などを避け、不要なユーザー承認を避けること
 - `gh` する場合は `--repo` は必要ないため使わないこと
   - OK `gh issue view 1`
   - NG `gh issue view 1 --repo /path/to/repo`
-
-- `git` 操作ではパスを `-C` で指定すること
-  - `git rev-parse --show-toplevel` でリポジトリルートを取得する
-  - OK `git -C /path/to/repo add add-file.java`
-  - NG `cd /path/to/work && git add add add-file.java`
+- `git` 操作では `cd` しないこと
+  - OK `git add /path/to/repo/add-file.java`
+  - NG `cd /path/to/repo && git add add-file.java`
+- `cd` が必要な場合は事前に `cd` してから後続のコマンドを実行すること
+  - OK
+    1. `cd /path/to/work`
+    2. `./gradlew build`
+  - NG `cd /path/to/work && ./gradlew build`
 
 ### よく使うコマンド
 
