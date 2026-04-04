@@ -30,5 +30,14 @@ jobs:
       - name: Check style (Checkstyle)
         run: ./gradlew checkstyleMain checkstyleTest
 
-      - name: Build and test
+      - name: Compile
+        run: ./gradlew classes testClasses integrationTestClasses
+
+      - name: Unit test
+        run: ./gradlew test
+
+      - name: Integration test
+        run: ./gradlew integrationTest
+
+      - name: Build
         run: ./gradlew build
