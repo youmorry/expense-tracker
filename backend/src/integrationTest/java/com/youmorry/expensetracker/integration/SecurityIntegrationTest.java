@@ -28,7 +28,7 @@ class SecurityIntegrationTest extends AbstractIntegrationTest {
   }
 
   @Test
-  void authEndpoint_withoutToken_returns200() throws Exception {
+  void googleAuth_withValidIdToken_returns200() throws Exception {
     given(oauthTokenVerifier.verify("valid-google-token"))
         .willReturn(new OauthUserInfo("google-sub-1", "user1@example.com", "User 1"));
 
