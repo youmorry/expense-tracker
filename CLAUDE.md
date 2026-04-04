@@ -56,16 +56,22 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 - ブランチ戦略: GitHub Flow
   - `main` は常にデプロイ可能な状態を維持する
   - `main` から feature/hotfix ブランチを切り、PR でマージする
-  - マージ後のブランチは削除する
 - ブランチ命名:
   - 機能追加: `feature/<説明>`（例: `feature/add-expense-api`）
   - バグ修正: `hotfix/<説明>`（例: `hotfix/fix-date-validation`）
   - 英語・ケバブケースで記述する
-- git コマンド実行時は cd を利用しないこと
-  - OK: `git add backend/aaa.txt`
-  - NG: `cd backend && git add aaa.txt`
 
 ## Commands
+
+### Bash操作のルール
+
+- `cd` する場合は必ずサブシェルで囲むこと
+  - OK `(cd src/main/java && javac Foo.java)`
+  - NG `cd src/main/java` → `javac Foo.java`（別呼び出し）
+- ファイル操作は絶対パスを優先すること
+- プロジェクトルートは `$(git rev-parse --show-toplevel)` で取得できる
+
+### よく使うコマンド
 
 ```bash
 docker compose up                        # ローカル DB・モックサーバー・Scalar 起動
