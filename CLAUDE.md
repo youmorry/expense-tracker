@@ -65,10 +65,10 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
 
 ### Bash操作のルール
 
-- `cd` する場合は必ずサブシェルで囲むこと
-  - OK `(cd src/main/java && javac Foo.java)`
-  - NG `cd src/main/java` → `javac Foo.java`（別呼び出し）
 - ファイル操作は絶対パスを優先すること
+- `gh` する場合は `--repo` は必要ないため使わないこと
+  - OK `gh issue view 1`
+  - NG `gh issue view 1 --repo /path/to/repo`
 - プロジェクトルートは `$(git rev-parse --show-toplevel)` で取得できる
 
 ### よく使うコマンド
