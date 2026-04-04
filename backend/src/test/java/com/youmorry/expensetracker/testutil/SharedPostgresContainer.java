@@ -9,7 +9,6 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
  */
 public final class SharedPostgresContainer {
 
-  @SuppressWarnings("resource")
   public static final PostgreSQLContainer INSTANCE = new PostgreSQLContainer("postgres:17");
 
   static {
