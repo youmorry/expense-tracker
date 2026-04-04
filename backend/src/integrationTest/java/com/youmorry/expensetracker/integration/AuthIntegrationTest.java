@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -53,26 +54,22 @@ class AuthIntegrationTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.user.id").isNumber());
 
     // 2回目: 同じユーザーで再認証 → 新規作成されない
-    String secondResponse =
-        mockMvc
-            .perform(
-                post("/api/v1/auth/google")
-                    .contentType(APPLICATION_JSON)
-                    .content(
-                        """
-                        {"id_token": "valid-google-token"}
-                        """))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.user.email").value("existing@example.com"))
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
+    mockMvc
+        .perform(
+            post("/api/v1/auth/google")
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {"id_token": "valid-google-token"}
+                    """))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.user.email").value("existing@example.com"));
 
     // users テーブルに同一 google_id のレコードが1件のみであることを確認
     var count =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM users WHERE google_id = ?", Integer.class, "google-sub-456");
-    assert count == 1 : "Expected 1 user but found " + count;
+    assertThat(count).isEqualTo(1);
   }
 
   @Test

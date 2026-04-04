@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -10,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
-import com.youmorry.expensetracker.domain.user.UserId;
 import org.junit.jupiter.api.Test;
 
 /** コア CRUD（Transaction）の一気通貫テスト。 */
@@ -39,7 +39,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id", notNullValue()))
         .andExpect(jsonPath("$.date").value("2026-03-15"))
-        .andExpect(jsonPath("$.amount").value("1500"))
+        .andExpect(jsonPath("$.amount", amountEqualTo("1500")))
         .andExpect(jsonPath("$.category_id").value(1))
         .andExpect(jsonPath("$.category_name").value("Food"))
         .andExpect(jsonPath("$.need_want_type").value("NEED"))
@@ -49,7 +49,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
     var count =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM transactions WHERE user_id = ?", Integer.class, userId.value());
-    assert count == 1 : "Expected 1 transaction but found " + count;
+    assertThat(count).isEqualTo(1);
   }
 
   @Test
@@ -116,7 +116,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
                     """))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.date").value("2026-03-20"))
-        .andExpect(jsonPath("$.amount").value("2000"))
+        .andExpect(jsonPath("$.amount", amountEqualTo("2000")))
         .andExpect(jsonPath("$.title").value("Updated"));
   }
 
@@ -150,7 +150,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
     var count =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM transactions WHERE id = ?", Integer.class, transactionId);
-    assert count == 0 : "Expected 0 transactions but found " + count;
+    assertThat(count).isZero();
   }
 
   @Test
@@ -187,7 +187,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
     mockMvc
         .perform(get("/api/v1/transactions/" + transactionId).header("Authorization", token))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.amount").value("3000.0000"))
+        .andExpect(jsonPath("$.amount", amountEqualTo("3000")))
         .andExpect(jsonPath("$.category_name").value("Entertainment"))
         .andExpect(jsonPath("$.need_want_type").value("WANT"))
         .andExpect(jsonPath("$.title").value("Movie ticket"))
@@ -210,7 +210,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
                     }
                     """))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.amount").value("3500"))
+        .andExpect(jsonPath("$.amount", amountEqualTo("3500")))
         .andExpect(jsonPath("$.title").value("Movie ticket + popcorn"));
 
     // Delete
@@ -222,17 +222,5 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
     mockMvc
         .perform(get("/api/v1/transactions/" + transactionId).header("Authorization", token))
         .andExpect(status().isNotFound());
-  }
-
-  private UserId insertUser(String googleId, String email, String displayName) {
-    jdbcTemplate.update(
-        "INSERT INTO users (google_id, email, display_name) VALUES (?, ?, ?)",
-        googleId,
-        email,
-        displayName);
-    var id =
-        jdbcTemplate.queryForObject(
-            "SELECT id FROM users WHERE google_id = ?", Long.class, googleId);
-    return new UserId(id);
   }
 }
