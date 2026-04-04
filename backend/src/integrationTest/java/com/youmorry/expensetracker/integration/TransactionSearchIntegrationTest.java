@@ -1,9 +1,7 @@
 package com.youmorry.expensetracker.integration;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -167,34 +165,5 @@ class TransactionSearchIntegrationTest extends AbstractIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.items", hasSize(1)))
         .andExpect(jsonPath("$.items[0].title").value("User1 tx"));
-  }
-
-  private void createTransaction(
-      String token,
-      String date,
-      String amount,
-      int categoryId,
-      String needWantType,
-      String title,
-      String memo)
-      throws Exception {
-    var memoField = memo != null ? ", \"memo\": \"" + memo + "\"" : "";
-    mockMvc
-        .perform(
-            post("/api/v1/transactions")
-                .header("Authorization", token)
-                .contentType(APPLICATION_JSON)
-                .content(
-                    """
-                    {
-                      "date": "%s",
-                      "amount": "%s",
-                      "category_id": %d,
-                      "need_want_type": "%s",
-                      "title": "%s"%s
-                    }
-                    """
-                        .formatted(date, amount, categoryId, needWantType, title, memoField)))
-        .andExpect(status().isCreated());
   }
 }

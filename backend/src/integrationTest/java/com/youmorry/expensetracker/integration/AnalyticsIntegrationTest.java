@@ -2,9 +2,7 @@ package com.youmorry.expensetracker.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,6 +10,7 @@ import com.jayway.jsonpath.JsonPath;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 /** 分析エンドポイント（カテゴリ別集計・need/want 比率）の一気通貫テスト。 */
@@ -141,34 +140,11 @@ class AnalyticsIntegrationTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.total_amount", amountEqualTo("1000")));
   }
 
-  private void createTransaction(
-      String token, String date, String amount, int categoryId, String needWantType, String title)
-      throws Exception {
-    mockMvc
-        .perform(
-            post("/api/v1/transactions")
-                .header("Authorization", token)
-                .contentType(APPLICATION_JSON)
-                .content(
-                    """
-                    {
-                      "date": "%s",
-                      "amount": "%s",
-                      "category_id": %d,
-                      "need_want_type": "%s",
-                      "title": "%s"
-                    }
-                    """
-                        .formatted(date, amount, categoryId, needWantType, title)))
-        .andExpect(status().isCreated());
-  }
-
   /** Breakdown 配列を type をキーとする Map に変換する。 */
   private Map<String, Map<String, Object>> parseBreakdown(String json) {
     List<Map<String, Object>> items = JsonPath.read(json, "$.breakdown");
     return items.stream()
-        .collect(
-            java.util.stream.Collectors.toMap(item -> (String) item.get("type"), item -> item));
+        .collect(Collectors.toMap(item -> (String) item.get("type"), item -> item));
   }
 
   private void assertNeedWantItem(

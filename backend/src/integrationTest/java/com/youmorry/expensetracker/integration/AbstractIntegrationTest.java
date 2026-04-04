@@ -1,5 +1,9 @@
 package com.youmorry.expensetracker.integration;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.youmorry.expensetracker.application.auth.JwtTokenGenerator;
 import com.youmorry.expensetracker.application.auth.OauthTokenVerifier;
 import com.youmorry.expensetracker.domain.user.UserId;
@@ -92,6 +96,43 @@ abstract class AbstractIntegrationTest {
             .expiresAt(now.minus(1, ChronoUnit.HOURS))
             .build();
     return "Bearer " + encoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
+  }
+
+  /** テスト用の取引を作成するヘルパー。 */
+  protected void createTransaction(
+      String token,
+      String date,
+      String amount,
+      int categoryId,
+      String needWantType,
+      String title,
+      String memo)
+      throws Exception {
+    var memoField = memo != null ? ", \"memo\": \"" + memo + "\"" : "";
+    mockMvc
+        .perform(
+            post("/api/v1/transactions")
+                .header("Authorization", token)
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "date": "%s",
+                      "amount": "%s",
+                      "category_id": %d,
+                      "need_want_type": "%s",
+                      "title": "%s"%s
+                    }
+                    """
+                        .formatted(date, amount, categoryId, needWantType, title, memoField)))
+        .andExpect(status().isCreated());
+  }
+
+  /** memo なしの取引作成ヘルパー。 */
+  protected void createTransaction(
+      String token, String date, String amount, int categoryId, String needWantType, String title)
+      throws Exception {
+    createTransaction(token, date, amount, categoryId, needWantType, title, null);
   }
 
   /** スケール（小数桁数）を無視して金額を数値比較する Hamcrest マッチャー。 */
