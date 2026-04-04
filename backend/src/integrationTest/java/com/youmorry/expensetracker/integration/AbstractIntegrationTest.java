@@ -32,7 +32,7 @@ abstract class AbstractIntegrationTest {
 
   @Autowired protected JwtTokenGenerator jwtTokenGenerator;
 
-  @Autowired private JdbcTemplate jdbcTemplate;
+  @Autowired protected JdbcTemplate jdbcTemplate;
 
   @MockitoBean protected OauthTokenVerifier oauthTokenVerifier;
 
