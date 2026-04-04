@@ -47,6 +47,40 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
+
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project())
+            }
+
+            sources {
+                compileClasspath += sourceSets.test.get().output
+                runtimeClasspath += sourceSets.test.get().output
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+
+configurations["integrationTestImplementation"].extendsFrom(configurations.testImplementation.get())
+configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
+}
+
 checkstyle {
     toolVersion = "13.3.0"
     configFile = file("config/checkstyle/checkstyle.xml")
