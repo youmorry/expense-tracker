@@ -30,14 +30,14 @@ class SecurityIntegrationTest extends AbstractIntegrationTest {
   @Test
   void authEndpoint_withoutToken_returns200() throws Exception {
     given(oauthTokenVerifier.verify("valid-google-token"))
-        .willReturn(
-            new OauthUserInfo("google-sub-1", "user1@example.com", "User 1"));
+        .willReturn(new OauthUserInfo("google-sub-1", "user1@example.com", "User 1"));
 
     mockMvc
         .perform(
             post("/api/v1/auth/google")
                 .contentType(APPLICATION_JSON)
-                .content("""
+                .content(
+                    """
                     {"id_token": "valid-google-token"}
                     """))
         .andExpect(status().isOk());

@@ -79,8 +79,7 @@ abstract class AbstractIntegrationTest {
 
   /** 有効期限切れの JWT トークンを生成する。セキュリティテスト用。 */
   protected String generateExpiredToken(UserId userId, String email) {
-    SecretKeySpec key =
-        new SecretKeySpec(Base64.getDecoder().decode(jwtSecret), "HmacSHA256");
+    SecretKeySpec key = new SecretKeySpec(Base64.getDecoder().decode(jwtSecret), "HmacSHA256");
     NimbusJwtEncoder encoder = NimbusJwtEncoder.withSecretKey(key).build();
     Instant now = Instant.now();
     JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();

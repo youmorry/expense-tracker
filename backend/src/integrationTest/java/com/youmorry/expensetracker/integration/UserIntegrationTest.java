@@ -65,9 +65,7 @@ class UserIntegrationTest extends AbstractIntegrationTest {
     // Transaction もカスケード削除されたことを確認
     var txCount =
         jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM transactions WHERE user_id = ?",
-            Integer.class,
-            userId.value());
+            "SELECT COUNT(*) FROM transactions WHERE user_id = ?", Integer.class, userId.value());
     assertThat(txCount).isZero();
   }
 }
