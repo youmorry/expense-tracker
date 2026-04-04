@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,15 +20,10 @@ class SmokeIntegrationTest extends AbstractIntegrationTest {
   }
 
   @Test
-  void authEndpoint_withoutToken_returns200OrMethodSpecific() throws Exception {
+  void authEndpoint_withoutToken_returnsNon401() throws Exception {
     // /api/v1/auth/** は permitAll なので 401 にならないことを確認
-    // POST のみ受け付けるエンドポイントの場合、GET は 405 になる可能性がある
-    mockMvc
-        .perform(get("/api/v1/auth/google"))
-        .andExpect(
-            result -> {
-              int statusCode = result.getResponse().getStatus();
-              assert statusCode != 401 : "Auth endpoint should not return 401, got: " + statusCode;
-            });
+    var status = mockMvc.perform(get("/api/v1/auth/google")).andReturn().getResponse().getStatus();
+
+    assertThat(status).isNotEqualTo(401);
   }
 }
