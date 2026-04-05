@@ -1,4 +1,30 @@
 {
   "java.compile.nullAnalysis.mode": "automatic",
-  "editor.rulers": [100]
+  "editor.rulers": [
+    100
+  ],
+  "dbcode.connections": [
+    {
+      "connectionId": "K-S1xi_YDeO03ENYkF1Hy",
+      "name": "expense_tracker.local",
+      "driver": "postgres",
+      "connectionType": "host",
+      "host": "localhost",
+      "port": 5432,
+      "ssl": false,
+      "authMethod": "password",
+      "username": "postgres",
+      "password": "",
+      "savePassword": "secretStorage",
+      "database": "expense_tracker",
+      "readOnly": false,
+      "role": "development",
+      "postConnectionSqlType": "inline",
+      "connectionTimeout": 30,
+      "pinnedConnectionTimeout": "0",
+      "introspection": {
+        "progressive": false
+      }
+    }
+  ]
 }
