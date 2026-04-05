@@ -24,18 +24,20 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "vscjava.vscode-java-pack",
-        "vmware.vscode-spring-boot",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss",
-        "editorconfig.editorconfig",
         "anthropic.claude-code",
         "bierner.markdown-mermaid",
+        "bradlc.vscode-tailwindcss",
+        "chunsen.bracket-select",
+        "dbaeumer.vscode-eslint",
+        "dbcode.dbcode",
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "github.copilot-chat",
         "github.vscode-github-actions",
         "github.vscode-pull-request-github",
-        "github.copilot-chat",
-        "chunsen.bracket-select"
+        "vmware.vscode-spring-boot",
+        "vscjava.vscode-java-pack"
       ],
       "settings": {
         "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
