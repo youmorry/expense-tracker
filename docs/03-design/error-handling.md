@@ -48,7 +48,7 @@ RuntimeException
 
 - `RuntimeException` を継承する抽象クラス
 - 各サブクラスのコンストラクタは `detail`（エラーメッセージ）のみを受け取り、`type` / `title` / `status` はクラス内で固定する
-- `ValidationException` は追加で `List<FieldError>` を保持する。`FieldError` は `detail`（エラーメッセージ）と `pointer`（Java フィールドの論理名、camelCase）を持つ record とする。Presentation 層で JSON Pointer 形式（`#/snake_case`）に変換する
+- `ValidationException` は追加で `List<FieldError>` を保持する。`FieldError` は `detail`（エラーメッセージ）と `field`（Java フィールドの論理名、camelCase）を持つ record とする。Presentation 層で JSON Pointer 形式（`#/snake_case`）に変換する
 
 ### グローバル例外ハンドラ
 
