@@ -116,6 +116,11 @@ public ResponseEntity<TransactionResponse> create(
 - 他ユーザーのリソースアクセスは 404 を返す（403 ではなく存在を隠す）
 - Pagination なし（個人利用で年間 ~3000 件のため全件取得）
 
+## OpenAPI リンティング
+
+- `backend/openapi.yaml` を変更した場合は `npx @stoplight/spectral-cli lint openapi.yaml`（backend ディレクトリで実行）でリンティングを実施すること
+- Spectral のルール設定は `backend/.spectral.yaml` にある
+
 ## 命名規約
 
 - DB カラム / JSON キー: snake_case
