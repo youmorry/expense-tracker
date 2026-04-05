@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     if (ex instanceof ValidationException validationEx) {
       List<Map<String, String>> errors =
           validationEx.getErrors().stream()
-              .map(e -> Map.of("detail", e.detail(), "pointer", "#/" + toSnakeCase(e.pointer())))
+              .map(e -> Map.of("detail", e.detail(), "pointer", "#/" + toSnakeCase(e.field())))
               .toList();
       problem.setProperty("errors", errors);
     }
