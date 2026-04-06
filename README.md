@@ -36,6 +36,9 @@ expense-tracker/
 │   ├── 01-planning/
 │   ├── 02-requirements/
 │   └── 03-design/
+│       ├── common/
+│       ├── backend/
+│       └── frontend/
 └── docker-compose.yml
 ```
 
@@ -171,15 +174,15 @@ cd backend && ./gradlew bootRun
 
 | Document                                                       | Content                               |
 | -------------------------------------------------------------- | ------------------------------------- |
-| [API Design](docs/03-design/api-design.md)                     | 全 12 エンドポイントの API 仕様       |
-| [Auth Design](docs/03-design/auth-design.md)                   | 認証フロー・JWT・セキュリティ         |
-| [Database Schema](docs/03-design/database-schema.md)           | DDL・インデックス・Flyway             |
-| [Domain Model](docs/03-design/domain-model.md)                 | Entity / ValueObject / Aggregate 設計 |
-| [Error Handling](docs/03-design/error-handling.md)             | 例外階層・RFC 9457 レスポンス         |
-| [ER Diagram](docs/03-design/er-diagram.md)                     | ER 図・テーブル構成                   |
-| [Repository Structure](docs/03-design/repository-structure.md) | モノレポ構成・ディレクトリ設計        |
-| [Screen Flow](docs/03-design/screen-flow.md)                   | UI 画面遷移・インタラクション         |
-| [Java Coding Standards](docs/java-coding-standards.md)         | Java コーディング規約（Google Style） |
+| [API Design](docs/03-design/backend/api-design.md)                     | 全 12 エンドポイントの API 仕様       |
+| [Auth Design](docs/03-design/common/auth-design.md)                   | 認証フロー・JWT・セキュリティ         |
+| [Database Schema](docs/03-design/backend/database-schema.md)           | DDL・インデックス・Flyway             |
+| [Domain Model](docs/03-design/backend/domain-model.md)                 | Entity / ValueObject / Aggregate 設計 |
+| [Error Handling](docs/03-design/common/error-handling.md)             | 例外階層・RFC 9457 レスポンス         |
+| [ER Diagram](docs/03-design/backend/er-diagram.md)                     | ER 図・テーブル構成                   |
+| [Repository Structure](docs/03-design/common/repository-structure.md) | モノレポ構成・ディレクトリ設計        |
+| [Screen Flow](docs/03-design/frontend/screen-flow.md)                   | UI 画面遷移・インタラクション         |
+| [Java Coding Standards](docs/03-design/backend/java-coding-standards.md)         | Java コーディング規約（Google Style） |
 
 ## License
 
