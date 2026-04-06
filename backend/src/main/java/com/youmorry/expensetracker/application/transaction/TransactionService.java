@@ -52,15 +52,7 @@ public class TransactionService {
         command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
 
     var amount = new Money(command.amount());
-
-    CategoryType categoryType;
-    try {
-      categoryType = CategoryType.fromId(categoryId);
-    } catch (IllegalArgumentException e) {
-      throw new ValidationException(
-          "Category not found: " + categoryId.value(),
-          List.of(new FieldError("Category does not exist.", "categoryId")));
-    }
+    CategoryType categoryType = findCategoryOrThrow(categoryId);
 
     var transaction =
         new Transaction(
@@ -93,6 +85,15 @@ public class TransactionService {
         transaction, CategoryType.fromId(transaction.categoryId()).displayName());
   }
 
+  private CategoryType findCategoryOrThrow(CategoryId categoryId) {
+    return CategoryType.findById(categoryId)
+        .orElseThrow(
+            () ->
+                new ValidationException(
+                    "Category not found: " + categoryId.value(),
+                    List.of(new FieldError("Category does not exist.", "categoryId"))));
+  }
+
   private Transaction findByIdAndVerifyOwnership(UserId userId, TransactionId transactionId) {
     return transactionRepository
         .findById(transactionId)
@@ -121,15 +122,7 @@ public class TransactionService {
     NeedWantType needWantType =
         command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
     var amount = new Money(command.amount());
-
-    CategoryType categoryType;
-    try {
-      categoryType = CategoryType.fromId(categoryId);
-    } catch (IllegalArgumentException e) {
-      throw new ValidationException(
-          "Category not found: " + categoryId.value(),
-          List.of(new FieldError("Category does not exist.", "categoryId")));
-    }
+    CategoryType categoryType = findCategoryOrThrow(categoryId);
 
     var updated =
         new Transaction(

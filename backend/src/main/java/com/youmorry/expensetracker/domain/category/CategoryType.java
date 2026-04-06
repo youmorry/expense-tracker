@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.domain.category;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * 支出を分類するカテゴリの列挙型。
@@ -65,9 +66,17 @@ public enum CategoryType {
    * @throws IllegalArgumentException 該当するカテゴリが存在しない場合
    */
   public static CategoryType fromId(CategoryId id) {
-    return Arrays.stream(values())
-        .filter(type -> type.id.equals(id))
-        .findFirst()
+    return findById(id)
         .orElseThrow(() -> new IllegalArgumentException("Unknown category id: " + id.value()));
+  }
+
+  /**
+   * カテゴリ ID から対応する {@link CategoryType} を検索する。
+   *
+   * @param id カテゴリ ID
+   * @return 対応する CategoryType を含む Optional。該当なしの場合は空
+   */
+  public static Optional<CategoryType> findById(CategoryId id) {
+    return Arrays.stream(values()).filter(type -> type.id.equals(id)).findFirst();
   }
 }
