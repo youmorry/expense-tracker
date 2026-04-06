@@ -1,6 +1,8 @@
 package com.youmorry.expensetracker.presentation.analytics;
 
 import com.youmorry.expensetracker.application.analytics.AnalyticsService;
+import com.youmorry.expensetracker.application.analytics.CategoryAnalyticsResult;
+import com.youmorry.expensetracker.application.analytics.NeedWantAnalyticsResult;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.user.UserId;
 import java.time.LocalDate;
@@ -40,7 +42,7 @@ public class AnalyticsController {
       @RequestParam(required = false) LocalDate from,
       @RequestParam(required = false) LocalDate to,
       @AuthenticationPrincipal UserId userId) {
-    var result = analyticsService.getNeedWantBreakdown(userId, from, to);
+    NeedWantAnalyticsResult result = analyticsService.getNeedWantBreakdown(userId, from, to);
     return ResponseEntity.ok(NeedWantAnalyticsResponse.from(result));
   }
 
@@ -57,7 +59,7 @@ public class AnalyticsController {
       @RequestParam(required = false) LocalDate from,
       @RequestParam(required = false) LocalDate to,
       @AuthenticationPrincipal UserId userId) {
-    var result = analyticsService.getCategoryBreakdown(userId, from, to);
+    CategoryAnalyticsResult result = analyticsService.getCategoryBreakdown(userId, from, to);
     return ResponseEntity.ok(CategoryAnalyticsResponse.from(result));
   }
 }

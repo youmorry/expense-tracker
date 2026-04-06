@@ -19,7 +19,7 @@ public record CategoryAnalyticsResponse(String totalAmount, List<CategoryItem> c
    * @return レスポンス DTO
    */
   public static CategoryAnalyticsResponse from(CategoryAnalyticsResult result) {
-    var categories = result.breakdown().stream().map(CategoryItem::from).toList();
+    List<CategoryItem> categories = result.breakdown().stream().map(CategoryItem::from).toList();
     return new CategoryAnalyticsResponse(result.totalAmount().toPlainString(), categories);
   }
 

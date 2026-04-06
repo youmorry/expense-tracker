@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.application.transaction;
 
+import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.category.CategoryType;
 import com.youmorry.expensetracker.domain.transaction.Money;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
@@ -45,9 +46,10 @@ public class TransactionService {
    */
   @Transactional
   public TransactionResult create(UserId userId, TransactionCreateCommand command) {
-    var categoryId =
+    CategoryId categoryId =
         command.categoryId() != null ? command.categoryId() : CategoryType.UNCATEGORIZED.id();
-    var needWantType = command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
+    NeedWantType needWantType =
+        command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
 
     var amount = new Money(command.amount());
 
@@ -72,7 +74,7 @@ public class TransactionService {
             command.memo(),
             null,
             null);
-    var saved = transactionRepository.save(transaction);
+    Transaction saved = transactionRepository.save(transaction);
     return new TransactionResult(saved, categoryType.displayName());
   }
 
@@ -86,7 +88,7 @@ public class TransactionService {
    */
   @Transactional(readOnly = true)
   public TransactionResult findById(UserId userId, TransactionId transactionId) {
-    var transaction = findByIdAndVerifyOwnership(userId, transactionId);
+    Transaction transaction = findByIdAndVerifyOwnership(userId, transactionId);
     return new TransactionResult(
         transaction, CategoryType.fromId(transaction.categoryId()).displayName());
   }
@@ -112,11 +114,12 @@ public class TransactionService {
   @Transactional
   public TransactionResult update(
       UserId userId, TransactionId transactionId, TransactionUpdateCommand command) {
-    var existing = findByIdAndVerifyOwnership(userId, transactionId);
+    Transaction existing = findByIdAndVerifyOwnership(userId, transactionId);
 
-    var categoryId =
+    CategoryId categoryId =
         command.categoryId() != null ? command.categoryId() : CategoryType.UNCATEGORIZED.id();
-    var needWantType = command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
+    NeedWantType needWantType =
+        command.needWantType() != null ? command.needWantType() : NeedWantType.UNSET;
     var amount = new Money(command.amount());
 
     CategoryType categoryType;
@@ -140,7 +143,7 @@ public class TransactionService {
             command.memo(),
             existing.createdAt(),
             null);
-    var saved = transactionRepository.save(updated);
+    Transaction saved = transactionRepository.save(updated);
     return new TransactionResult(saved, categoryType.displayName());
   }
 
