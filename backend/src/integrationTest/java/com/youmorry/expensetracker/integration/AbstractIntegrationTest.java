@@ -75,7 +75,7 @@ abstract class AbstractIntegrationTest {
         googleId,
         email,
         displayName);
-    var id =
+    Long id =
         jdbcTemplate.queryForObject(
             "SELECT id FROM users WHERE google_id = ?", Long.class, googleId);
     return new UserId(id);

@@ -37,7 +37,7 @@ class UserServiceTest {
             Instant.parse("2026-01-01T00:00:00Z"));
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-    var result = userService.getMe(userId);
+    User result = userService.getMe(userId);
 
     assertEquals(user, result);
   }

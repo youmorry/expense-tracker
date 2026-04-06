@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.youmorry.expensetracker.domain.category.CategoryType;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class CategoryServiceTest {
@@ -12,7 +13,7 @@ class CategoryServiceTest {
 
   @Test
   void findAll_returnsAllCategoryTypes() {
-    var result = categoryService.findAll();
+    List<CategoryType> result = categoryService.findAll();
 
     assertEquals(Arrays.asList(CategoryType.values()), result);
   }
