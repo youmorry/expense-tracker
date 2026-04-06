@@ -1,5 +1,6 @@
 package com.youmorry.expensetracker.presentation.transaction;
 
+import com.youmorry.expensetracker.application.transaction.TransactionResult;
 import com.youmorry.expensetracker.application.transaction.TransactionSearchQuery;
 import com.youmorry.expensetracker.application.transaction.TransactionService;
 import com.youmorry.expensetracker.domain.category.CategoryId;
@@ -50,7 +51,7 @@ public class TransactionController {
   public ResponseEntity<TransactionResponse> create(
       @Valid @RequestBody CreateTransactionRequest request,
       @AuthenticationPrincipal UserId userId) {
-    var result = transactionService.create(userId, request.toCommand());
+    TransactionResult result = transactionService.create(userId, request.toCommand());
     return ResponseEntity.status(HttpStatus.CREATED).body(TransactionResponse.from(result));
   }
 
@@ -64,7 +65,7 @@ public class TransactionController {
   @GetMapping("/{id}")
   public ResponseEntity<TransactionResponse> getById(
       @PathVariable @Min(1) long id, @AuthenticationPrincipal UserId userId) {
-    var result = transactionService.findById(userId, new TransactionId(id));
+    TransactionResult result = transactionService.findById(userId, new TransactionId(id));
     return ResponseEntity.ok(TransactionResponse.from(result));
   }
 
@@ -81,7 +82,8 @@ public class TransactionController {
       @PathVariable @Min(1) long id,
       @Valid @RequestBody UpdateTransactionRequest request,
       @AuthenticationPrincipal UserId userId) {
-    var result = transactionService.update(userId, new TransactionId(id), request.toCommand());
+    TransactionResult result =
+        transactionService.update(userId, new TransactionId(id), request.toCommand());
     return ResponseEntity.ok(TransactionResponse.from(result));
   }
 
@@ -122,7 +124,7 @@ public class TransactionController {
         categoryId == null ? List.of() : categoryId.stream().map(v -> new CategoryId(v)).toList();
 
     var query = new TransactionSearchQuery(from, to, categoryIds, needWantType, keyword);
-    var results = transactionService.search(userId, query);
+    List<TransactionResult> results = transactionService.search(userId, query);
     return ResponseEntity.ok(TransactionListResponse.from(results));
   }
 }

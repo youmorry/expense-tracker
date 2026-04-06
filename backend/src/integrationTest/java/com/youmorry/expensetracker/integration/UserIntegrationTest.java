@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.youmorry.expensetracker.domain.user.UserId;
 import org.junit.jupiter.api.Test;
 
 /** ユーザーエンドポイントの統合テスト。 */
@@ -16,8 +17,8 @@ class UserIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void getMe_withValidJwt_returns200WithUserInfo() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
     mockMvc
         .perform(get("/api/v1/users/me").header("Authorization", token))
@@ -30,8 +31,8 @@ class UserIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void deleteAccount_withValidJwt_returns204AndCascadeDeletesTransactions() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
     // Transaction を作成
     mockMvc
@@ -57,13 +58,13 @@ class UserIntegrationTest extends AbstractIntegrationTest {
         .andExpect(status().isNoContent());
 
     // ユーザーが削除されたことを確認
-    var userCount =
+    Integer userCount =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM users WHERE id = ?", Integer.class, userId.value());
     assertThat(userCount).isZero();
 
     // Transaction もカスケード削除されたことを確認
-    var txCount =
+    Integer txCount =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM transactions WHERE user_id = ?", Integer.class, userId.value());
     assertThat(txCount).isZero();
@@ -71,8 +72,8 @@ class UserIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void getMe_withDeletedUser_returns404() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
     // アカウント削除
     mockMvc

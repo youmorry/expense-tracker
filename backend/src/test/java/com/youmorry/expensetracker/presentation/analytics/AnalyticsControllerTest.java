@@ -40,7 +40,7 @@ class AnalyticsControllerTest {
 
   @Test
   void getCategoryBreakdown_withoutDateParams_returns200WithResult() throws Exception {
-    var result = buildResult();
+    CategoryAnalyticsResult result = buildResult();
     when(analyticsService.getCategoryBreakdown(eq(new UserId(1L)), isNull(), isNull()))
         .thenReturn(result);
 
@@ -59,7 +59,7 @@ class AnalyticsControllerTest {
 
   @Test
   void getCategoryBreakdown_withDateParams_returns200WithResult() throws Exception {
-    var result = buildResult();
+    CategoryAnalyticsResult result = buildResult();
     when(analyticsService.getCategoryBreakdown(
             eq(new UserId(1L)), eq(LocalDate.of(2026, 1, 1)), eq(LocalDate.of(2026, 3, 31))))
         .thenReturn(result);
@@ -82,7 +82,7 @@ class AnalyticsControllerTest {
 
   @Test
   void getNeedWantBreakdown_withoutDateParams_returns200WithResult() throws Exception {
-    var result = buildNeedWantResult();
+    NeedWantAnalyticsResult result = buildNeedWantResult();
     when(analyticsService.getNeedWantBreakdown(eq(new UserId(1L)), isNull(), isNull()))
         .thenReturn(result);
 
@@ -108,7 +108,7 @@ class AnalyticsControllerTest {
 
   @Test
   void getNeedWantBreakdown_withDateParams_returns200WithResult() throws Exception {
-    var result = buildNeedWantResult();
+    NeedWantAnalyticsResult result = buildNeedWantResult();
     when(analyticsService.getNeedWantBreakdown(
             eq(new UserId(1L)), eq(LocalDate.of(2026, 1, 1)), eq(LocalDate.of(2026, 3, 31))))
         .thenReturn(result);

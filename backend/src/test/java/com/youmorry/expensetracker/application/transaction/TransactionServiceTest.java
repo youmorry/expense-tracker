@@ -62,7 +62,7 @@ class TransactionServiceTest {
             Instant.parse("2026-03-25T10:00:00Z"));
     when(transactionRepository.save(any(Transaction.class))).thenReturn(savedTransaction);
 
-    var result = transactionService.create(userId, command);
+    TransactionResult result = transactionService.create(userId, command);
 
     assertEquals(savedTransaction, result.transaction());
     assertEquals("Food", result.categoryName());
@@ -94,7 +94,7 @@ class TransactionServiceTest {
             Instant.parse("2026-03-25T10:00:00Z"));
     when(transactionRepository.save(any(Transaction.class))).thenReturn(savedTransaction);
 
-    var result = transactionService.create(userId, command);
+    TransactionResult result = transactionService.create(userId, command);
 
     assertEquals(CategoryType.UNCATEGORIZED.id(), result.transaction().categoryId());
     assertEquals("Uncategorized", result.categoryName());
@@ -126,7 +126,7 @@ class TransactionServiceTest {
             Instant.parse("2026-03-25T10:00:00Z"));
     when(transactionRepository.save(any(Transaction.class))).thenReturn(savedTransaction);
 
-    var result = transactionService.create(userId, command);
+    TransactionResult result = transactionService.create(userId, command);
 
     assertEquals(NeedWantType.UNSET, result.transaction().needWantType());
   }
@@ -177,7 +177,7 @@ class TransactionServiceTest {
     when(transactionSearchRepository.search(userId, query.toCriteria()))
         .thenReturn(List.of(transaction1, transaction2));
 
-    var results = transactionService.search(userId, query);
+    List<TransactionResult> results = transactionService.search(userId, query);
 
     assertEquals(2, results.size());
     assertEquals("Food", results.get(0).categoryName());
@@ -202,7 +202,7 @@ class TransactionServiceTest {
             Instant.parse("2026-03-25T10:00:00Z"));
     when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
 
-    var result = transactionService.findById(userId, transactionId);
+    TransactionResult result = transactionService.findById(userId, transactionId);
 
     assertEquals(transaction, result.transaction());
     assertEquals("Food", result.categoryName());
@@ -280,7 +280,7 @@ class TransactionServiceTest {
             Instant.parse("2026-03-26T10:00:00Z"));
     when(transactionRepository.save(any(Transaction.class))).thenReturn(savedTransaction);
 
-    var result = transactionService.update(userId, transactionId, command);
+    TransactionResult result = transactionService.update(userId, transactionId, command);
 
     assertEquals(savedTransaction, result.transaction());
     assertEquals("Transport", result.categoryName());

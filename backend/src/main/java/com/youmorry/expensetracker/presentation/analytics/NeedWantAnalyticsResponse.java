@@ -20,7 +20,7 @@ public record NeedWantAnalyticsResponse(String totalAmount, List<BreakdownItem> 
    * @return レスポンス DTO
    */
   public static NeedWantAnalyticsResponse from(NeedWantAnalyticsResult result) {
-    var items = result.breakdown().stream().map(BreakdownItem::from).toList();
+    List<BreakdownItem> items = result.breakdown().stream().map(BreakdownItem::from).toList();
     return new NeedWantAnalyticsResponse(result.totalAmount().toPlainString(), items);
   }
 

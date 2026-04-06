@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.auth.OauthUserInfo;
+import com.youmorry.expensetracker.domain.user.UserId;
 import org.junit.jupiter.api.Test;
 
 /** 横断的セキュリティの統合テスト。認証が必要なエンドポイントと公開エンドポイントのアクセス制御を検証する。 */
@@ -19,8 +20,8 @@ class SecurityIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void authenticatedEndpoint_withExpiredToken_returns401() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var expiredToken = generateExpiredToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String expiredToken = generateExpiredToken(userId, "user1@example.com");
 
     mockMvc
         .perform(get("/api/v1/users/me").header("Authorization", expiredToken))

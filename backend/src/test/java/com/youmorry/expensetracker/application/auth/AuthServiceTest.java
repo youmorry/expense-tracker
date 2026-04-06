@@ -44,7 +44,7 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(existingUser.id()), eq(existingUser.email())))
         .thenReturn("jwt-token");
 
-    var result = authService.authenticate("valid-token");
+    AuthService.AuthResult result = authService.authenticate("valid-token");
 
     assertEquals("jwt-token", result.accessToken());
     assertEquals(existingUser, result.user());
@@ -67,7 +67,7 @@ class AuthServiceTest {
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
         .thenReturn("new-jwt-token");
 
-    var result = authService.authenticate("new-token");
+    AuthService.AuthResult result = authService.authenticate("new-token");
 
     assertEquals("new-jwt-token", result.accessToken());
     assertEquals(savedUser, result.user());

@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.presentation.user;
 
 import com.youmorry.expensetracker.application.UserService;
+import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,7 +34,7 @@ public class UserController {
    */
   @GetMapping
   public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal UserId userId) {
-    var user = userService.getMe(userId);
+    User user = userService.getMe(userId);
     return ResponseEntity.ok(UserResponse.from(user));
   }
 

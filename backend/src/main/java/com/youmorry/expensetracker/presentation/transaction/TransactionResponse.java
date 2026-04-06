@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.presentation.transaction;
 
 import com.youmorry.expensetracker.application.transaction.TransactionResult;
+import com.youmorry.expensetracker.domain.transaction.Transaction;
 import java.time.Instant;
 import java.time.LocalDate;
 import org.jspecify.annotations.Nullable;
@@ -25,7 +26,7 @@ public record TransactionResponse(
    * @return 支出レスポンス
    */
   public static TransactionResponse from(TransactionResult result) {
-    var tx = result.transaction();
+    Transaction tx = result.transaction();
     return new TransactionResponse(
         tx.id().value(),
         tx.date(),

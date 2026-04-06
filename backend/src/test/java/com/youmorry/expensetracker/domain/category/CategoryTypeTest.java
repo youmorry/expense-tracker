@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,7 @@ class CategoryTypeTest {
 
   @Test
   void values_allHaveUniqueIds() {
-    var ids =
+    Set<CategoryId> ids =
         Arrays.stream(CategoryType.values()).map(CategoryType::id).collect(Collectors.toSet());
 
     assertEquals(CategoryType.values().length, ids.size());
@@ -19,7 +20,7 @@ class CategoryTypeTest {
 
   @Test
   void values_allHaveUniqueDisplayOrders() {
-    var orders =
+    Set<Integer> orders =
         Arrays.stream(CategoryType.values())
             .map(CategoryType::displayOrder)
             .collect(Collectors.toSet());

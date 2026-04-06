@@ -45,10 +45,10 @@ class UserIdArgumentResolverTest {
 
   @Test
   void resolveArgument_withJwtAuthentication_returnsUserId() throws Exception {
-    var jwt = Jwt.withTokenValue("token").header("alg", "HS256").subject("42").build();
+    Jwt jwt = Jwt.withTokenValue("token").header("alg", "HS256").subject("42").build();
     SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
 
-    var result =
+    Object result =
         resolver.resolveArgument(
             mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
 
@@ -59,7 +59,7 @@ class UserIdArgumentResolverTest {
   void resolveArgument_withNoAuthentication_returnsNull() throws Exception {
     SecurityContextHolder.clearContext();
 
-    var result =
+    Object result =
         resolver.resolveArgument(
             mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
 

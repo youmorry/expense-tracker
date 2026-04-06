@@ -66,7 +66,7 @@ class AuthIntegrationTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.user.email").value("existing@example.com"));
 
     // users テーブルに同一 google_id のレコードが1件のみであることを確認
-    var count =
+    Integer count =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM users WHERE google_id = ?", Integer.class, "google-sub-456");
     assertThat(count).isEqualTo(1);

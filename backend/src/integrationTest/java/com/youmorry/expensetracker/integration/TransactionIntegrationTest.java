@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
+import com.youmorry.expensetracker.domain.user.UserId;
 import org.junit.jupiter.api.Test;
 
 /** コア CRUD（Transaction）の一気通貫テスト。 */
@@ -18,8 +19,8 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void create_withValidJwt_returns201AndPersistsToDb() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
     mockMvc
         .perform(
@@ -46,7 +47,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
         .andExpect(jsonPath("$.title").value("Lunch"))
         .andExpect(jsonPath("$.created_at", notNullValue()));
 
-    var count =
+    Integer count =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM transactions WHERE user_id = ?", Integer.class, userId.value());
     assertThat(count).isEqualTo(1);
@@ -54,11 +55,11 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void get_ofAnotherUser_returns404() throws Exception {
-    var user1 = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var user2 = insertUser("google-sub-2", "user2@example.com", "User 2");
+    UserId user1 = insertUser("google-sub-1", "user1@example.com", "User 1");
+    UserId user2 = insertUser("google-sub-2", "user2@example.com", "User 2");
 
     // user1 が Transaction を作成
-    var createResponse =
+    String createResponse =
         mockMvc
             .perform(
                 post("/api/v1/transactions")
@@ -85,10 +86,10 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void update_withValidData_returns200AndUpdatesDb() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
-    var createResponse =
+    String createResponse =
         mockMvc
             .perform(
                 post("/api/v1/transactions")
@@ -122,10 +123,10 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void delete_withValidId_returns204AndRemovesFromDb() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
-    var createResponse =
+    String createResponse =
         mockMvc
             .perform(
                 post("/api/v1/transactions")
@@ -147,7 +148,7 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
         .andExpect(status().isNoContent());
 
     // DB から削除されていることを確認
-    var count =
+    Integer count =
         jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM transactions WHERE id = ?", Integer.class, transactionId);
     assertThat(count).isZero();
@@ -155,11 +156,11 @@ class TransactionIntegrationTest extends AbstractIntegrationTest {
 
   @Test
   void fullCrudLifecycle_createReadUpdateDelete() throws Exception {
-    var userId = insertUser("google-sub-1", "user1@example.com", "User 1");
-    var token = generateToken(userId, "user1@example.com");
+    UserId userId = insertUser("google-sub-1", "user1@example.com", "User 1");
+    String token = generateToken(userId, "user1@example.com");
 
     // Create
-    var createResponse =
+    String createResponse =
         mockMvc
             .perform(
                 post("/api/v1/transactions")

@@ -22,7 +22,7 @@ class SmokeIntegrationTest extends AbstractIntegrationTest {
   @Test
   void authEndpoint_withoutToken_returnsNon401() throws Exception {
     // /api/v1/auth/** は permitAll なので 401 にならないことを確認
-    var status = mockMvc.perform(get("/api/v1/auth/google")).andReturn().getResponse().getStatus();
+    int status = mockMvc.perform(get("/api/v1/auth/google")).andReturn().getResponse().getStatus();
 
     assertThat(status).isNotEqualTo(401);
   }
