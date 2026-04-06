@@ -40,12 +40,13 @@ public record Transaction(
     @LastModifiedDate @Nullable Instant updatedAt) {
 
   private static final int TITLE_MAX_LENGTH = 200;
+  private static final int MEMO_MAX_LENGTH = 2000;
 
   /**
    * 不変条件を検証する。
    *
    * @throws NullPointerException userId, date, amount, categoryId, needWantType が null の場合
-   * @throws IllegalArgumentException title が 200 文字を超過する場合
+   * @throws IllegalArgumentException title が 200 文字、または memo が 2000 文字を超過する場合
    */
   public Transaction {
     Objects.requireNonNull(userId, "userId must not be null");
@@ -56,6 +57,10 @@ public record Transaction(
     if (title != null && title.length() > TITLE_MAX_LENGTH) {
       throw new IllegalArgumentException(
           "title must not exceed " + TITLE_MAX_LENGTH + " characters, but was: " + title.length());
+    }
+    if (memo != null && memo.length() > MEMO_MAX_LENGTH) {
+      throw new IllegalArgumentException(
+          "memo must not exceed " + MEMO_MAX_LENGTH + " characters, but was: " + memo.length());
     }
   }
 }

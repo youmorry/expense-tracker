@@ -37,7 +37,7 @@ Bean Validation とドメインオブジェクトのコンストラクタで**�
 // Presentation 層: DTO に Bean Validation アノテーション
 public record CreateTransactionRequest(
     @NotNull LocalDate date,
-    @NotNull @Positive BigDecimal amount,
+    @NotNull BigDecimal amount,
     // ...
 ) {}
 
@@ -45,10 +45,6 @@ public record CreateTransactionRequest(
 public record Money(BigDecimal value) {
     public Money {
         Objects.requireNonNull(value, "value must not be null");
-        if (value.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException(
-                "Money value must be positive, but was: " + value);
-        }
     }
 }
 ```
@@ -144,7 +140,7 @@ private Category findCategoryOrThrow(CategoryId categoryId) {
 
 | 種類 | 定義 | 検証場所 | 例 |
 |---|---|---|---|
-| ドメイン不変条件 | オブジェクトが常に満たすべき条件 | Domain 層（コンストラクタ） | Money が正の値であること |
+| ドメイン不変条件 | オブジェクトが常に満たすべき条件 | Domain 層（コンストラクタ） | Money が null でないこと |
 | ユースケース固有ルール | 特定の操作でのみ適用される制約 | Application 層（Service） | カテゴリ ID の存在チェック |
 
 **判断基準**: 「そのオブジェクトが存在する限り常に成り立つべきか？」を問う。
@@ -157,8 +153,12 @@ private Category findCategoryOrThrow(CategoryId categoryId) {
 Application 層の入力オブジェクト（`TransactionCreateCommand` 等）にはバリデーションを持たせない。
 Presentation 層の Bean Validation で検証済みの値を運ぶ**入れ物**として扱う。
 
+ただし、必須フィールドに対する `Objects.requireNonNull` は防御的プログラミングとして許容する。
+これはバリデーションではなく、プログラミングエラーの早期検出を目的とする。
+
 ```java
 // バリデーションなし — 検証済みの値を保持するだけ
+// requireNonNull は防御的プログラミングとして許容
 public record TransactionCreateCommand(
     UserId userId,
     LocalDate date,
@@ -167,7 +167,13 @@ public record TransactionCreateCommand(
     NeedWantType needWantType,
     String title,
     String memo
-) {}
+) {
+    public TransactionCreateCommand {
+        Objects.requireNonNull(userId, "userId must not be null");
+        Objects.requireNonNull(date, "date must not be null");
+        Objects.requireNonNull(amount, "amount must not be null");
+    }
+}
 ```
 
 ---

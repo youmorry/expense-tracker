@@ -57,10 +57,6 @@ public record Money(BigDecimal value) {
 
   public Money {
     Objects.requireNonNull(value, "value must not be null");
-    if (value.compareTo(BigDecimal.ZERO) <= 0) {
-      throw new IllegalArgumentException(
-          "Money value must be positive, but was: " + value);
-    }
   }
 }
 ```

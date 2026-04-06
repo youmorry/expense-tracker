@@ -2,8 +2,10 @@ package com.youmorry.expensetracker.domain.category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -37,5 +39,20 @@ class CategoryTypeTest {
   @Test
   void fromId_withInvalidId_throwsIllegalArgumentException() {
     assertThrows(IllegalArgumentException.class, () -> CategoryType.fromId(new CategoryId(999L)));
+  }
+
+  @Test
+  void findById_withValidId_returnsOptionalContainingType() {
+    Optional<CategoryType> result = CategoryType.findById(new CategoryId(1L));
+
+    assertTrue(result.isPresent());
+    assertEquals(CategoryType.FOOD, result.get());
+  }
+
+  @Test
+  void findById_withInvalidId_returnsEmpty() {
+    Optional<CategoryType> result = CategoryType.findById(new CategoryId(999L));
+
+    assertTrue(result.isEmpty());
   }
 }
