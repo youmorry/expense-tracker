@@ -191,4 +191,43 @@ class TransactionTest {
                 Instant.now(),
                 Instant.now()));
   }
+
+  @Test
+  void constructor_withMaxLengthMemo_createsTransaction() {
+    var memo = "a".repeat(2000);
+
+    assertDoesNotThrow(
+        () ->
+            new Transaction(
+                new TransactionId(1L),
+                new UserId(1L),
+                LocalDate.of(2026, 1, 1),
+                new Money(new BigDecimal("1000")),
+                new CategoryId(1L),
+                NeedWantType.NEED,
+                "ランチ",
+                memo,
+                Instant.now(),
+                Instant.now()));
+  }
+
+  @Test
+  void constructor_withMemoExceeding2000Chars_throwsIllegalArgumentException() {
+    var memo = "a".repeat(2001);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            new Transaction(
+                new TransactionId(1L),
+                new UserId(1L),
+                LocalDate.of(2026, 1, 1),
+                new Money(new BigDecimal("1000")),
+                new CategoryId(1L),
+                NeedWantType.NEED,
+                "ランチ",
+                memo,
+                Instant.now(),
+                Instant.now()));
+  }
 }
