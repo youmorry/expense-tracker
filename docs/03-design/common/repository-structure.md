@@ -44,6 +44,9 @@ expense-tracker/
 │   ├── 01-planning/
 │   ├── 02-requirements/
 │   └── 03-design/
+│       ├── common/                 # 共通設計ドキュメント
+│       ├── backend/                # バックエンド設計ドキュメント
+│       └── frontend/               # フロントエンド設計ドキュメント
 │
 ├── .github/
 │   └── workflows/

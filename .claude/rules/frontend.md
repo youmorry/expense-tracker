@@ -30,7 +30,7 @@ src/
 
 - **TanStack Query**: サーバー状態管理に使用。グローバル状態管理ライブラリは不要
 - **JWT in memory**: localStorage/Cookie 不使用。XSS でのトークン窃取リスク最小化（CSRF も不要に）
-- **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は @docs/03-design/auth-design.md
+- **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は @docs/03-design/common/auth-design.md
 
 ## コンポーネント設計
 
@@ -43,7 +43,7 @@ src/
 - API エラーは `ApiException`（RFC 9457 Problem Details）として構造化
 - 422 → フォームのインラインエラー、その他 → トースト通知
 - 401 → JWT クリア＋ログイン画面リダイレクト（グローバル処理）
-- 詳細は @docs/03-design/error-handling.md
+- 詳細は @docs/03-design/common/error-handling.md
 
 ## テスト方針
 

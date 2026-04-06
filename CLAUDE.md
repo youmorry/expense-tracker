@@ -112,12 +112,12 @@ npm run build                            # ビルド
 - `docs/01-planning/project-overview.md` — プロジェクト概要
 - `docs/01-planning/tech-stack.md` — 技術スタック詳細・選定理由
 - `docs/02-requirements/requirements.md` — 要件定義
-- `docs/03-design/domain-model.md` — Entity / VO / Aggregate 設計
-- `docs/03-design/er-diagram.md` — ER図
-- `docs/03-design/api-design.md` — API エンドポイント仕様
-- `docs/03-design/error-handling.md` — 例外階層・RFC 9457 レスポンス
-- `docs/03-design/database-schema.md` — DDL・インデックス・Flyway
-- `docs/03-design/auth-design.md` — 認証フロー・JWT・セキュリティ
-- `docs/03-design/screen-flow.md` — 画面遷移
-- `docs/03-design/repository-structure.md` — リポジトリ構成
-- `docs/java-coding-standards.md` — Java コーディング規約
+- `docs/03-design/backend/domain-model.md` — Entity / VO / Aggregate 設計
+- `docs/03-design/backend/er-diagram.md` — ER図
+- `docs/03-design/backend/api-design.md` — API エンドポイント仕様
+- `docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
+- `docs/03-design/backend/database-schema.md` — DDL・インデックス・Flyway
+- `docs/03-design/common/auth-design.md` — 認証フロー・JWT・セキュリティ
+- `docs/03-design/frontend/screen-flow.md` — 画面遷移
+- `docs/03-design/common/repository-structure.md` — リポジトリ構成
+- `docs/03-design/backend/java-coding-standards.md` — Java コーディング規約
