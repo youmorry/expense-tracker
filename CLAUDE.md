@@ -116,6 +116,7 @@ npm run build                            # ビルド
 - `docs/03-design/backend/er-diagram.md` — ER図
 - `docs/03-design/backend/api-design.md` — API エンドポイント仕様
 - `docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
+- `docs/03-design/backend/validation-strategy.md` — バリデーション方針・層別の責務
 - `docs/03-design/backend/database-schema.md` — DDL・インデックス・Flyway
 - `docs/03-design/common/auth-design.md` — 認証フロー・JWT・セキュリティ
 - `docs/03-design/frontend/screen-flow.md` — 画面遷移

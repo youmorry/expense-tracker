@@ -175,4 +175,5 @@ public ResponseEntity<TransactionResponse> create(
 
 - `docs/03-design/backend/domain-model.md` — Entity / VO / Aggregate 設計
 - `docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
+- `docs/03-design/backend/validation-strategy.md` — バリデーション方針・層別の責務
 - `docs/03-design/backend/database-schema.md` — DDL・インデックス・Flyway

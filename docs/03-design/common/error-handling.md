@@ -7,6 +7,7 @@ Expense Tracker におけるエラーハンドリングの方針を定義する�
 アプリケーション全体のエラー処理フローを記述する。
 
 エラーレスポンス形式は [API 設計](../backend/api-design.md) で定義した RFC 9457 Problem Details に準拠する。
+バリデーションの層別の責務・例外・実装方針は[バリデーション方針](../backend/validation-strategy.md)を参照。
 
 ---
 
