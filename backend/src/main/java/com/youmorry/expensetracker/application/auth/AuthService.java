@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthService {
 
+  private static final String DEFAULT_DISPLAY_NAME = "USER";
+
   private final OauthTokenVerifier oauthTokenVerifier;
   private final UserRepository userRepository;
   private final JwtTokenGenerator jwtTokenGenerator;
@@ -53,7 +55,11 @@ public class AuthService {
   }
 
   private User createNewUser(OauthUserInfo userInfo) {
-    User newUser = User.createNew(userInfo.subject(), userInfo.email(), userInfo.name());
+    String displayName =
+        (userInfo.name() == null || userInfo.name().isBlank())
+            ? DEFAULT_DISPLAY_NAME
+            : userInfo.name();
+    User newUser = User.createNew(userInfo.subject(), userInfo.email(), displayName);
     return userRepository.save(newUser);
   }
 
