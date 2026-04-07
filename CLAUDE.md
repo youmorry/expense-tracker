@@ -60,6 +60,7 @@ Issue やタスクの作業を開始するとき、以下の手順を守るこ�
   - 機能追加: `feature/<説明>`（例: `feature/add-expense-api`）
   - バグ修正: `hotfix/<説明>`（例: `hotfix/fix-date-validation`）
   - 英語・ケバブケースで記述する
+- アーキテクチャに関する重要な決定があった場合は、ユーザーにADRへの記録を促すこと
 
 ## Commands
 
