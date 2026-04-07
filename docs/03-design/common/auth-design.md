@@ -78,7 +78,7 @@ FE から受け取った ID トークンを Google の公開鍵で検証する�
 |---------|------|----------|
 | sub | Google ユーザーの一意識別子 | users.google_id |
 | email | メールアドレス | users.email |
-| name | 表示名 | users.display_name |
+| name | 表示名（未設定時は "USER"） | users.display_name |
 
 ### ユーザーの検索・自動作成
 
