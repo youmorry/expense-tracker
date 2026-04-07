@@ -82,7 +82,7 @@ Google OAuth2 で認証されたユーザーを表す。
 | id | UserId | ○ | 内部ID（自動採番） |
 | googleId | String | ○ | Google アカウントの識別子（sub クレーム） |
 | email | String | ○ | メールアドレス |
-| displayName | String | ○ | 表示名 |
+| displayName | String | ○ | 表示名（デフォルト: USER） |
 | createdAt | Instant | ○ | 登録日時 |
 
 **ルール**
