@@ -17,6 +17,9 @@ import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -74,48 +77,27 @@ class AuthServiceTest {
     verify(userRepository).save(any(User.class));
   }
 
-  @Test
-  void authenticate_withNewUserAndNullName_returnsTokenWithDefaultDisplayName() {
-    var userInfo = new OauthUserInfo("google-null", "null@gmail.com", null);
+  @ParameterizedTest
+  @NullSource
+  @ValueSource(strings = {"", "   "})
+  void authenticate_withNewUserAndMissingName_returnsTokenWithDefaultDisplayName(String name) {
+    var userInfo = new OauthUserInfo("google-noname", "noname@gmail.com", name);
     var savedUser =
         new User(
             new UserId(3L),
-            "google-null",
-            "null@gmail.com",
+            "google-noname",
+            "noname@gmail.com",
             "USER",
             Instant.parse("2026-01-01T00:00:00Z"));
-    when(oauthTokenVerifier.verify("null-name-token")).thenReturn(userInfo);
-    when(userRepository.findByGoogleId("google-null")).thenReturn(Optional.empty());
+    when(oauthTokenVerifier.verify("noname-token")).thenReturn(userInfo);
+    when(userRepository.findByGoogleId("google-noname")).thenReturn(Optional.empty());
     when(userRepository.save(any(User.class))).thenReturn(savedUser);
     when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
-        .thenReturn("null-jwt-token");
+        .thenReturn("noname-jwt-token");
 
-    AuthService.AuthResult result = authService.authenticate("null-name-token");
+    AuthService.AuthResult result = authService.authenticate("noname-token");
 
-    assertEquals("null-jwt-token", result.accessToken());
-    assertEquals("USER", result.user().displayName());
-    verify(userRepository).save(any(User.class));
-  }
-
-  @Test
-  void authenticate_withNewUserAndBlankName_returnsTokenWithDefaultDisplayName() {
-    var userInfo = new OauthUserInfo("google-blank", "blank@gmail.com", "   ");
-    var savedUser =
-        new User(
-            new UserId(4L),
-            "google-blank",
-            "blank@gmail.com",
-            "USER",
-            Instant.parse("2026-01-01T00:00:00Z"));
-    when(oauthTokenVerifier.verify("blank-name-token")).thenReturn(userInfo);
-    when(userRepository.findByGoogleId("google-blank")).thenReturn(Optional.empty());
-    when(userRepository.save(any(User.class))).thenReturn(savedUser);
-    when(jwtTokenGenerator.generateToken(eq(savedUser.id()), eq(savedUser.email())))
-        .thenReturn("blank-jwt-token");
-
-    AuthService.AuthResult result = authService.authenticate("blank-name-token");
-
-    assertEquals("blank-jwt-token", result.accessToken());
+    assertEquals("noname-jwt-token", result.accessToken());
     assertEquals("USER", result.user().displayName());
     verify(userRepository).save(any(User.class));
   }
