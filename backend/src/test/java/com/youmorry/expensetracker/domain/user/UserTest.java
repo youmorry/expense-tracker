@@ -3,7 +3,11 @@ package com.youmorry.expensetracker.domain.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class UserTest {
 
@@ -16,46 +20,36 @@ class UserTest {
     assertEquals("Test User", user.displayName());
   }
 
-  @Test
-  void constructor_withNullGoogleId_throwsNullPointerException() {
+  @ParameterizedTest
+  @MethodSource("nullFieldArgs")
+  void constructor_withNullRequiredField_throwsNullPointerException(
+      String googleId, String email, String displayName) {
     assertThrows(
         NullPointerException.class,
-        () -> new User(new UserId(1L), null, "user@example.com", "Test User", null));
+        () -> new User(new UserId(1L), googleId, email, displayName, null));
   }
 
-  @Test
-  void constructor_withBlankGoogleId_throwsIllegalArgumentException() {
+  static Stream<Arguments> nullFieldArgs() {
+    return Stream.of(
+        Arguments.of(null, "user@example.com", "Test User"),
+        Arguments.of("google-123", null, "Test User"),
+        Arguments.of("google-123", "user@example.com", null));
+  }
+
+  @ParameterizedTest
+  @MethodSource("blankFieldArgs")
+  void constructor_withBlankRequiredField_throwsIllegalArgumentException(
+      String googleId, String email, String displayName) {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new User(new UserId(1L), "  ", "user@example.com", "Test User", null));
+        () -> new User(new UserId(1L), googleId, email, displayName, null));
   }
 
-  @Test
-  void constructor_withNullEmail_throwsNullPointerException() {
-    assertThrows(
-        NullPointerException.class,
-        () -> new User(new UserId(1L), "google-123", null, "Test User", null));
-  }
-
-  @Test
-  void constructor_withBlankEmail_throwsIllegalArgumentException() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> new User(new UserId(1L), "google-123", "  ", "Test User", null));
-  }
-
-  @Test
-  void constructor_withNullDisplayName_throwsNullPointerException() {
-    assertThrows(
-        NullPointerException.class,
-        () -> new User(new UserId(1L), "google-123", "user@example.com", null, null));
-  }
-
-  @Test
-  void constructor_withBlankDisplayName_throwsIllegalArgumentException() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> new User(new UserId(1L), "google-123", "user@example.com", "  ", null));
+  static Stream<Arguments> blankFieldArgs() {
+    return Stream.of(
+        Arguments.of("  ", "user@example.com", "Test User"),
+        Arguments.of("google-123", "  ", "Test User"),
+        Arguments.of("google-123", "user@example.com", "  "));
   }
 
   @Test
