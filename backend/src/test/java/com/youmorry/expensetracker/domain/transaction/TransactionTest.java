@@ -108,11 +108,7 @@ class TransactionTest {
             new CategoryId(1L),
             NeedWantType.NEED),
         Arguments.of(
-            new UserId(1L),
-            LocalDate.of(2026, 1, 1),
-            null,
-            new CategoryId(1L),
-            NeedWantType.NEED),
+            new UserId(1L), LocalDate.of(2026, 1, 1), null, new CategoryId(1L), NeedWantType.NEED),
         Arguments.of(
             new UserId(1L),
             LocalDate.of(2026, 1, 1),
