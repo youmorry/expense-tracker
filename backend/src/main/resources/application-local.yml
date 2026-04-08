@@ -1,4 +1,8 @@
 spring:
+  flyway:
+    locations:
+      - classpath:db/migration
+      - classpath:db/devdata
   datasource:
     url: jdbc:postgresql://localhost:5432/expense_tracker
     username: postgres
