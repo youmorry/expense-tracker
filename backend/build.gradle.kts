@@ -107,18 +107,21 @@ tasks.withType<JavaCompile>().configureEach {
         check("NullAway", CheckSeverity.ERROR)
         option("NullAway:JSpecifyMode", "true")
         option("NullAway:OnlyNullMarked", "true")
+        check("RequireExplicitNullMarking", CheckSeverity.ERROR)
     }
 }
 
 tasks.named<JavaCompile>("compileTestJava") {
     options.errorprone {
         check("NullAway", CheckSeverity.OFF)
+        check("RequireExplicitNullMarking", CheckSeverity.OFF)
     }
 }
 
 tasks.named<JavaCompile>("compileIntegrationTestJava") {
     options.errorprone {
         check("NullAway", CheckSeverity.OFF)
+        check("RequireExplicitNullMarking", CheckSeverity.OFF)
     }
 }
 
