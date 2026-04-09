@@ -1,6 +1,7 @@
 package com.youmorry.expensetracker.infrastructure.web;
 
 import com.youmorry.expensetracker.domain.user.UserId;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +20,11 @@ public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
   }
 
   @Override
-  public Object resolveArgument(
+  public @Nullable Object resolveArgument(
       MethodParameter parameter,
-      ModelAndViewContainer mavContainer,
+      @Nullable ModelAndViewContainer mavContainer,
       NativeWebRequest webRequest,
-      WebDataBinderFactory binderFactory) {
+      @Nullable WebDataBinderFactory binderFactory) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) {
       return null;

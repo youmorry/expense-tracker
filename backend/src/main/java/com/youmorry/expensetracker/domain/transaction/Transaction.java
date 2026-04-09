@@ -34,8 +34,8 @@ public record Transaction(
     @Column("amount") Money amount,
     CategoryId categoryId,
     NeedWantType needWantType,
-    String title,
-    String memo,
+    @Nullable String title,
+    @Nullable String memo,
     @CreatedDate @Nullable Instant createdAt,
     @LastModifiedDate @Nullable Instant updatedAt) {
 

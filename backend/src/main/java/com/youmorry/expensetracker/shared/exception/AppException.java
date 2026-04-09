@@ -12,12 +12,14 @@ public abstract class AppException extends RuntimeException {
   private final String type;
   private final String title;
   private final int status;
+  private final String detail;
 
   protected AppException(String type, String title, int status, String detail) {
     super(detail);
     this.type = type;
     this.title = title;
     this.status = status;
+    this.detail = detail;
   }
 
   public String getType() {
@@ -33,6 +35,6 @@ public abstract class AppException extends RuntimeException {
   }
 
   public String getDetail() {
-    return getMessage();
+    return detail;
   }
 }

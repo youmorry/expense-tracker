@@ -2,6 +2,7 @@ package com.youmorry.expensetracker.application.auth;
 
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserRepository;
+import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +51,8 @@ public class AuthService {
     User user =
         userRepository.findByGoogleId(userInfo.subject()).orElseGet(() -> createNewUser(userInfo));
 
-    String accessToken = jwtTokenGenerator.generateToken(user.id(), user.email());
+    String accessToken =
+        jwtTokenGenerator.generateToken(Objects.requireNonNull(user.id()), user.email());
     return new AuthResult(accessToken, user);
   }
 
