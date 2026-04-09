@@ -1,9 +1,13 @@
+import net.ltgt.gradle.errorprone.CheckSeverity
+import net.ltgt.gradle.errorprone.errorprone
+
 plugins {
     java
     checkstyle
     id("org.springframework.boot") version "4.0.5"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "8.3.0"
+    id("net.ltgt.errorprone") version "5.1.0"
 }
 
 group = "com.youmorry"
@@ -36,6 +40,9 @@ dependencies {
     implementation("com.google.guava:guava:33.5.0-jre")
     implementation("com.google.api-client:google-api-client:2.9.0")
     implementation("org.jspecify:jspecify:1.0.0")
+
+    errorprone("com.uber.nullaway:nullaway:0.13.1")
+    errorprone("com.google.errorprone:error_prone_core:2.39.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
@@ -92,6 +99,26 @@ spotless {
         googleJavaFormat("1.35.0")
         removeUnusedImports()
         formatAnnotations()
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone {
+        check("NullAway", CheckSeverity.ERROR)
+        option("NullAway:AnnotatedPackages", "com.youmorry.expensetracker")
+        option("NullAway:JSpecifyMode", "true")
+    }
+}
+
+tasks.named<JavaCompile>("compileTestJava") {
+    options.errorprone {
+        check("NullAway", CheckSeverity.OFF)
+    }
+}
+
+tasks.named<JavaCompile>("compileIntegrationTestJava") {
+    options.errorprone {
+        check("NullAway", CheckSeverity.OFF)
     }
 }
 
