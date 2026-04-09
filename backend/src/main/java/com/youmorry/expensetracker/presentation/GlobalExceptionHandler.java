@@ -85,14 +85,17 @@ public class GlobalExceptionHandler {
                                       "pointer",
                                       "#/" + toSnakeCase(fe.getField())));
                     }
+                    String paramName = r.getMethodParameter().getParameterName();
                     return r.getResolvableErrors().stream()
                         .map(
                             err ->
                                 Map.of(
                                     "detail",
-                                    err.getDefaultMessage(),
+                                    err.getDefaultMessage() != null
+                                        ? err.getDefaultMessage()
+                                        : "invalid value",
                                     "pointer",
-                                    "#/" + toSnakeCase(r.getMethodParameter().getParameterName())));
+                                    "#/" + toSnakeCase(paramName != null ? paramName : "unknown")));
                   })
               .toList();
     } else {

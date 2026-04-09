@@ -33,6 +33,7 @@ public abstract class AppException extends RuntimeException {
   }
 
   public String getDetail() {
-    return getMessage();
+    String message = getMessage();
+    return message != null ? message : "";
   }
 }
