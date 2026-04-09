@@ -105,8 +105,8 @@ spotless {
 tasks.withType<JavaCompile>().configureEach {
     options.errorprone {
         check("NullAway", CheckSeverity.ERROR)
-        option("NullAway:AnnotatedPackages", "com.youmorry.expensetracker")
         option("NullAway:JSpecifyMode", "true")
+        option("NullAway:OnlyNullMarked", "true")
     }
 }
 
