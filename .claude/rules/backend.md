@@ -6,17 +6,41 @@ paths:
 
 # Backend ルール
 
-## アーキテクチャ: DDD + Layered
+## アーキテクチャ: フィーチャーファースト + DDD 4層
 
 ```
 com.youmorry.expensetracker/
-├── domain/           # Entity, ValueObject, Repository interface
-├── application/      # Service（ユースケース実装）
-├── infrastructure/   # Spring Data JDBC Repository 実装, 外部 API
-├── presentation/     # REST Controller, DTO
-└── shared/           # 横断的関心事（例外クラス等）
+├── transaction/          # 支出記録
+│   ├── domain/           # Entity, ValueObject, Repository interface
+│   ├── application/      # Service（ユースケース実装）
+│   ├── infrastructure/   # JDBC Repository 実装
+│   └── presentation/     # REST Controller, DTO
+├── user/                 # ユーザー
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   └── presentation/
+├── category/             # カテゴリ
+│   ├── domain/
+│   ├── application/
+│   └── presentation/
+├── analytics/            # 分析
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   └── presentation/
+├── auth/                 # 認証
+│   ├── application/
+│   ├── infrastructure/
+│   └── presentation/
+└── shared/               # 横断的関心事
+    ├── exception/        # 例外クラス
+    └── infrastructure/   # DB設定, Web設定, コンバーター
+        ├── persistence/
+        └── web/
 ```
 
+- 各フィーチャーがトップレベルパッケージ、内部に `domain` / `application` / `infrastructure` / `presentation` の4層を持つ
 - `domain` と `application` を明示的に分離し、ドメインロジックを `domain` に集約
 - Spring Data JDBC の Aggregate/Repository 概念を DDD にそのまま対応させる
 - `domain` 層はフレームワークのロジックに依存しない（`@Table`, `@Id` 等のマッピング用アノテーションは許容）
@@ -26,6 +50,12 @@ com.youmorry.expensetracker/
 - 依存方向: presentation → application → domain ← infrastructure
 - domain 層は他の層に依存しない（依存性逆転）
 - Controller から Repository を直接呼ばない（必ず application 層を経由）
+
+### クロスフィーチャー依存ルール
+
+- フィーチャー間の依存は `domain` パッケージへの参照のみ許可（例: `transaction` → `user.domain.UserId`）
+- `application` / `infrastructure` / `presentation` 層は他フィーチャーの同層に依存しない
+- 例外: `auth.presentation` → `user.presentation`（`AuthResponse` → `UserResponse`）は許容
 
 ### インターフェースの配置規約
 
