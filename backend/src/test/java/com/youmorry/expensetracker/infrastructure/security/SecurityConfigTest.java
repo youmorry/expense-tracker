@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.domain.user.UserId;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ class SecurityConfigTest {
 
   // 32 bytes of key material, Base64-encoded
   private static final String SECRET =
-      Base64.getEncoder().encodeToString("test-secret-key-at-least-32-byte".getBytes());
+      Base64.getEncoder()
+          .encodeToString("test-secret-key-at-least-32-byte".getBytes(StandardCharsets.UTF_8));
   private static final String ISSUER = "https://test.example.com";
 
   @Autowired private MockMvc mockMvc;
@@ -54,7 +56,8 @@ class SecurityConfigTest {
   void jwtDecoder_withShortSecret_throwsIllegalArgumentException() {
     SecurityConfig config = new SecurityConfig();
     // Base64 of "short" (only 5 bytes, less than 32)
-    String shortBase64 = Base64.getEncoder().encodeToString("short".getBytes());
+    String shortBase64 =
+        Base64.getEncoder().encodeToString("short".getBytes(StandardCharsets.UTF_8));
     assertThrows(IllegalArgumentException.class, () -> config.jwtDecoder(shortBase64, ISSUER));
   }
 
@@ -62,7 +65,8 @@ class SecurityConfigTest {
   void jwtDecoder_with32ByteSecret_returnsDecoder() {
     SecurityConfig config = new SecurityConfig();
     String validBase64 =
-        Base64.getEncoder().encodeToString("valid-secret-key-that-is-32-byte".getBytes());
+        Base64.getEncoder()
+            .encodeToString("valid-secret-key-that-is-32-byte".getBytes(StandardCharsets.UTF_8));
     assertNotNull(config.jwtDecoder(validBase64, ISSUER));
   }
 

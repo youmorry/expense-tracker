@@ -128,7 +128,7 @@ abstract class AbstractIntegrationTest {
         .andExpect(status().isCreated());
   }
 
-  /** memo なしの取引作成ヘルパー。 */
+  /** メモなしの取引作成ヘルパー。 */
   protected void createTransaction(
       String token, String date, String amount, int categoryId, String needWantType, String title)
       throws Exception {

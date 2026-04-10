@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.youmorry.expensetracker.domain.user.UserId;
+import java.nio.charset.StandardCharsets;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import javax.crypto.spec.SecretKeySpec;
@@ -15,7 +16,8 @@ class JwtProviderTest {
 
   // 32 bytes of key material, Base64-encoded
   private static final String SECRET =
-      Base64.getEncoder().encodeToString("test-secret-key-at-least-32-byte".getBytes());
+      Base64.getEncoder()
+          .encodeToString("test-secret-key-at-least-32-byte".getBytes(StandardCharsets.UTF_8));
   private static final String ISSUER = "https://test.example.com";
   private static final long EXPIRATION_HOURS = 24;
 
