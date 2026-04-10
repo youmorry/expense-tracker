@@ -1,10 +1,13 @@
 package com.youmorry.expensetracker.domain.category;
 
+import com.google.errorprone.annotations.Immutable;
+
 /**
  * Value Object: Category ID。
  *
  * @param value Category ID
  */
+@Immutable
 public record CategoryId(long value) {
   /**
    * ID が正の値であることを検証する。
