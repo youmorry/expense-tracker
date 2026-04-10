@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.web;
+package com.youmorry.expensetracker.shared.infrastructure.web;
 
 import com.youmorry.expensetracker.domain.user.UserId;
 import org.jspecify.annotations.Nullable;

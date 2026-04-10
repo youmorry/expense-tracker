@@ -1,7 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.repository;
-
-import com.youmorry.expensetracker.infrastructure.repository.converter.IdConverters;
-import com.youmorry.expensetracker.infrastructure.repository.converter.ValueObjectConverters;
+package com.youmorry.expensetracker.shared.infrastructure.persistence;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;

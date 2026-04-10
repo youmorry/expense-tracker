@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.web;
+package com.youmorry.expensetracker.shared.infrastructure.web;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -12,7 +12,7 @@ import com.youmorry.expensetracker.application.UserService;
 import com.youmorry.expensetracker.domain.user.User;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
-import com.youmorry.expensetracker.infrastructure.web.WebMvcConfig;
+import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;

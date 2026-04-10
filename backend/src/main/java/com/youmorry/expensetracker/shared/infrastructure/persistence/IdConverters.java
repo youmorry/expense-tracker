@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.infrastructure.repository.converter;
+package com.youmorry.expensetracker.shared.infrastructure.persistence;
 
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.TransactionId;

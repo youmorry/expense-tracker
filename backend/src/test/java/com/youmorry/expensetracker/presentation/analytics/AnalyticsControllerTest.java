@@ -15,7 +15,7 @@ import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.user.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
-import com.youmorry.expensetracker.infrastructure.web.WebMvcConfig;
+import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;

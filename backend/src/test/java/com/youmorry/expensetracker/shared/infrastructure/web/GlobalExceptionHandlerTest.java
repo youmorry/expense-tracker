@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.presentation;
+package com.youmorry.expensetracker.shared.infrastructure.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

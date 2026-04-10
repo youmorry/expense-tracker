@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.presentation;
+package com.youmorry.expensetracker.shared.infrastructure.web;
 
 import com.google.common.base.CaseFormat;
 import com.youmorry.expensetracker.shared.exception.AppException;
