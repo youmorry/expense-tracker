@@ -8,12 +8,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.youmorry.expensetracker.auth.infrastructure.SecurityConfig;
+import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
+import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import com.youmorry.expensetracker.user.application.UserService;
 import com.youmorry.expensetracker.user.domain.User;
 import com.youmorry.expensetracker.user.domain.UserId;
-import com.youmorry.expensetracker.auth.infrastructure.SecurityConfig;
-import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
-import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

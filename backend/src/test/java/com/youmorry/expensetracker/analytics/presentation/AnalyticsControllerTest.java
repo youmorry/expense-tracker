@@ -11,11 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.youmorry.expensetracker.analytics.application.AnalyticsService;
 import com.youmorry.expensetracker.analytics.application.CategoryAnalyticsResult;
 import com.youmorry.expensetracker.analytics.application.NeedWantAnalyticsResult;
+import com.youmorry.expensetracker.auth.infrastructure.SecurityConfig;
 import com.youmorry.expensetracker.category.domain.CategoryId;
+import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import com.youmorry.expensetracker.transaction.domain.NeedWantType;
 import com.youmorry.expensetracker.user.domain.UserId;
-import com.youmorry.expensetracker.auth.infrastructure.SecurityConfig;
-import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;

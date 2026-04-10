@@ -1,4 +1,5 @@
 package com.youmorry.expensetracker.shared.infrastructure.persistence;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;

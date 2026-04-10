@@ -9,10 +9,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import com.youmorry.expensetracker.user.domain.User;
 import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.user.domain.UserRepository;
-import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

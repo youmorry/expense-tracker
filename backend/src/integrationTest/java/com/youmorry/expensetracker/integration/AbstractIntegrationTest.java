@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.youmorry.expensetracker.auth.application.JwtTokenGenerator;
 import com.youmorry.expensetracker.auth.application.OauthTokenVerifier;
-import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.testutil.SharedPostgresContainer;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

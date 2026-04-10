@@ -3,9 +3,8 @@ package com.youmorry.expensetracker.transaction.infrastructure;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.youmorry.expensetracker.shared.infrastructure.persistence.AbstractRepositoryTest;
-
 import com.youmorry.expensetracker.category.domain.CategoryId;
+import com.youmorry.expensetracker.shared.infrastructure.persistence.AbstractRepositoryTest;
 import com.youmorry.expensetracker.transaction.domain.Money;
 import com.youmorry.expensetracker.transaction.domain.NeedWantType;
 import com.youmorry.expensetracker.transaction.domain.Transaction;

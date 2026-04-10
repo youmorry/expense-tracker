@@ -6,9 +6,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.youmorry.expensetracker.auth.infrastructure.SecurityConfig;
 import com.youmorry.expensetracker.category.application.CategoryService;
 import com.youmorry.expensetracker.category.domain.CategoryType;
-import com.youmorry.expensetracker.auth.infrastructure.SecurityConfig;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
