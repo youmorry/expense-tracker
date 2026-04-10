@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.shared.infrastructure.persistence;
 
-import com.youmorry.expensetracker.domain.transaction.Money;
+import com.youmorry.expensetracker.transaction.domain.Money;
 import java.math.BigDecimal;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;

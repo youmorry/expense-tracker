@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.youmorry.expensetracker.application.auth.OauthUserInfo;
+import com.youmorry.expensetracker.auth.application.OauthUserInfo;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import org.junit.jupiter.api.Test;
 

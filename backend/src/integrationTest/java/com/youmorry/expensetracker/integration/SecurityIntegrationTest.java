@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.youmorry.expensetracker.application.auth.OauthUserInfo;
+import com.youmorry.expensetracker.auth.application.OauthUserInfo;
 import com.youmorry.expensetracker.user.domain.UserId;
 import org.junit.jupiter.api.Test;
 

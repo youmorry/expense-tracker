@@ -4,8 +4,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.youmorry.expensetracker.application.auth.JwtTokenGenerator;
-import com.youmorry.expensetracker.application.auth.OauthTokenVerifier;
+import com.youmorry.expensetracker.auth.application.JwtTokenGenerator;
+import com.youmorry.expensetracker.auth.application.OauthTokenVerifier;
 import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.testutil.SharedPostgresContainer;
 import java.math.BigDecimal;

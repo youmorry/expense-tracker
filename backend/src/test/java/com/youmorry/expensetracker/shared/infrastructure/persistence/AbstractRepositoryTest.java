@@ -1,0 +1,18 @@
+package com.youmorry.expensetracker.shared.infrastructure.persistence;
+
+import com.youmorry.expensetracker.testutil.SharedPostgresContainer;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.postgresql.PostgreSQLContainer;
+
+/**
+ * リポジトリ統合テストの基底クラス。
+ *
+ * <p>Testcontainers で PostgreSQL コンテナを起動し、{@code @ServiceConnection} で Spring に接続情報を自動注入する。 Flyway
+ * マイグレーションはスライステスト起動時に自動実行される。
+ *
+ * <p>Singleton Container パターンを採用し、複数のテストクラス間でコンテナを共有する。
+ */
+public abstract class AbstractRepositoryTest {
+
+  @ServiceConnection static final PostgreSQLContainer POSTGRES = SharedPostgresContainer.INSTANCE;
+}

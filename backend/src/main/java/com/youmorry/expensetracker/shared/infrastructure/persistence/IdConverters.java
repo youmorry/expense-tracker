@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.shared.infrastructure.persistence;
 
-import com.youmorry.expensetracker.domain.category.CategoryId;
-import com.youmorry.expensetracker.domain.transaction.TransactionId;
+import com.youmorry.expensetracker.category.domain.CategoryId;
+import com.youmorry.expensetracker.transaction.domain.TransactionId;
 import com.youmorry.expensetracker.user.domain.UserId;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;

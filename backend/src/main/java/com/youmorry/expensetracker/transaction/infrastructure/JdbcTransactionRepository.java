@@ -1,0 +1,20 @@
+package com.youmorry.expensetracker.transaction.infrastructure;
+
+import com.youmorry.expensetracker.transaction.domain.Transaction;
+import com.youmorry.expensetracker.transaction.domain.TransactionId;
+import com.youmorry.expensetracker.transaction.domain.TransactionRepository;
+import com.youmorry.expensetracker.user.domain.UserId;
+import java.util.List;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+/** Spring Data JDBC による {@link TransactionRepository} の実装。 */
+@Repository
+public interface JdbcTransactionRepository
+    extends TransactionRepository, CrudRepository<Transaction, TransactionId> {
+
+  @Override
+  @Query("SELECT * FROM transactions WHERE user_id = :userId ORDER BY date DESC, id DESC")
+  List<Transaction> findByUserId(UserId userId);
+}
