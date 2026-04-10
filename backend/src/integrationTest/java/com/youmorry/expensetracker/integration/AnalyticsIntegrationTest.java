@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

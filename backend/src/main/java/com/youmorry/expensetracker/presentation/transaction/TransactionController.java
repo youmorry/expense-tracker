@@ -6,7 +6,7 @@ import com.youmorry.expensetracker.application.transaction.TransactionService;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
 import com.youmorry.expensetracker.domain.transaction.TransactionId;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import java.time.LocalDate;

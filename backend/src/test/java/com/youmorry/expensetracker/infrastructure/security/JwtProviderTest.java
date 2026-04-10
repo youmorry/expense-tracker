@@ -3,7 +3,7 @@ package com.youmorry.expensetracker.infrastructure.security;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import javax.crypto.spec.SecretKeySpec;

@@ -1,13 +1,13 @@
-package com.youmorry.expensetracker.application;
+package com.youmorry.expensetracker.user.application;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.youmorry.expensetracker.domain.user.User;
-import com.youmorry.expensetracker.domain.user.UserId;
-import com.youmorry.expensetracker.domain.user.UserRepository;
+import com.youmorry.expensetracker.user.domain.User;
+import com.youmorry.expensetracker.user.domain.UserId;
+import com.youmorry.expensetracker.user.domain.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import java.time.Instant;
 import java.util.Optional;

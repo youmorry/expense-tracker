@@ -1,8 +1,8 @@
-package com.youmorry.expensetracker.infrastructure.repository;
+package com.youmorry.expensetracker.user.infrastructure;
 
-import com.youmorry.expensetracker.domain.user.User;
-import com.youmorry.expensetracker.domain.user.UserId;
-import com.youmorry.expensetracker.domain.user.UserRepository;
+import com.youmorry.expensetracker.user.domain.User;
+import com.youmorry.expensetracker.user.domain.UserId;
+import com.youmorry.expensetracker.user.domain.UserRepository;
 import java.util.Optional;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;

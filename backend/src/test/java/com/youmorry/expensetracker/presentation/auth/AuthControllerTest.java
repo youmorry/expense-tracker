@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.youmorry.expensetracker.application.auth.AuthService;
 import com.youmorry.expensetracker.application.auth.AuthService.AuthResult;
-import com.youmorry.expensetracker.domain.user.User;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.User;
+import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.shared.exception.UnauthorizedException;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.domain.analytics;
 
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.time.LocalDate;
 import java.util.List;
 import org.jspecify.annotations.Nullable;

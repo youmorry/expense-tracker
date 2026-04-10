@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.infrastructure.security;
 
 import com.youmorry.expensetracker.application.auth.JwtTokenGenerator;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;

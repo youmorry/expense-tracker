@@ -4,7 +4,7 @@ import com.youmorry.expensetracker.application.analytics.AnalyticsService;
 import com.youmorry.expensetracker.application.analytics.CategoryAnalyticsResult;
 import com.youmorry.expensetracker.application.analytics.NeedWantAnalyticsResult;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.time.LocalDate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

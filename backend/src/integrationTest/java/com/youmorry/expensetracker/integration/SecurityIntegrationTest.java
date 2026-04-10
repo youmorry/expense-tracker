@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.application.auth.OauthUserInfo;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import org.junit.jupiter.api.Test;
 
 /** 横断的セキュリティの統合テスト。認証が必要なエンドポイントと公開エンドポイントのアクセス制御を検証する。 */

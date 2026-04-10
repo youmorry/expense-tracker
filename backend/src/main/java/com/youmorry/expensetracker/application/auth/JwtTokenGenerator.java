@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.application.auth;
 
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 
 /** JWT アクセストークンの生成を担うポート。 */
 public interface JwtTokenGenerator {

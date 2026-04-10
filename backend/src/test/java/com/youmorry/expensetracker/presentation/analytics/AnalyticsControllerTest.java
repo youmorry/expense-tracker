@@ -13,7 +13,7 @@ import com.youmorry.expensetracker.application.analytics.CategoryAnalyticsResult
 import com.youmorry.expensetracker.application.analytics.NeedWantAnalyticsResult;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import java.math.BigDecimal;

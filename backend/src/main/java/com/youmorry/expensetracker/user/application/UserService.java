@@ -1,8 +1,8 @@
-package com.youmorry.expensetracker.application;
+package com.youmorry.expensetracker.user.application;
 
-import com.youmorry.expensetracker.domain.user.User;
-import com.youmorry.expensetracker.domain.user.UserId;
-import com.youmorry.expensetracker.domain.user.UserRepository;
+import com.youmorry.expensetracker.user.domain.User;
+import com.youmorry.expensetracker.user.domain.UserId;
+import com.youmorry.expensetracker.user.domain.UserRepository;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,6 @@
 package com.youmorry.expensetracker.shared.infrastructure.web;
 
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;

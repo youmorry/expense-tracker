@@ -1,7 +1,7 @@
 package com.youmorry.expensetracker.presentation.auth;
 
 import com.youmorry.expensetracker.application.auth.AuthService.AuthResult;
-import com.youmorry.expensetracker.presentation.user.UserResponse;
+import com.youmorry.expensetracker.user.presentation.UserResponse;
 
 /** Google 認証レスポンス。JWT アクセストークンとユーザー情報を返す。 */
 public record AuthResponse(String accessToken, UserResponse user) {

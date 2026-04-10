@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.user;
+package com.youmorry.expensetracker.user.domain;
 
 import java.util.Optional;
 

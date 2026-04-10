@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.presentation.user;
+package com.youmorry.expensetracker.user.presentation;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,9 +8,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.youmorry.expensetracker.application.UserService;
-import com.youmorry.expensetracker.domain.user.User;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.application.UserService;
+import com.youmorry.expensetracker.user.domain.User;
+import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.infrastructure.security.SecurityConfig;
 import com.youmorry.expensetracker.shared.infrastructure.web.WebMvcConfig;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;

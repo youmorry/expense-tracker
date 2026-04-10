@@ -1,4 +1,4 @@
-package com.youmorry.expensetracker.domain.user;
+package com.youmorry.expensetracker.user.domain;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

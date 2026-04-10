@@ -7,7 +7,7 @@ import com.youmorry.expensetracker.domain.transaction.Transaction;
 import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchCriteria;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.util.List;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;

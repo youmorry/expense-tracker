@@ -8,7 +8,7 @@ import com.youmorry.expensetracker.domain.analytics.CategoryBreakdown;
 import com.youmorry.expensetracker.domain.analytics.NeedWantBreakdown;
 import com.youmorry.expensetracker.domain.category.CategoryId;
 import com.youmorry.expensetracker.domain.transaction.NeedWantType;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;

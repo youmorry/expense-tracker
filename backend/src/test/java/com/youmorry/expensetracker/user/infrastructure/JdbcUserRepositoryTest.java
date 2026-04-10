@@ -1,17 +1,22 @@
-package com.youmorry.expensetracker.infrastructure.repository;
+package com.youmorry.expensetracker.user.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.youmorry.expensetracker.domain.user.User;
-import com.youmorry.expensetracker.domain.user.UserId;
-import com.youmorry.expensetracker.domain.user.UserRepository;
+import com.youmorry.expensetracker.user.domain.User;
+import com.youmorry.expensetracker.user.domain.UserId;
+import com.youmorry.expensetracker.user.domain.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.youmorry.expensetracker.testutil.SharedPostgresContainer;
 import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @DataJdbcTest
-class JdbcUserRepositoryTest extends AbstractRepositoryTest {
+class JdbcUserRepositoryTest {
+
+  @ServiceConnection static final PostgreSQLContainer POSTGRES = SharedPostgresContainer.INSTANCE;
 
   @Autowired private UserRepository userRepository;
 

@@ -1,4 +1,4 @@
 @NullMarked
-package com.youmorry.expensetracker.presentation.user;
+package com.youmorry.expensetracker.user.presentation;
 
 import org.jspecify.annotations.NullMarked;

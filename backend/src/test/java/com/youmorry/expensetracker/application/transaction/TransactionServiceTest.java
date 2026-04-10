@@ -15,7 +15,7 @@ import com.youmorry.expensetracker.domain.transaction.Transaction;
 import com.youmorry.expensetracker.domain.transaction.TransactionId;
 import com.youmorry.expensetracker.domain.transaction.TransactionRepository;
 import com.youmorry.expensetracker.domain.transaction.TransactionSearchRepository;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import com.youmorry.expensetracker.shared.exception.ResourceNotFoundException;
 import com.youmorry.expensetracker.shared.exception.ValidationException;
 import java.math.BigDecimal;

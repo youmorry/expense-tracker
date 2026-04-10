@@ -1,6 +1,6 @@
-package com.youmorry.expensetracker.presentation.user;
+package com.youmorry.expensetracker.user.presentation;
 
-import com.youmorry.expensetracker.domain.user.User;
+import com.youmorry.expensetracker.user.domain.User;
 import java.time.Instant;
 import java.util.Objects;
 

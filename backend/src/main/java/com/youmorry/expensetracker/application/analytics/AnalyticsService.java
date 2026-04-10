@@ -3,7 +3,7 @@ package com.youmorry.expensetracker.application.analytics;
 import com.youmorry.expensetracker.domain.analytics.AnalyticsRepository;
 import com.youmorry.expensetracker.domain.analytics.CategoryBreakdown;
 import com.youmorry.expensetracker.domain.analytics.NeedWantBreakdown;
-import com.youmorry.expensetracker.domain.user.UserId;
+import com.youmorry.expensetracker.user.domain.UserId;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
