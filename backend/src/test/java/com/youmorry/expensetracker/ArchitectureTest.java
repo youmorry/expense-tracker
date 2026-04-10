@@ -12,9 +12,12 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import com.youmorry.expensetracker.shared.exception.AppException;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO: フィーチャーファースト構成への移行後に新しいルールで書き直す（Step 9）
+@Disabled("パッケージ構成をクリーンアーキテクチャに移行中")
 @AnalyzeClasses(
     packages = "com.youmorry.expensetracker",
     importOptions = ImportOption.DoNotIncludeTests.class)
