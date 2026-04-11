@@ -33,7 +33,7 @@ public class JdbcTransactionSearchRepository implements TransactionSearchReposit
    *
    * @param userId ユーザー ID
    * @param criteria 検索条件
-   * @return 検索条件に合致する支出記録のリスト（date DESC, created_at DESC）
+   * @return 検索条件に合致する支出記録のリスト（date DESC, id DESC）
    */
   @Override
   public List<Transaction> search(UserId userId, TransactionSearchCriteria criteria) {
@@ -62,7 +62,7 @@ public class JdbcTransactionSearchRepository implements TransactionSearchReposit
       params.addValue("keyword", "%" + criteria.keyword() + "%");
     }
 
-    sql.append(" ORDER BY date DESC, created_at DESC");
+    sql.append(" ORDER BY date DESC, id DESC");
 
     return jdbcClient
         .sql(sql.toString())

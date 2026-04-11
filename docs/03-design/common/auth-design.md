@@ -254,6 +254,7 @@ FE と BE が異なるオリジンで動作するため、CORS を適切に設�
 |--------|--------|------|
 | `GOOGLE_CLIENT_ID` | BE / FE | Google OAuth2 クライアント ID |
 | `JWT_SECRET` | BE | JWT 署名用の秘密鍵（最低 32 バイト） |
+| `JWT_ISSUER` | BE | JWT 発行者（iss クレームの値） |
 | `JWT_EXPIRATION_HOURS` | BE | JWT 有効期限（時間単位、デフォルト: 24） |
 
 ---
