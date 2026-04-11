@@ -9,6 +9,8 @@ spring:
     password: postgres
 
 app:
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:8081
   auth:
     google-client-id: dummy-client-id
     jwt-secret: ZGV2LXNlY3JldC1rZXktYXQtbGVhc3QtMzItYnl0ZXMh
