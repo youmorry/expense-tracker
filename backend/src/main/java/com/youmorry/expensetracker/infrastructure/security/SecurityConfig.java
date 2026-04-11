@@ -1,6 +1,8 @@
 package com.youmorry.expensetracker.infrastructure.security;
 
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +15,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /** Spring Security の設定。 */
 @Configuration
@@ -22,7 +26,8 @@ public class SecurityConfig {
   /** セキュリティフィルターチェーンを構成する。 */
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
+    http.cors(Customizer.withDefaults())
+        .csrf(csrf -> csrf.disable())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
@@ -30,6 +35,23 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
     return http.build();
+  }
+
+  /** CORS の許可設定を構成する。 */
+  @Bean
+  public UrlBasedCorsConfigurationSource corsConfigurationSource(
+      @Value("${app.cors.allowed-origins:}") String allowedOrigins) {
+    CorsConfiguration configuration = new CorsConfiguration();
+    if (!allowedOrigins.isBlank()) {
+      configuration.setAllowedOrigins(
+          Arrays.stream(allowedOrigins.split(",")).map(String::trim).toList());
+    }
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    configuration.setAllowCredentials(true);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
   /** HS256 で署名された JWT を検証する {@link JwtDecoder} を構成する。issuer の一致も検証する。 */
