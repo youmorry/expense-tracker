@@ -3,7 +3,7 @@
 ## 概要
 
 [er-diagram.md](er-diagram.md) で定義したテーブル構成に対し、カラムの精度・制約・インデックスなどの詳細を定義する。
-DDL は Flyway のマイグレーションスクリプトとして管理する。
+DDL は Flyway のマイグレーションスクリプトとして管理する（[flyway-migrations.md](flyway-migrations.md) 参照）。
 
 ---
 
@@ -134,12 +134,6 @@ ON DELETE は「親テーブルのレコードが削除されたとき、それ�
 `(user_id, date DESC, category_id)` のインデックスで期間指定なしのカテゴリ別集計（`WHERE user_id = ? GROUP BY category_id`）を行う場合、date を飛び越えて category_id を活用することはできない。そのユーザーの全レコードを読んでからグループ化する動きになる。
 
 ただし、本アプリは個人利用で1ユーザーのデータ量は年間数千件程度を想定している。user_id で絞り込んだ時点で対象レコードは十分に少ないため、期間指定なしのケースでも実用上のパフォーマンス問題にはならない。月/年の期間指定が主な利用パターンであることを優先し、この構成を採用した。
-
----
-
-## Flyway マイグレーション
-
-マイグレーションスクリプトの一覧・各 SQL の詳細は [flyway-migrations.md](flyway-migrations.md) を参照。
 
 ---
 
