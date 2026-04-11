@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.youmorry.expensetracker.domain.user.UserId;
@@ -13,12 +15,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(SecurityTestController.class)
 @Import(SecurityConfig.class)
+@TestPropertySource(
+    properties = "app.cors.allowed-origins=http://localhost:5173,http://localhost:8081")
 class SecurityConfigTest {
 
   // 32 bytes of key material, Base64-encoded
@@ -90,5 +96,27 @@ class SecurityConfigTest {
     String token = provider.generateToken(new UserId(1L), "test@gmail.com");
 
     assertNotNull(decoder.decode(token));
+  }
+
+  @Test
+  void preflightRequest_fromAllowedOrigin_returnsOk() throws Exception {
+    mockMvc
+        .perform(
+            options("/api/v1/test")
+                .header(HttpHeaders.ORIGIN, "http://localhost:5173")
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET"))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:5173"))
+        .andExpect(header().exists(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS));
+  }
+
+  @Test
+  void preflightRequest_fromDisallowedOrigin_returnsForbidden() throws Exception {
+    mockMvc
+        .perform(
+            options("/api/v1/test")
+                .header(HttpHeaders.ORIGIN, "http://evil.example.com")
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET"))
+        .andExpect(status().isForbidden());
   }
 }
