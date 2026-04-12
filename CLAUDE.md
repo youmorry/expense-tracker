@@ -32,7 +32,7 @@
 ## Tech Stack
 
 - Backend: Java 25, Spring Boot 4.0, Spring Data JDBC, Flyway, PostgreSQL
-- Frontend: React, TypeScript, Vite, TanStack Query（未実装）
+- Frontend: React 19, TypeScript 6, Vite 8, React Router 7, TanStack Query v5, Tailwind CSS 4, Vitest 4（未実装）
 - Infra: Docker Compose（ローカル開発）
 
 ## Architecture
@@ -97,9 +97,11 @@ docker compose up                        # ローカル DB・モックサーバ�
 
 # Frontend (cd frontend) ※未実装
 npm install
-npm run dev                              # 開発サーバー
-npm test                                 # テスト
+npm run dev                              # 開発サーバー（Vite 8）
+npm test                                 # テスト（Vitest）
 npm run build                            # ビルド
+npm run lint                             # ESLint
+npm run format                           # Prettier
 ```
 
 ## Skills
