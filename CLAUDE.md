@@ -32,7 +32,7 @@
 ## Tech Stack
 
 - Backend: Java 25, Spring Boot 4.0, Spring Data JDBC, Flyway, PostgreSQL
-- Frontend: React, TypeScript, Vite, TanStack Query（未実装）
+- Frontend: React 19, TypeScript 6, Vite 8, React Router 7, TanStack Query v5, Tailwind CSS 4, Vitest 4（未実装）
 - Infra: Docker Compose（ローカル開発）
 
 ## Architecture
@@ -97,9 +97,11 @@ docker compose up                        # ローカル DB・モックサーバ�
 
 # Frontend (cd frontend) ※未実装
 npm install
-npm run dev                              # 開発サーバー
-npm test                                 # テスト
+npm run dev                              # 開発サーバー（Vite 8）
+npm test                                 # テスト（Vitest）
 npm run build                            # ビルド
+npm run lint                             # ESLint
+npm run format                           # Prettier
 ```
 
 ## Skills
@@ -111,7 +113,9 @@ npm run build                            # ビルド
 ## 参照ドキュメント
 
 - `docs/01-planning/project-overview.md` — プロジェクト概要
-- `docs/01-planning/tech-stack.md` — 技術スタック詳細・選定理由
+- `docs/01-planning/tech-stack.md` — 技術スタック概要・共通インフラ
+- `docs/01-planning/tech-stack-backend.md` — バックエンド技術スタック詳細・選定理由
+- `docs/01-planning/tech-stack-frontend.md` — フロントエンド技術スタック詳細・選定理由
 - `docs/02-requirements/requirements.md` — 要件定義
 - `docs/03-design/backend/domain-model.md` — Entity / VO / Aggregate 設計
 - `docs/03-design/backend/er-diagram.md` — ER図

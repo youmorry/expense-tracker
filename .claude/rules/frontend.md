@@ -47,6 +47,7 @@ src/
 
 ## テスト方針
 
+- テストフレームワークは Vitest を使用（Vite の設定・変換パイプラインを共有）
 - ユーザー操作ベースでテストする（実装詳細に依存しない）
 - Testing Library の `getByRole`, `getByLabelText` を優先（`getByTestId` は最終手段）
 - API モックは MSW を使用

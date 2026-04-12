@@ -2,100 +2,31 @@
 
 ## 概要
 
-| レイヤー | 技術 | バージョン |
-|----------|------|------------|
-| バックエンド | Spring Boot | 4.0.x |
-| バックエンド言語 | Java | 25 (LTS) |
-| フロントエンド | React | 19.x |
-| フロントエンド言語 | TypeScript | 5.x |
-| データベース | PostgreSQL | 18.x |
-| コンテナ | Docker / Docker Compose | - |
+### バックエンド
 
----
+| 技術 | バージョン |
+|------|------------|
+| Java | 25 (LTS) |
+| Spring Boot | 4.0.x |
+| PostgreSQL | 18.x |
 
-## バックエンド
+詳細: [tech-stack-backend.md](tech-stack-backend.md)
 
-### コアフレームワーク
+### フロントエンド
 
-| 技術 | 用途 |
-|------|------|
-| Spring Boot 4.0 | アプリケーションフレームワーク |
-| Spring Web | REST API 提供 |
-| Spring Data JDBC | データアクセス |
-| Spring Security | 認証・認可 |
-| Spring OAuth2 Resource Server | JWT 検証 |
+| 技術 | バージョン |
+|------|------------|
+| React | 19.x |
+| TypeScript | 6.x |
+| Vite | 8.x |
 
-> **Spring Boot 4.0 について**
-> 2025年11月リリースの最新メジャーバージョン。Spring Framework 7.0 / Jakarta EE 11 ベース。
-> Jackson 3 への移行（パッケージが `com.fasterxml.jackson` → `tools.jackson`）など破壊的変更があるため、
-> ライブラリの対応状況を確認しながら進める。
+詳細: [tech-stack-frontend.md](tech-stack-frontend.md)
 
-### 認証
+### 共通
 
-| 技術 | 用途 |
-|------|------|
-| Google OAuth2 | ソーシャルログイン |
-| Spring Security OAuth2 Client | OAuth2 フロー処理 |
-
-ユーザー登録・パスワード管理の複雑さを排除するため、Google認証のみサポートする。
-
-### ビルドツール
-
-| 技術 | 用途 |
-|------|------|
-| Gradle (Kotlin DSL) | ビルド・依存関係管理 |
-
-Maven と比較してビルドが速く（インクリメンタルビルド・キャッシュ）、設定の記述量も少ない。
-Spring Boot の新規プロジェクトで採用が増えており、Spring Initializr のデフォルトでもある。
-スクリプトは Kotlin DSL（`build.gradle.kts`）を使用し、IDE の補完を活用する。
-
-### データベース・マイグレーション
-
-| 技術 | 用途 |
-|------|------|
-| PostgreSQL 18 | リレーショナルDB |
-| Flyway | DBマイグレーション管理 |
-
-### API仕様
-
-| 技術 | 用途 |
-|------|------|
-| SpringDoc OpenAPI | OpenAPI 3.0 仕様の自動生成 |
-| Scalar | API ドキュメント閲覧 |
-
----
-
-## フロントエンド
-
-### コアフレームワーク
-
-| 技術 | 用途 |
-|------|------|
-| React 19 | UI フレームワーク |
-| TypeScript 5 | 型安全な開発 |
-| Vite | ビルドツール・開発サーバー |
-
-### 状態管理・データフェッチ
-
-| 技術 | 用途 |
-|------|------|
-| TanStack Query (React Query v5) | サーバー状態管理・キャッシュ |
-
-> **TanStack Query について**
-> APIから取得するデータの「ローディング・エラー・キャッシュ・再取得」をまとめて管理するライブラリ。
-> `useState` + `useEffect` によるデータフェッチの定型コードを削減できる。
-
-### スタイリング
-
-| 技術 | 用途 |
-|------|------|
-| Tailwind CSS | ユーティリティファーストCSS |
-
-### 認証
-
-| 技術 | 用途 |
-|------|------|
-| @react-oauth/google | Google OAuth2 クライアント |
+| 技術 | バージョン |
+|------|------------|
+| Docker / Docker Compose | - |
 
 ---
 
@@ -189,26 +120,9 @@ main マージ → Render: 自動デプロイ（CD）
 
 ---
 
-## 技術選定の理由
+## インフラの技術選定の理由
 
-### バックエンド: Spring Boot 4.0 + Java 25 (LTS)
-既存のJava経験を活かしつつ、最新LTSであるJava 25と最新のSpring Boot 4.0を採用する。
+### Render + Neon
 
-### ビルドツール: Gradle (Kotlin DSL)
-Mavenと比較してビルドが速く、設定の記述量も少ない。Spring Boot の新規プロジェクトで採用が増えており、Kotlin DSL により IDE の補完が効いて書きやすい。
-
-### フロントエンド: React 19 + TypeScript
-React 19は2024年12月に正式リリースされた安定版。Actions API・Server Components（フレームワーク経由）・フォーム処理の改善など実用的な機能が追加されている。TypeScriptにより型安全性を確保し、保守性を高める。
-
-### データアクセス: Spring Data JDBC
-JPAと比較して以下の理由から採用する。
-
-- **学習コストが低い**: 遅延ロード・ダーティチェック・一次キャッシュなどJPA固有の暗黙の挙動がなく、
-  「SQLが明示的に発行される」シンプルなモデルを維持できる。
-- **DDDとの親和性**: Aggregate / Repository の概念がDDDのそれと直接対応しており、
-  ドメインモデルをAggregateRoot単位で設計する思想を自然に表現できる。
-- **SQLの透明性**: 発行されるSQLが予測しやすく、クエリのデバッグや最適化が容易。
-
-### インフラ: Render + Neon
 無料で永続運用できる構成として採用。FE は Render Static Site でCDN配信、BE は Render Web Service で
 Dockerコンテナ実行、DB は Neon のマネージドPostgreSQLを利用する。BE のスリープは無料運用の制約として許容する。
