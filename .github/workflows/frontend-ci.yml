@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  changes:
+  detect-changes:
     runs-on: ubuntu-latest
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
@@ -24,9 +24,9 @@ jobs:
               - "frontend/**"
               - ".github/workflows/frontend-ci.yml"
 
-  lint-and-build:
-    needs: changes
-    if: needs.changes.outputs.frontend == 'true'
+  build-and-test:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -55,13 +55,13 @@ jobs:
       - name: Build
         run: npm run build
 
-  frontend:
-    needs: [changes, lint-and-build]
+  frontend-result:
+    needs: [detect-changes, build-and-test]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Check results
         run: |
-          if [[ "${{ needs.lint-and-build.result }}" == "failure" || "${{ needs.lint-and-build.result }}" == "cancelled" ]]; then
+          if [[ "${{ needs.build-and-test.result }}" == "failure" || "${{ needs.build-and-test.result }}" == "cancelled" ]]; then
             exit 1
           fi

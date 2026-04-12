@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  changes:
+  detect-changes:
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
@@ -25,8 +25,8 @@ jobs:
               - ".github/workflows/backend-ci.yml"
 
   openapi-lint:
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,8 +42,8 @@ jobs:
         run: npx @stoplight/spectral-cli lint openapi.yaml
 
   build-and-test:
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -75,8 +75,8 @@ jobs:
       - name: Build
         run: ./gradlew build
 
-  backend:
-    needs: [changes, openapi-lint, build-and-test]
+  backend-result:
+    needs: [detect-changes, openapi-lint, build-and-test]
     if: always()
     runs-on: ubuntu-latest
     steps:
