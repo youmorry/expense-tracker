@@ -35,6 +35,54 @@ updates:
         update-types:
           - version-update:semver-major
 
+  # npm (frontend)
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Tokyo
+    labels:
+      - dependencies
+      - frontend
+    open-pull-requests-limit: 5
+    groups:
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "@playwright/*"
+          - "vitest*"
+          - "@vitest/*"
+          - "msw*"
+      linting-and-formatting:
+        patterns:
+          - "eslint*"
+          - "prettier*"
+          - "typescript-eslint*"
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+        exclude-patterns:
+          - "react*"
+          - "@types/react*"
+          - "@testing-library/*"
+          - "@playwright/*"
+          - "vitest*"
+          - "@vitest/*"
+          - "msw*"
+          - "eslint*"
+          - "prettier*"
+          - "typescript-eslint*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
+
   # Docker
   - package-ecosystem: docker-compose
     directory: /
