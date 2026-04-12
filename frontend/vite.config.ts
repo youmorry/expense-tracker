@@ -14,7 +14,7 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "html"],
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/test/**", "src/main.tsx", "src/**/*.d.ts"],
+      exclude: ["src/test/**", "src/main.tsx", "src/**/*.d.ts", "e2e/**"],
     },
     clearMocks: true,
     restoreMocks: true,
