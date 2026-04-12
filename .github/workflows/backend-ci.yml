@@ -1,4 +1,4 @@
-name: CI
+name: Backend CI
 
 on:
   push:
@@ -10,7 +10,23 @@ permissions:
   contents: read
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - "backend/**"
+              - ".github/workflows/backend-ci.yml"
+
   openapi-lint:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,7 +41,9 @@ jobs:
       - name: Lint OpenAPI (Spectral)
         run: npx @stoplight/spectral-cli lint openapi.yaml
 
-  backend:
+  build-and-test:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -56,3 +74,17 @@ jobs:
 
       - name: Build
         run: ./gradlew build
+
+  backend-result:
+    needs: [detect-changes, openapi-lint, build-and-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.openapi-lint.result }}" == "failure" || "${{ needs.openapi-lint.result }}" == "cancelled" ]]; then
+            exit 1
+          fi
+          if [[ "${{ needs.build-and-test.result }}" == "failure" || "${{ needs.build-and-test.result }}" == "cancelled" ]]; then
+            exit 1
+          fi
