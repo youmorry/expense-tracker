@@ -3,18 +3,30 @@ name: Frontend CI
 on:
   push:
     branches: [main]
-    paths:
-      - "frontend/**"
   pull_request:
     branches: [main]
-    paths:
-      - "frontend/**"
 
 permissions:
   contents: read
 
 jobs:
-  frontend:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - "frontend/**"
+              - ".github/workflows/frontend-ci.yml"
+
+  lint-and-build:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,3 +54,14 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  frontend:
+    needs: [changes, lint-and-build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.lint-and-build.result }}" == "failure" || "${{ needs.lint-and-build.result }}" == "cancelled" ]]; then
+            exit 1
+          fi
