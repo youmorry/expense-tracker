@@ -22,6 +22,12 @@ updates:
       google:
         patterns:
           - "com.google*"
+        exclude-patterns:
+          - "com.google.errorprone*"
+      error-prone:
+        patterns:
+          - "com.google.errorprone*"
+          - "com.uber.nullaway*"
       minor-and-patch:
         update-types:
           - minor
@@ -30,6 +36,7 @@ updates:
           - "org.springframework*"
           - "org.testcontainers*"
           - "com.google*"
+          - "com.uber.nullaway*"
     ignore:
       - dependency-name: "*"
         update-types:
