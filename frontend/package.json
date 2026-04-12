@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "check": "prettier --check . && eslint . && tsc -b && vitest run && vite build"
   },
   "dependencies": {
     "react": "^19.2.4",
