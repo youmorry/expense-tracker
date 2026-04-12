@@ -113,7 +113,9 @@ npm run format                           # Prettier
 ## 参照ドキュメント
 
 - `docs/01-planning/project-overview.md` — プロジェクト概要
-- `docs/01-planning/tech-stack.md` — 技術スタック詳細・選定理由
+- `docs/01-planning/tech-stack.md` — 技術スタック概要・共通インフラ
+- `docs/01-planning/tech-stack-backend.md` — バックエンド技術スタック詳細・選定理由
+- `docs/01-planning/tech-stack-frontend.md` — フロントエンド技術スタック詳細・選定理由
 - `docs/02-requirements/requirements.md` — 要件定義
 - `docs/03-design/backend/domain-model.md` — Entity / VO / Aggregate 設計
 - `docs/03-design/backend/er-diagram.md` — ER図
