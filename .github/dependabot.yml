@@ -35,6 +35,27 @@ updates:
         update-types:
           - version-update:semver-major
 
+  # npm (frontend)
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Tokyo
+    labels:
+      - dependencies
+      - frontend
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
+
   # Docker
   - package-ecosystem: docker-compose
     directory: /
