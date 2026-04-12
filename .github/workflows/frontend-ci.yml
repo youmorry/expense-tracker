@@ -52,8 +52,24 @@ jobs:
       - name: Compile (TypeScript)
         run: npx tsc -b
 
+      - name: Unit test (Vitest)
+        run: npm test
+
       - name: Build
         run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E test (Playwright)
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 30
 
   frontend-result:
     needs: [detect-changes, build-and-test]
