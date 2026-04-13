@@ -26,8 +26,9 @@
 
 ※ テストと実装を同一コミットにまとめない。テスト→実装の順でコミット履歴を残す。
 
-テスト規約の詳細は `.claude/rules/backend.md` の「テスト方針」セクションに従うこと。
-※frontendは現在未定義
+テスト規約の詳細は以下の「テスト方針」セクションに従うこと
+- `.claude/rules/backend.md`
+- `.claude/rules/frontend.md`
 
 ## Tech Stack
 
