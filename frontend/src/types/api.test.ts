@@ -14,7 +14,12 @@ import {
 
 describe("UserSchema", () => {
   it("transforms snake_case keys to camelCase", () => {
-    const input = { id: 1, email: "user@example.com", display_name: "Yuto", created_at: "2026-01-01T00:00:00Z" };
+    const input = {
+      id: 1,
+      email: "user@example.com",
+      display_name: "Yuto",
+      created_at: "2026-01-01T00:00:00Z",
+    };
 
     const result = UserSchema.parse(input);
 
@@ -37,7 +42,12 @@ describe("AuthResponseSchema", () => {
   it("transforms nested user and access_token", () => {
     const input = {
       access_token: "jwt-token",
-      user: { id: 1, email: "user@example.com", display_name: "Yuto", created_at: "2026-01-01T00:00:00Z" },
+      user: {
+        id: 1,
+        email: "user@example.com",
+        display_name: "Yuto",
+        created_at: "2026-01-01T00:00:00Z",
+      },
     };
 
     const result = AuthResponseSchema.parse(input);

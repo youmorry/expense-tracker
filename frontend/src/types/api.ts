@@ -1,147 +1,215 @@
 /**
- * API レスポンス・リクエストのグローバル型定義。
+ * API レスポンス・リクエストの Zod スキーマとそこから導出される型定義。
  *
- * API の JSON キーは snake_case だが、フロントエンドでは camelCase に変換して使用する。
- * 変換は {@link snakeToCamel} / {@link camelToSnake}（lib/case-converter.ts）で行う。
+ * レスポンススキーマは API の snake_case キーを受け取り、camelCase に変換する。
+ * リクエストスキーマは camelCase で定義し、API クライアント層で snake_case に変換する。
  *
  * @see docs/03-design/backend/api-design.md
  */
 
+import { z } from "zod";
+
 /** 支出の必要度分類 */
-export type NeedWantType = "NEED" | "WANT" | "UNSET";
+const NeedWantTypeSchema = z.enum(["NEED", "WANT", "UNSET"]);
+export type NeedWantType = z.infer<typeof NeedWantTypeSchema>;
 
 // ------------------------------------------------------------
-// Auth
+// Auth (Response)
 // ------------------------------------------------------------
 
 /** ユーザー情報（GET /api/v1/users/me） */
-export interface User {
-  id: number;
-  email: string;
-  displayName: string;
-  /** ISO 8601 日時 */
-  createdAt: string;
-}
+export const UserSchema = z
+  .object({
+    id: z.number(),
+    email: z.string(),
+    display_name: z.string(),
+    created_at: z.string(),
+  })
+  .transform(({ display_name, created_at, ...rest }) => ({
+    ...rest,
+    displayName: display_name,
+    createdAt: created_at,
+  }));
+export type User = z.infer<typeof UserSchema>;
 
 /** Google 認証レスポンス（POST /api/v1/auth/google） */
-export interface AuthResponse {
-  accessToken: string;
-  user: User;
-}
+export const AuthResponseSchema = z
+  .object({
+    access_token: z.string(),
+    user: UserSchema,
+  })
+  .transform(({ access_token, ...rest }) => ({
+    ...rest,
+    accessToken: access_token,
+  }));
+export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 
 // ------------------------------------------------------------
-// Transaction
+// Auth (Request)
+// ------------------------------------------------------------
+
+/** Google 認証リクエスト（POST /api/v1/auth/google） */
+export const GoogleAuthRequestSchema = z
+  .object({
+    id_token: z.string(),
+  })
+  .transform(({ id_token }) => ({
+    idToken: id_token,
+  }));
+export type GoogleAuthRequest = z.infer<typeof GoogleAuthRequestSchema>;
+
+// ------------------------------------------------------------
+// Transaction (Response)
 // ------------------------------------------------------------
 
 /** 支出レコード（GET /api/v1/transactions, GET /api/v1/transactions/{id}） */
-export interface Transaction {
-  id: number;
-  /** ISO 8601 日付（例: "2026-02-23"） */
-  date: string;
-  /** 精度保持のため文字列（例: "1200"） */
-  amount: string;
-  categoryId: number;
-  categoryName: string;
-  needWantType: NeedWantType;
-  title?: string;
-  memo?: string;
-  /** ISO 8601 日時 */
-  createdAt: string;
-  /** ISO 8601 日時 */
-  updatedAt: string;
-}
+export const TransactionSchema = z
+  .object({
+    id: z.number(),
+    date: z.string(),
+    amount: z.string(),
+    category_id: z.number(),
+    category_name: z.string(),
+    need_want_type: NeedWantTypeSchema,
+    title: z.string().optional(),
+    memo: z.string().optional(),
+    created_at: z.string(),
+    updated_at: z.string(),
+  })
+  .transform(({ category_id, category_name, need_want_type, created_at, updated_at, ...rest }) => ({
+    ...rest,
+    categoryId: category_id,
+    categoryName: category_name,
+    needWantType: need_want_type,
+    createdAt: created_at,
+    updatedAt: updated_at,
+  }));
+export type Transaction = z.infer<typeof TransactionSchema>;
+
+// ------------------------------------------------------------
+// Transaction (Request)
+// ------------------------------------------------------------
 
 /** 支出作成リクエスト（POST /api/v1/transactions） */
-export interface CreateTransactionRequest {
-  date: string;
-  /** 精度保持のため文字列 */
-  amount: string;
-  categoryId?: number;
-  needWantType?: NeedWantType;
-  title?: string;
-  memo?: string;
-}
+export const CreateTransactionRequestSchema = z.object({
+  date: z.string(),
+  amount: z.string(),
+  categoryId: z.number().optional(),
+  needWantType: NeedWantTypeSchema.optional(),
+  title: z.string().optional(),
+  memo: z.string().optional(),
+});
+export type CreateTransactionRequest = z.infer<typeof CreateTransactionRequestSchema>;
 
 /** 支出更新リクエスト（PUT /api/v1/transactions/{id}）。全量更新のため作成と同一形式 */
 export type UpdateTransactionRequest = CreateTransactionRequest;
 
 // ------------------------------------------------------------
-// Category
+// Category (Response)
 // ------------------------------------------------------------
 
 /** カテゴリ（GET /api/v1/categories） */
-export interface Category {
-  id: number;
-  name: string;
-  displayOrder: number;
-}
+export const CategorySchema = z
+  .object({
+    id: z.number(),
+    name: z.string(),
+    display_order: z.number(),
+  })
+  .transform(({ display_order, ...rest }) => ({
+    ...rest,
+    displayOrder: display_order,
+  }));
+export type Category = z.infer<typeof CategorySchema>;
 
 // ------------------------------------------------------------
-// Analytics
+// Analytics (Response)
 // ------------------------------------------------------------
 
 /** カテゴリ別集計の個別項目 */
-export interface CategoryAnalyticsItem {
-  categoryId: number;
-  categoryName: string;
-  amount: string;
-  /** 全体に占める割合（%、小数1桁） */
-  percentage: number;
-  transactionCount: number;
-}
+const CategoryAnalyticsItemSchema = z
+  .object({
+    category_id: z.number(),
+    category_name: z.string(),
+    amount: z.string(),
+    percentage: z.number(),
+    transaction_count: z.number(),
+  })
+  .transform(({ category_id, category_name, transaction_count, ...rest }) => ({
+    ...rest,
+    categoryId: category_id,
+    categoryName: category_name,
+    transactionCount: transaction_count,
+  }));
+export type CategoryAnalyticsItem = z.infer<typeof CategoryAnalyticsItemSchema>;
 
 /** カテゴリ別集計（GET /api/v1/analytics/category） */
-export interface CategoryAnalytics {
-  totalAmount: string;
-  categories: CategoryAnalyticsItem[];
-}
+export const CategoryAnalyticsSchema = z
+  .object({
+    total_amount: z.string(),
+    categories: z.array(CategoryAnalyticsItemSchema),
+  })
+  .transform(({ total_amount, ...rest }) => ({
+    ...rest,
+    totalAmount: total_amount,
+  }));
+export type CategoryAnalytics = z.infer<typeof CategoryAnalyticsSchema>;
 
 /** Need/Want 集計の個別項目 */
-export interface NeedWantBreakdownItem {
-  type: NeedWantType;
-  amount: string;
-  /** 全体に占める割合（%、小数1桁） */
-  percentage: number;
-  transactionCount: number;
-}
+const NeedWantBreakdownItemSchema = z
+  .object({
+    type: NeedWantTypeSchema,
+    amount: z.string(),
+    percentage: z.number(),
+    transaction_count: z.number(),
+  })
+  .transform(({ transaction_count, ...rest }) => ({
+    ...rest,
+    transactionCount: transaction_count,
+  }));
+export type NeedWantBreakdownItem = z.infer<typeof NeedWantBreakdownItemSchema>;
 
 /** Need/Want 比率（GET /api/v1/analytics/need-want） */
-export interface NeedWantAnalytics {
-  totalAmount: string;
-  breakdown: NeedWantBreakdownItem[];
-}
+export const NeedWantAnalyticsSchema = z
+  .object({
+    total_amount: z.string(),
+    breakdown: z.array(NeedWantBreakdownItemSchema),
+  })
+  .transform(({ total_amount, ...rest }) => ({
+    ...rest,
+    totalAmount: total_amount,
+  }));
+export type NeedWantAnalytics = z.infer<typeof NeedWantAnalyticsSchema>;
 
 // ------------------------------------------------------------
 // Error（RFC 9457 Problem Details）
 // ------------------------------------------------------------
 
 /** バリデーションエラーの個別フィールドエラー */
-export interface FieldError {
-  detail: string;
-  /** エラー箇所を示す JSON Pointer（例: "#/amount"） */
-  pointer: string;
-}
+const FieldErrorSchema = z.object({
+  detail: z.string(),
+  pointer: z.string(),
+});
+export type FieldError = z.infer<typeof FieldErrorSchema>;
 
 /**
  * API エラーレスポンス（RFC 9457 Problem Details）。
  * @see docs/03-design/common/error-handling.md
  */
-export interface ApiError {
-  /** 問題種別の URI（例: "/errors/validation-error", "about:blank"） */
-  type: string;
-  title: string;
-  status: number;
-  detail: string;
-  instance?: string;
-  /** バリデーションエラー（422）の場合のみ */
-  errors?: FieldError[];
-}
+export const ApiErrorSchema = z.object({
+  type: z.string(),
+  title: z.string(),
+  status: z.number(),
+  detail: z.string(),
+  instance: z.string().optional(),
+  errors: z.array(FieldErrorSchema).optional(),
+});
+export type ApiError = z.infer<typeof ApiErrorSchema>;
 
 // ------------------------------------------------------------
 // Common
 // ------------------------------------------------------------
 
-/** リスト系レスポンスの共通ラッパー */
-export interface ListResponse<T> {
-  items: T[];
+/** リスト系レスポンスの共通ラッパーを生成する */
+export function listResponseSchema<T extends z.ZodType>(itemSchema: T) {
+  return z.object({ items: z.array(itemSchema) });
 }
