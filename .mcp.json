@@ -6,6 +6,10 @@
       "headers": {
         "CONTEXT7_API_KEY": "ctx7sk-1638cb4b-81d7-4eb3-905a-b0993a790f39"
       }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@0.0.70"]
     }
   }
 }
