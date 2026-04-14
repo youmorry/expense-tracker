@@ -1,3 +1,10 @@
+/**
+ * API クライアントのテスト。
+ *
+ * MSW を使用してHTTPリクエストをインターセプトし、
+ * リクエスト送信・レスポンス解析・エラーハンドリング・リトライの動作を検証する。
+ */
+
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ApiError } from "../../types/api";
