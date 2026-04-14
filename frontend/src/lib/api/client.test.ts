@@ -104,6 +104,21 @@ describe("apiClient", () => {
 
       expect(authHeader).toBeNull();
     });
+
+    it("does not add Authorization header when skipAuth is true", async () => {
+      auth.setToken("my-jwt-token");
+      let authHeader: string | null = null;
+      server.use(
+        http.post(`${BASE_URL}/auth/google`, ({ request }) => {
+          authHeader = request.headers.get("Authorization");
+          return HttpResponse.json({});
+        }),
+      );
+
+      await apiClient.post(`${BASE_URL}/auth/google`, { idToken: "xxx" }, { skipAuth: true });
+
+      expect(authHeader).toBeNull();
+    });
   });
 
   describe("request body snake_case conversion", () => {
@@ -382,6 +397,26 @@ describe("apiClient", () => {
         http.get(`${BASE_URL}/test`, () => {
           callCount++;
           return HttpResponse.json(apiError, { status: 404 });
+        }),
+      );
+
+      await apiClient.get(`${BASE_URL}/test`).catch(() => {});
+
+      expect(callCount).toBe(1);
+    });
+
+    it("does not retry on 400", async () => {
+      let callCount = 0;
+      const apiError: ApiError = {
+        type: "https://example.com/bad-request",
+        title: "Bad Request",
+        status: 400,
+        detail: "Invalid request",
+      };
+      server.use(
+        http.get(`${BASE_URL}/test`, () => {
+          callCount++;
+          return HttpResponse.json(apiError, { status: 400 });
         }),
       );
 
