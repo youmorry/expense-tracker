@@ -124,7 +124,7 @@ function TransactionForm() {
 
 ## リンティング・フォーマッティング
 
-- ESLint: `typescript-eslint` の `recommendedTypeChecked` を使用
+- ESLint: `typescript-eslint` の `strictTypeChecked` を使用
 - Prettier: `printWidth: 100`、`prettier-plugin-tailwindcss` でクラス名のソートを自動化
 - コード変更時は `npm run lint` と `npm run format:check` でチェックする
 - フルチェックは `npm run check`（Prettier + ESLint + tsc + Vitest + build）
