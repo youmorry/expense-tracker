@@ -165,20 +165,26 @@ describe("apiClient", () => {
       const error = await apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
 
       expect(error).toBeInstanceOf(ApiException);
-      expect((error as ApiException).status).toBe(404);
-      expect((error as ApiException).apiError).toEqual(apiError);
+      if (error instanceof ApiException) {
+        expect(error.status).toBe(404);
+        expect(error.apiError).toEqual(apiError);
+      }
     });
 
     it("throws NetworkException on network failure", async () => {
+      vi.useFakeTimers();
       server.use(
         http.get(`${BASE_URL}/test`, () => {
           return HttpResponse.error();
         }),
       );
 
-      const error = await apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
+      const promise = apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
+      await vi.advanceTimersByTimeAsync(10_000);
+      const error = await promise;
 
       expect(error).toBeInstanceOf(NetworkException);
+      vi.useRealTimers();
     });
   });
 
@@ -218,11 +224,21 @@ describe("apiClient", () => {
       const error = await apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
 
       expect(error).toBeInstanceOf(ApiException);
-      expect((error as ApiException).status).toBe(401);
+      if (error instanceof ApiException) {
+        expect(error.status).toBe(401);
+      }
     });
   });
 
   describe("retry", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it("retries on 500 error up to 3 times", async () => {
       let callCount = 0;
       const apiError: ApiError = {
@@ -238,7 +254,9 @@ describe("apiClient", () => {
         }),
       );
 
-      await apiClient.get(`${BASE_URL}/test`).catch(() => {});
+      const promise = apiClient.get(`${BASE_URL}/test`).catch(() => {});
+      await vi.advanceTimersByTimeAsync(10_000);
+      await promise;
 
       expect(callCount).toBe(4); // 1 initial + 3 retries
     });
@@ -261,7 +279,9 @@ describe("apiClient", () => {
         }),
       );
 
-      const result = await apiClient.get(`${BASE_URL}/test`);
+      const promise = apiClient.get(`${BASE_URL}/test`);
+      await vi.advanceTimersByTimeAsync(10_000);
+      const result = await promise;
 
       expect(result).toEqual({ id: 1 });
       expect(callCount).toBe(3);
