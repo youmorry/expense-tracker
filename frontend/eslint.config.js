@@ -9,7 +9,7 @@ export default tseslint.config(
   { ignores: ["dist/"] },
   {
     files: ["**/*.{ts,tsx}"],
-    extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
+    extends: [js.configs.recommended, ...tseslint.configs.strictTypeChecked],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -17,6 +17,10 @@ export default tseslint.config(
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/consistent-type-assertions": ["error", { assertionStyle: "never" }],
     },
   },
   reactHooks.configs.flat.recommended,

@@ -7,6 +7,11 @@
     "types": ["vite/client", "vitest/globals"],
     "skipLibCheck": true,
 
+    /* Strict type checking */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
