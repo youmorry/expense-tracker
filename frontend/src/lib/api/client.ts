@@ -6,7 +6,10 @@ const NO_RETRY_STATUSES = new Set([401, 403, 404, 422]);
 const MAX_RETRIES = 3;
 
 function toSnakeCaseKey(key: string): string {
-  return key.replace(/[A-Z]/g, (ch) => `_${ch.toLowerCase()}`);
+  return key
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2")
+    .replace(/([a-z\d])([A-Z])/g, "$1_$2")
+    .toLowerCase();
 }
 
 function toSnakeCaseBody(value: unknown): unknown {
@@ -46,8 +49,18 @@ async function request(method: string, path: string, body?: unknown): Promise<un
   }
 
   if (!response.ok) {
-    const errorBody: unknown = await response.json();
-    const apiError = ApiErrorSchema.parse(errorBody);
+    let apiError;
+    try {
+      const errorBody: unknown = await response.json();
+      apiError = ApiErrorSchema.parse(errorBody);
+    } catch {
+      throw new ApiException(response.status, {
+        type: "about:blank",
+        title: response.statusText,
+        status: response.status,
+        detail: response.statusText,
+      });
+    }
 
     if (response.status === 401) {
       clearToken();
@@ -64,11 +77,7 @@ async function request(method: string, path: string, body?: unknown): Promise<un
   return json;
 }
 
-async function requestWithRetry(
-  method: string,
-  path: string,
-  body?: unknown,
-): Promise<unknown> {
+async function requestWithRetry(method: string, path: string, body?: unknown): Promise<unknown> {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
       return await request(method, path, body);
@@ -94,9 +103,7 @@ async function requestWithRetry(
 
 export const apiClient = {
   get: (path: string): Promise<unknown> => requestWithRetry("GET", path),
-  post: (path: string, body?: unknown): Promise<unknown> =>
-    requestWithRetry("POST", path, body),
-  put: (path: string, body?: unknown): Promise<unknown> =>
-    requestWithRetry("PUT", path, body),
+  post: (path: string, body?: unknown): Promise<unknown> => requestWithRetry("POST", path, body),
+  put: (path: string, body?: unknown): Promise<unknown> => requestWithRetry("PUT", path, body),
   del: (path: string): Promise<unknown> => requestWithRetry("DELETE", path),
 };

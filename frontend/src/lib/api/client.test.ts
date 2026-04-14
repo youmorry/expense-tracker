@@ -146,6 +146,26 @@ describe("apiClient", () => {
         user_data: { display_name: "test" },
       });
     });
+
+    it("converts consecutive uppercase keys to snake_case", async () => {
+      let receivedBody: unknown;
+      server.use(
+        http.post(`${BASE_URL}/test`, async ({ request }) => {
+          receivedBody = await request.json();
+          return HttpResponse.json({}, { status: 201 });
+        }),
+      );
+
+      await apiClient.post(`${BASE_URL}/test`, {
+        userAPIKey: "abc",
+        htmlParser: "v2",
+      });
+
+      expect(receivedBody).toEqual({
+        user_api_key: "abc",
+        html_parser: "v2",
+      });
+    });
   });
 
   describe("error handling", () => {
@@ -169,6 +189,29 @@ describe("apiClient", () => {
         expect(error.status).toBe(404);
         expect(error.apiError).toEqual(apiError);
       }
+    });
+
+    it("throws ApiException when error response is not JSON", async () => {
+      vi.useFakeTimers();
+      server.use(
+        http.get(`${BASE_URL}/test`, () => {
+          return new HttpResponse("<html>Bad Gateway</html>", {
+            status: 502,
+            headers: { "Content-Type": "text/html" },
+          });
+        }),
+      );
+
+      const promise = apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
+      await vi.advanceTimersByTimeAsync(10_000);
+      const error = await promise;
+
+      expect(error).toBeInstanceOf(ApiException);
+      if (error instanceof ApiException) {
+        expect(error.status).toBe(502);
+        expect(error.apiError.type).toBe("about:blank");
+      }
+      vi.useRealTimers();
     });
 
     it("throws NetworkException on network failure", async () => {

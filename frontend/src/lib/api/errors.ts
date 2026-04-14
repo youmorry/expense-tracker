@@ -1,12 +1,14 @@
 import type { ApiError } from "../../types/api";
 
 export class ApiException extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly apiError: ApiError,
-  ) {
+  readonly status: number;
+  readonly apiError: ApiError;
+
+  constructor(status: number, apiError: ApiError) {
     super(apiError.title);
     this.name = "ApiException";
+    this.status = status;
+    this.apiError = apiError;
   }
 }
 
