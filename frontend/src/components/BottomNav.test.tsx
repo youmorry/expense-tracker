@@ -8,12 +8,16 @@ function renderWithRouter(initialEntry: string) {
   const router = createMemoryRouter(
     [
       {
+        path: "/transactions",
         element: <BottomNav />,
-        children: [
-          { path: "/transactions", element: <h1>Transactions</h1> },
-          { path: "/analytics", element: <h1>Analytics</h1> },
-          { path: "/settings", element: <h1>Settings</h1> },
-        ],
+      },
+      {
+        path: "/analytics",
+        element: <BottomNav />,
+      },
+      {
+        path: "/settings",
+        element: <BottomNav />,
       },
     ],
     { initialEntries: [initialEntry] },
