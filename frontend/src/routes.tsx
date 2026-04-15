@@ -1,6 +1,7 @@
 import type { RouteObject } from "react-router";
 import { redirect } from "react-router";
 
+import { AppLayout } from "./components/AppLayout";
 import { AuthGuard } from "./components/AuthGuard";
 import AnalyticsPage from "./features/analytics/components/AnalyticsPage";
 import LoginPage from "./features/auth/components/LoginPage";
@@ -16,20 +17,25 @@ export const routes: RouteObject[] = [
     Component: AuthGuard,
     children: [
       {
-        path: "/",
-        loader: () => redirect("/transactions"),
-      },
-      {
-        path: "/transactions",
-        Component: TransactionsPage,
-      },
-      {
-        path: "/analytics",
-        Component: AnalyticsPage,
-      },
-      {
-        path: "/settings",
-        Component: SettingsPage,
+        Component: AppLayout,
+        children: [
+          {
+            path: "/",
+            loader: () => redirect("/transactions"),
+          },
+          {
+            path: "/transactions",
+            Component: TransactionsPage,
+          },
+          {
+            path: "/analytics",
+            Component: AnalyticsPage,
+          },
+          {
+            path: "/settings",
+            Component: SettingsPage,
+          },
+        ],
       },
     ],
   },
