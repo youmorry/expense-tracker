@@ -88,21 +88,28 @@ docker compose up                        # ローカル DB・モックサーバ�
 
 # Backend (cd backend)
 ./gradlew bootRun                        # 開発サーバー
-./gradlew test                           # 全テスト
+./gradlew test                           # 単体テスト
 ./gradlew test --tests "com.youmorry.expensetracker.SomeTest"           # クラス単位
 ./gradlew test --tests "com.youmorry.expensetracker.SomeTest.method"    # メソッド単位
+./gradlew integrationTest                # 統合テスト
+./gradlew check                          # 全チェック（テスト + 統合テスト + Checkstyle + Spotless）
 ./gradlew build                          # ビルド
+./gradlew clean                          # ビルド成果物削除
 ./gradlew checkstyleMain checkstyleTest checkstyleIntegrationTest  # Checkstyle
 ./gradlew spotlessCheck                  # Spotless チェック
 ./gradlew spotlessApply                  # Spotless 自動修正
 
-# Frontend (cd frontend) ※未実装
+# Frontend (cd frontend)
 npm install
 npm run dev                              # 開発サーバー（Vite 8）
 npm test                                 # テスト（Vitest）
+npm run test:watch                       # テスト（ウォッチモード）
+npm run test:coverage                    # テスト（カバレッジ付き）
+npm run test:e2e                         # E2E テスト（Playwright）
 npm run build                            # ビルド
-npm run lint                             # ESLint
-npm run format                           # Prettier
+npm run lint:fix                         # ESLint 自動修正
+npm run format                           # Prettier フォーマット
+npm run check                            # 全チェック（Prettier + ESLint + tsc + Vitest + ビルド）
 ```
 
 ## Skills
