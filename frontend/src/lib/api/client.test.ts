@@ -2,11 +2,11 @@
  * API クライアントのテスト。
  *
  * MSW を使用してHTTPリクエストをインターセプトし、
- * リクエスト送信・レスポンス解析・エラーハンドリング・リトライの動作を検証する。
+ * リクエスト送信・レスポンス解析・エラーハンドリングの動作を検証する。
  */
 
 import { http, HttpResponse } from "msw";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import type { ApiError } from "../../types/api";
 import { server } from "../../test/mocks/server";
 import * as auth from "../auth";
@@ -214,7 +214,6 @@ describe("apiClient", () => {
     });
 
     it("throws ApiException when error response is not JSON", async () => {
-      vi.useFakeTimers();
       server.use(
         http.get(`${BASE_URL}/test`, () => {
           return new HttpResponse("<html>Bad Gateway</html>", {
@@ -224,32 +223,25 @@ describe("apiClient", () => {
         }),
       );
 
-      const promise = apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
-      await vi.advanceTimersByTimeAsync(10_000);
-      const error = await promise;
+      const error = await apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
 
       expect(error).toBeInstanceOf(ApiException);
       if (error instanceof ApiException) {
         expect(error.status).toBe(502);
         expect(error.apiError.type).toBe("about:blank");
       }
-      vi.useRealTimers();
     });
 
     it("throws NetworkException on network failure", async () => {
-      vi.useFakeTimers();
       server.use(
         http.get(`${BASE_URL}/test`, () => {
           return HttpResponse.error();
         }),
       );
 
-      const promise = apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
-      await vi.advanceTimersByTimeAsync(10_000);
-      const error = await promise;
+      const error = await apiClient.get(`${BASE_URL}/test`).catch((e: unknown) => e);
 
       expect(error).toBeInstanceOf(NetworkException);
-      vi.useRealTimers();
     });
   });
 
@@ -292,165 +284,6 @@ describe("apiClient", () => {
       if (error instanceof ApiException) {
         expect(error.status).toBe(401);
       }
-    });
-  });
-
-  describe("retry", () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    it("retries on 500 error up to 3 times", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/server-error",
-        title: "Internal Server Error",
-        status: 500,
-        detail: "Server error",
-      };
-      server.use(
-        http.get(`${BASE_URL}/test`, () => {
-          callCount++;
-          return HttpResponse.json(apiError, { status: 500 });
-        }),
-      );
-
-      const promise = apiClient.get(`${BASE_URL}/test`).catch(() => {});
-      await vi.advanceTimersByTimeAsync(10_000);
-      await promise;
-
-      expect(callCount).toBe(4); // 1 initial + 3 retries
-    });
-
-    it("returns response when retry succeeds", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/server-error",
-        title: "Internal Server Error",
-        status: 500,
-        detail: "Server error",
-      };
-      server.use(
-        http.get(`${BASE_URL}/test`, () => {
-          callCount++;
-          if (callCount < 3) {
-            return HttpResponse.json(apiError, { status: 500 });
-          }
-          return HttpResponse.json({ id: 1 });
-        }),
-      );
-
-      const promise = apiClient.get(`${BASE_URL}/test`);
-      await vi.advanceTimersByTimeAsync(10_000);
-      const result = await promise;
-
-      expect(result).toEqual({ id: 1 });
-      expect(callCount).toBe(3);
-    });
-
-    it("does not retry on 401", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/unauthorized",
-        title: "Unauthorized",
-        status: 401,
-        detail: "Invalid token",
-      };
-      server.use(
-        http.get(`${BASE_URL}/test`, () => {
-          callCount++;
-          return HttpResponse.json(apiError, { status: 401 });
-        }),
-      );
-
-      await apiClient.get(`${BASE_URL}/test`).catch(() => {});
-
-      expect(callCount).toBe(1);
-    });
-
-    it("does not retry on 403", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/forbidden",
-        title: "Forbidden",
-        status: 403,
-        detail: "Access denied",
-      };
-      server.use(
-        http.get(`${BASE_URL}/test`, () => {
-          callCount++;
-          return HttpResponse.json(apiError, { status: 403 });
-        }),
-      );
-
-      await apiClient.get(`${BASE_URL}/test`).catch(() => {});
-
-      expect(callCount).toBe(1);
-    });
-
-    it("does not retry on 404", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/not-found",
-        title: "Not Found",
-        status: 404,
-        detail: "Not found",
-      };
-      server.use(
-        http.get(`${BASE_URL}/test`, () => {
-          callCount++;
-          return HttpResponse.json(apiError, { status: 404 });
-        }),
-      );
-
-      await apiClient.get(`${BASE_URL}/test`).catch(() => {});
-
-      expect(callCount).toBe(1);
-    });
-
-    it("does not retry on 400", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/bad-request",
-        title: "Bad Request",
-        status: 400,
-        detail: "Invalid request",
-      };
-      server.use(
-        http.get(`${BASE_URL}/test`, () => {
-          callCount++;
-          return HttpResponse.json(apiError, { status: 400 });
-        }),
-      );
-
-      await apiClient.get(`${BASE_URL}/test`).catch(() => {});
-
-      expect(callCount).toBe(1);
-    });
-
-    it("does not retry on 422", async () => {
-      let callCount = 0;
-      const apiError: ApiError = {
-        type: "https://example.com/validation-error",
-        title: "Unprocessable Entity",
-        status: 422,
-        detail: "Validation failed",
-        errors: [{ detail: "Amount is required", pointer: "#/amount" }],
-      };
-      server.use(
-        http.post(`${BASE_URL}/test`, () => {
-          callCount++;
-          return HttpResponse.json(apiError, { status: 422 });
-        }),
-      );
-
-      await apiClient.post(`${BASE_URL}/test`, { amount: "" }).catch(() => {});
-
-      expect(callCount).toBe(1);
     });
   });
 });
