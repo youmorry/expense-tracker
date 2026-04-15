@@ -18,7 +18,6 @@ import { clearToken, getToken } from "../auth";
 import { toSnakeCaseKeys } from "../caseConverter";
 import { ApiException, NetworkException } from "./errors";
 
-/** リクエストごとのオプション */
 interface RequestOptions {
   /**
    * true の場合、Authorization ヘッダーを付与しない。
@@ -27,10 +26,6 @@ interface RequestOptions {
   skipAuth?: boolean;
 }
 
-/**
- * HTTP リクエストを実行する。
- * レスポンスの解析とエラーハンドリングを担当する。
- */
 async function request(
   method: string,
   path: string,
@@ -89,11 +84,6 @@ async function request(
   return json;
 }
 
-/**
- * API クライアント。
- *
- * DELETE はリクエストボディを受け付けない（API 設計上の制約）。
- */
 export const apiClient = {
   get: (path: string, options?: RequestOptions): Promise<unknown> =>
     request("GET", path, undefined, options),

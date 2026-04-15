@@ -1,9 +1,6 @@
 /**
- * オブジェクトのキーを camelCase から snake_case に再帰的に変換するユーティリティ。
- *
- * API リクエストボディの送信時に使用する。
- * フロントエンドは camelCase、バックエンド API は snake_case を採用しているため、
- * リクエスト時にキーを変換する必要がある。
+ * フロントエンド（camelCase）とバックエンド API（snake_case）の
+ * キー命名規約の差異を吸収するための変換ユーティリティ。
  *
  * @see docs/03-design/backend/api-design.md
  */
@@ -20,13 +17,6 @@ function toSnakeCaseKey(key: string): string {
     .toLowerCase();
 }
 
-/**
- * オブジェクトのキーを再帰的に snake_case に変換する。
- *
- * - プリミティブ値はそのまま返す
- * - 配列は各要素を再帰的に変換する
- * - オブジェクトはキーを snake_case に変換し、値を再帰的に変換する
- */
 export function toSnakeCaseKeys(value: unknown): unknown {
   if (value === null || value === undefined || typeof value !== "object") {
     return value;
