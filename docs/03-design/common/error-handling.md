@@ -150,23 +150,15 @@ API クライアント（fetch ラッパー）でレスポンスステータス�
 
 #### リトライ方針
 
-API クライアント層で指数バックオフリトライを行う（最大 3 回）。
-クライアント起因のエラー（4xx）はリトライしても結果が変わらないため、以下のステータスコードはリトライ対象外とする:
-
-- 400 Bad Request（JSON パースエラー、パラメータ型不正）
-- 401 Unauthorized（認証エラー）
-- 403 Forbidden（認可エラー）
-- 404 Not Found（リソース不在）
-- 422 Unprocessable Content（バリデーションエラー）
-
-上記以外（5xx、ネットワークエラー）は最大 3 回リトライする。
+API クライアント層ではリトライを行わない。リトライは TanStack Query の QueryClient が一元管理する。
 
 ### TanStack Query でのエラーハンドリング
 
 #### リトライ方針
 
-API クライアント層でリトライを行うため、TanStack Query の `retry` は無効化する（`retry: false`）。
+QueryClient のデフォルト設定でリトライポリシーを定義する（`src/lib/queryClient.ts`）。
 
+- Query: クライアントエラー（4xx）はリトライしない。サーバーエラー（5xx）・ネットワークエラーは最大 3 回リトライする
 - Mutation: リトライしない
 
 #### Mutation のエラー処理

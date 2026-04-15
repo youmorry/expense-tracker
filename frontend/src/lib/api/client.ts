@@ -5,8 +5,9 @@
  * - JWT 認証ヘッダーの自動付与（skipAuth オプションで無効化可能）
  * - リクエストボディの camelCase → snake_case キー変換
  * - RFC 9457 Problem Details 形式のエラーレスポンス解析
- * - サーバーエラー・ネットワークエラー時の指数バックオフリトライ（最大3回）
  * - 401 レスポンス時のトークン自動クリア
+ *
+ * リトライは TanStack Query の QueryClient が担当する。
  *
  * @see docs/03-design/common/error-handling.md
  * @see docs/03-design/common/auth-design.md
@@ -16,13 +17,6 @@ import { ApiErrorSchema } from "../../types/api";
 import { clearToken, getToken } from "../auth";
 import { toSnakeCaseKeys } from "../caseConverter";
 import { ApiException, NetworkException } from "./errors";
-
-/**
- * リトライ対象外のステータスコード。
- * クライアント起因のエラーはリトライしても結果が変わらないため除外する。
- */
-const NO_RETRY_STATUSES = new Set([400, 401, 403, 404, 422]);
-const MAX_RETRIES = 3;
 
 /** リクエストごとのオプション */
 interface RequestOptions {
@@ -34,8 +28,8 @@ interface RequestOptions {
 }
 
 /**
- * 単一の HTTP リクエストを実行する。
- * リトライは行わず、レスポンスの解析とエラーハンドリングを担当する。
+ * HTTP リクエストを実行する。
+ * レスポンスの解析とエラーハンドリングを担当する。
  */
 async function request(
   method: string,
@@ -96,53 +90,18 @@ async function request(
 }
 
 /**
- * リトライ付きで HTTP リクエストを実行する。
- * サーバーエラー（5xx）やネットワークエラーは指数バックオフで最大 {@link MAX_RETRIES} 回リトライする。
- * {@link NO_RETRY_STATUSES} に含まれるステータスコードはリトライしない。
- */
-async function requestWithRetry(
-  method: string,
-  path: string,
-  body?: unknown,
-  options?: RequestOptions,
-): Promise<unknown> {
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      return await request(method, path, body, options);
-    } catch (error: unknown) {
-      const isLastAttempt = attempt === MAX_RETRIES;
-      if (isLastAttempt) {
-        throw error;
-      }
-
-      if (error instanceof ApiException && NO_RETRY_STATUSES.has(error.status)) {
-        throw error;
-      }
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2 ** attempt * 1000);
-      });
-    }
-  }
-
-  // unreachable
-  throw new Error("Unexpected retry loop exit");
-}
-
-/**
  * API クライアント。
  *
- * 各メソッドはリトライ付きでリクエストを実行する。
  * DELETE はリクエストボディを受け付けない（API 設計上の制約）。
  */
 export const apiClient = {
   get: (path: string, options?: RequestOptions): Promise<unknown> =>
-    requestWithRetry("GET", path, undefined, options),
+    request("GET", path, undefined, options),
   post: (path: string, body?: unknown, options?: RequestOptions): Promise<unknown> =>
-    requestWithRetry("POST", path, body, options),
+    request("POST", path, body, options),
   put: (path: string, body?: unknown, options?: RequestOptions): Promise<unknown> =>
-    requestWithRetry("PUT", path, body, options),
+    request("PUT", path, body, options),
   /** DELETE はリクエストボディを受け付けない。 */
   del: (path: string, options?: RequestOptions): Promise<unknown> =>
-    requestWithRetry("DELETE", path, undefined, options),
+    request("DELETE", path, undefined, options),
 };
