@@ -35,8 +35,9 @@ argument-hint: "[issue-number]"
 7. TDD サイクルで実装する:
    - CLAUDE.md の TDD ワークフローに従う
    - コミット時は `.claude/skills/commit/SKILL.md` の規約に従う
+   - コミット前にソースコードの自動フォーマット・自動修正を行う（`npm run format` や `./gradlew spotlessApply` など）
 8. 実装が完了したらビルドできることを確認する:
-   - `./gradlew build`（backend）や `npm run build`（frontend）でビルドが成功することを確認する
+   - `./gradlew build`（backend）や `npm run check`（frontend）でビルドが成功することを確認する
    - ビルドに失敗した場合は修正する
 9. 完了報告:
    - 実装内容のサマリーをユーザーに報告する
