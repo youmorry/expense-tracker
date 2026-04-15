@@ -1,15 +1,14 @@
 /**
  * API レスポンス・リクエストの Zod スキーマとそこから導出される型定義。
  *
- * レスポンススキーマは API の snake_case キーを受け取り、camelCase に変換する。
- * リクエストスキーマは camelCase で定義し、API クライアント層で snake_case に変換する。
+ * スキーマは API の snake_case キーを受け取り camelCase に変換する。
+ * リクエスト送信時の camelCase → snake_case 逆変換は API クライアント層が担当する。
  *
  * @see docs/03-design/backend/api-design.md
  */
 
 import { z } from "zod";
 
-/** 支出の必要度分類 */
 const NeedWantTypeSchema = z.enum(["NEED", "WANT", "UNSET"]);
 export type NeedWantType = z.infer<typeof NeedWantTypeSchema>;
 
@@ -125,7 +124,6 @@ export type Category = z.infer<typeof CategorySchema>;
 // Analytics (Response)
 // ------------------------------------------------------------
 
-/** カテゴリ別集計の個別項目 */
 const CategoryAnalyticsItemSchema = z
   .object({
     category_id: z.number(),
@@ -154,7 +152,6 @@ export const CategoryAnalyticsSchema = z
   }));
 export type CategoryAnalytics = z.infer<typeof CategoryAnalyticsSchema>;
 
-/** Need/Want 集計の個別項目 */
 const NeedWantBreakdownItemSchema = z
   .object({
     type: NeedWantTypeSchema,
@@ -184,7 +181,6 @@ export type NeedWantAnalytics = z.infer<typeof NeedWantAnalyticsSchema>;
 // Error（RFC 9457 Problem Details）
 // ------------------------------------------------------------
 
-/** バリデーションエラーの個別フィールドエラー */
 const FieldErrorSchema = z.object({
   detail: z.string(),
   pointer: z.string(),
@@ -209,7 +205,6 @@ export type ApiError = z.infer<typeof ApiErrorSchema>;
 // Common
 // ------------------------------------------------------------
 
-/** リスト系レスポンスの共通ラッパーを生成する */
 export function listResponseSchema<T extends z.ZodType>(itemSchema: T) {
   return z.object({ items: z.array(itemSchema) });
 }

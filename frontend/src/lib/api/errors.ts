@@ -1,8 +1,4 @@
-/**
- * API クライアントが投げる例外クラス。
- *
- * @see docs/03-design/common/error-handling.md
- */
+/** @see docs/03-design/common/error-handling.md */
 
 import type { ApiError } from "../../types/api";
 
