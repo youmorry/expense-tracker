@@ -157,10 +157,11 @@ function TransactionForm() {
 
 ### テストの書き方
 
-- メソッド名は振る舞いを説明する英語で書く
-  - パターン: `<操作や条件>_<期待結果>`
+- テスト名は振る舞いを説明する自然な英語で書く（`it` に続けて英文として読める形）
+  - パターン: `<動詞> <対象> when <条件>`
   - 例: `renders transaction list when data is loaded`
   - 例: `shows error message when API returns 422`
+  - 条件が不要な場合は省略可: `renders three navigation links`
 - Arrange-Act-Assert パターンで構造化し、各セクションを空行で区切る
 - Testing Library の `getByRole`, `getByLabelText` を優先（`getByTestId` は最終手段）
 - API モックは MSW を使用（`src/test/mocks/handlers.ts` にデフォルトハンドラを定義）
