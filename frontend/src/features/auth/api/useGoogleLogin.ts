@@ -15,7 +15,7 @@ export function useGoogleLogin() {
     },
     onSuccess: (data) => {
       setToken(data.accessToken);
-      navigate("/transactions", { replace: true });
+      void navigate("/transactions", { replace: true });
     },
   });
 }

@@ -15,7 +15,9 @@ vi.mock("react-router", () => ({
 
 const mockSetToken = vi.fn();
 vi.mock("../../../lib/auth", () => ({
-  setToken: (token: string) => mockSetToken(token),
+  setToken: (token: string): void => {
+    mockSetToken(token);
+  },
   clearToken: vi.fn(),
   getToken: vi.fn(),
 }));
@@ -49,7 +51,9 @@ describe("useGoogleLogin", () => {
 
     result.current.mutate("google-id-token");
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
     expect(mockSetToken).toHaveBeenCalledWith("jwt-token-123");
     expect(mockNavigate).toHaveBeenCalledWith("/transactions", { replace: true });
   });
@@ -75,7 +79,9 @@ describe("useGoogleLogin", () => {
 
     result.current.mutate("google-id-token");
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
     expect(capturedBody).toEqual({ id_token: "google-id-token" });
   });
 
@@ -98,7 +104,9 @@ describe("useGoogleLogin", () => {
 
     result.current.mutate("invalid-token");
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
     expect(result.current.error).toBeInstanceOf(ApiException);
     expect(mockSetToken).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();

@@ -16,7 +16,7 @@ const { getToken } = await import("../../../lib/auth");
 const mockGetToken = vi.mocked(getToken);
 
 vi.mock("@react-oauth/google", () => ({
-  GoogleLogin: (props: { onSuccess: unknown; onError: unknown }) => (
+  GoogleLogin: () => (
     <button data-testid="google-login-button" type="button">
       Sign in with Google
     </button>
@@ -53,7 +53,7 @@ describe("LoginPage", () => {
     expect(screen.getByTestId("google-login-button")).toBeInTheDocument();
   });
 
-  it("redirects to /transactions when already authenticated", async () => {
+  it("redirects to /transactions when already authenticated", () => {
     mockGetToken.mockReturnValue("existing-jwt-token");
 
     renderLoginPage();
