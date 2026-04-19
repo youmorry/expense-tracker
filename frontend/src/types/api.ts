@@ -48,13 +48,9 @@ export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 // ------------------------------------------------------------
 
 /** Google 認証リクエスト（POST /api/v1/auth/google） */
-export const GoogleAuthRequestSchema = z
-  .object({
-    id_token: z.string(),
-  })
-  .transform(({ id_token }) => ({
-    idToken: id_token,
-  }));
+export const GoogleAuthRequestSchema = z.object({
+  idToken: z.string(),
+});
 export type GoogleAuthRequest = z.infer<typeof GoogleAuthRequestSchema>;
 
 // ------------------------------------------------------------
