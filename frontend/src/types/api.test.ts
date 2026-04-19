@@ -65,8 +65,8 @@ describe("AuthResponseSchema", () => {
 });
 
 describe("GoogleAuthRequestSchema", () => {
-  it("validates id_token field", () => {
-    const input = { id_token: "google-id-token" };
+  it("validates idToken field", () => {
+    const input = { idToken: "google-id-token" };
 
     const result = GoogleAuthRequestSchema.parse(input);
 
