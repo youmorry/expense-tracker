@@ -23,28 +23,28 @@ describe("routes", () => {
     mockedGetToken.mockReturnValue(null);
   });
 
-  it("redirects_unauthenticated_user_from_transactions_to_login", async () => {
+  it("redirects unauthenticated user from transactions to login", async () => {
     const router = renderWithRouter("/transactions");
 
     await screen.findByRole("heading", { name: "Login" });
     expect(router.state.location.pathname).toBe("/login");
   });
 
-  it("redirects_unauthenticated_user_from_analytics_to_login", async () => {
+  it("redirects unauthenticated user from analytics to login", async () => {
     const router = renderWithRouter("/analytics");
 
     await screen.findByRole("heading", { name: "Login" });
     expect(router.state.location.pathname).toBe("/login");
   });
 
-  it("redirects_unauthenticated_user_from_settings_to_login", async () => {
+  it("redirects unauthenticated user from settings to login", async () => {
     const router = renderWithRouter("/settings");
 
     await screen.findByRole("heading", { name: "Login" });
     expect(router.state.location.pathname).toBe("/login");
   });
 
-  it("returns_transactions_page_when_authenticated", async () => {
+  it("returns transactions page when authenticated", async () => {
     mockedGetToken.mockReturnValue("valid-token");
 
     renderWithRouter("/transactions");
@@ -52,7 +52,7 @@ describe("routes", () => {
     await screen.findByRole("heading", { name: "Transactions" });
   });
 
-  it("redirects_root_to_transactions", async () => {
+  it("redirects root to transactions", async () => {
     mockedGetToken.mockReturnValue("valid-token");
 
     const router = renderWithRouter("/");
@@ -61,7 +61,7 @@ describe("routes", () => {
     expect(router.state.location.pathname).toBe("/transactions");
   });
 
-  it("returns_login_page_without_authentication", async () => {
+  it("returns login page without authentication", async () => {
     renderWithRouter("/login");
 
     await screen.findByRole("heading", { name: "Login" });
