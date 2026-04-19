@@ -62,11 +62,10 @@ describe("Modal", () => {
       </Modal>,
     );
 
-    const overlay = screen
-      .getByRole("dialog")
-      .parentElement?.querySelector("[data-slot='dialog-overlay']");
-    expect(overlay).toBeInTheDocument();
-    await user.click(overlay!);
+    const dialogElement = screen.getByRole("dialog");
+    const overlay = dialogElement.parentElement?.querySelector("[data-slot='dialog-overlay']");
+    if (!overlay) throw new Error("Overlay not found");
+    await user.click(overlay);
 
     expect(onClose).toHaveBeenCalledOnce();
   });
