@@ -16,6 +16,8 @@ vi.mock("react-router", () => ({
 const mockSetToken = vi.fn();
 vi.mock("../../../lib/auth", () => ({
   setToken: (token: string) => mockSetToken(token),
+  clearToken: vi.fn(),
+  getToken: vi.fn(),
 }));
 
 function createWrapper() {
