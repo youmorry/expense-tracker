@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { ToastProvider } from "./components/Toast";
 import "./index.css";
 import { queryClient } from "./lib/queryClient";
 import { routes } from "./routes";
@@ -19,8 +20,10 @@ createRoot(root).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={String(import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "")}>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ToastProvider>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </ToastProvider>
       </QueryClientProvider>
     </GoogleOAuthProvider>
   </StrictMode>,
