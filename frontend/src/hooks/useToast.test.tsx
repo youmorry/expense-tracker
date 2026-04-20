@@ -1,4 +1,4 @@
-import { act, render, renderHook, screen } from "@testing-library/react";
+import { act, renderHook, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { ToastProvider } from "@/components/Toast";
