@@ -8,7 +8,7 @@ type Period = { from: string; to: string } | null;
 
 describe("PeriodSelector", () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-02-15T12:00:00Z"));
   });
 
