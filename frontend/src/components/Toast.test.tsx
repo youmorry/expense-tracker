@@ -30,7 +30,7 @@ describe("Toast", () => {
     expect(screen.getByText("Something went wrong. Please try again.")).toBeInTheDocument();
   });
 
-  it("renders a close button for error variant", () => {
+  it("renders a close button for dismissable toasts", () => {
     const { result } = renderToastHook();
 
     act(() => {
@@ -40,7 +40,7 @@ describe("Toast", () => {
     expect(screen.getByRole("button", { name: /close/i })).toBeInTheDocument();
   });
 
-  it("does not render a close button for success variant", () => {
+  it("does not render a close button for auto-dismissing toasts", () => {
     const { result } = renderToastHook();
 
     act(() => {
