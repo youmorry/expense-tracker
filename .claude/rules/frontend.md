@@ -11,9 +11,10 @@ paths:
 ```
 src/
 ├── components/       # 共通 UI コンポーネント
+│   └── ui/           # shadcn/ui プリミティブ（CLI で追加）
 ├── features/         # 機能単位モジュール（api/, components/, types.ts）
 ├── hooks/            # カスタムフック
-├── lib/              # API クライアント・ユーティリティ
+├── lib/              # API クライアント・ユーティリティ（`utils.ts` に `cn` ヘルパーを含む）
 ├── types/            # 共通型定義
 └── test/             # テスト共通設定（MSW サーバー等）
 ```
@@ -47,6 +48,16 @@ src/
 - **TanStack Query**: サーバー状態管理に使用。グローバル状態管理ライブラリは不要
 - **JWT in memory**: localStorage/Cookie 不使用。XSS でのトークン窃取リスク最小化（CSRF も不要に）
 - **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は @docs/03-design/common/auth-design.md
+- **UI プリミティブ**: shadcn/ui（Radix UI + Tailwind CSS ベース）を採用。コピー & ペースト型で、ソースコードをプロジェクト内に取り込む
+
+## UI コンポーネントライブラリ: shadcn/ui
+
+- プリミティブ（`Button`, `Dialog`, `Spinner` など）は `npx shadcn@latest add <component>` で `src/components/ui/` に追加する
+- 追加前に必ず [shadcn/ui のカタログ](https://ui.shadcn.com/docs/components) を確認し、既存コンポーネントがあれば優先する
+- `src/components/ui/` のファイルは shadcn CLI が生成したコードをそのまま保持する。独自の修正を加える場合は最小限にとどめ、コメントで理由を残す
+- 共通の組み合わせコンポーネント（例: `ConfirmDialog`, `EmptyState`）は `src/components/` 直下に配置し、shadcn プリミティブをラップして実装する
+- アイコンは `lucide-react` を使用（shadcn のデフォルト）
+- クラス名の合成は `@/lib/utils` の `cn` を使う（`clsx` + `tailwind-merge`）
 
 ## コンポーネント設計
 
