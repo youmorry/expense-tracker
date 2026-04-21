@@ -22,8 +22,10 @@ describe("toIsoDate", () => {
   it.each([
     ["month below range", 2026, 0, 15],
     ["month above range", 2026, 13, 15],
+    ["negative month", 2026, -1, 15],
     ["day below range", 2026, 1, 0],
     ["day above range", 2026, 1, 32],
+    ["negative day", 2026, 1, -1],
   ])("throws RangeError when %s", (_label, year, month, day) => {
     expect(() => toIsoDate(year, month, day)).toThrow(RangeError);
   });
