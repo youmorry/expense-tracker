@@ -1,23 +1,17 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { type IsoDate, toIsoDate } from "../lib/isoDate";
+
 type Unit = "month" | "year" | "all";
 
-export type Period = { from: string; to: string } | null;
+export type Period = { from: IsoDate; to: IsoDate } | null;
 
 interface PeriodSelectorProps {
   onChange: (period: Period) => void;
 }
 
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" });
-
-function pad2(n: number) {
-  return n.toString().padStart(2, "0");
-}
-
-function formatDate(year: number, month: number, day: number): string {
-  return `${year.toString().padStart(4, "0")}-${pad2(month)}-${pad2(day)}`;
-}
 
 function lastDayOfMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
@@ -27,12 +21,12 @@ function computePeriod(unit: Unit, anchor: Date): Period {
   if (unit === "all") return null;
   const year = anchor.getFullYear();
   if (unit === "year") {
-    return { from: formatDate(year, 1, 1), to: formatDate(year, 12, 31) };
+    return { from: toIsoDate(year, 1, 1), to: toIsoDate(year, 12, 31) };
   }
   const month = anchor.getMonth() + 1;
   return {
-    from: formatDate(year, month, 1),
-    to: formatDate(year, month, lastDayOfMonth(year, month)),
+    from: toIsoDate(year, month, 1),
+    to: toIsoDate(year, month, lastDayOfMonth(year, month)),
   };
 }
 
