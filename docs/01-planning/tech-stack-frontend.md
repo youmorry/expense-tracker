@@ -47,6 +47,19 @@
 > 設定モデルが `tailwind.config.js`（JavaScript）から CSS ベース（`@theme`）に変更された。
 > コンテンツ検出が自動化され、設定がシンプルになった。新規プロジェクトなので移行コストなし。
 
+## UI コンポーネント
+
+| 技術 | 用途 |
+|------|------|
+| shadcn/ui | UI プリミティブ（Radix UI ベース） |
+| lucide-react | アイコンライブラリ |
+
+> **shadcn/ui について**
+> コピー & ペースト型のコンポーネントライブラリ。npm パッケージとして依存するのではなく、
+> ソースコードを `src/components/ui/` に取り込む形式。Radix UI（アクセシビリティ対応のヘッドレス UI プリミティブ）と
+> Tailwind CSS をベースに、カスタマイズ可能なコンポーネントを提供する。
+> 追加は `npx shadcn@latest add <component>` で行う。設定は `frontend/components.json`。
+
 ## 認証
 
 | 技術 | 用途 |
