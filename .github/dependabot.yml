@@ -8,6 +8,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
       - backend
@@ -49,6 +51,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
       - frontend
@@ -70,6 +74,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
     open-pull-requests-limit: 3
@@ -89,6 +95,8 @@ updates:
       interval: weekly
       day: monday
       timezone: Asia/Tokyo
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
     open-pull-requests-limit: 3
