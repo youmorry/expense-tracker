@@ -53,10 +53,11 @@ export function detectCurrencyFromLocale(locale: string): string {
 }
 
 export function getCurrencyDecimalDigits(currency: string): number {
-  return new Intl.NumberFormat(undefined, {
+  const { maximumFractionDigits } = new Intl.NumberFormat(undefined, {
     style: "currency",
     currency,
-  }).resolvedOptions().maximumFractionDigits;
+  }).resolvedOptions();
+  return maximumFractionDigits ?? 2;
 }
 
 export function formatCurrency(amount: number, currency: string, locale?: string): string {
