@@ -16,7 +16,7 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
     createdAt: "2026-02-23T10:30:00Z",
     updatedAt: "2026-02-23T10:30:00Z",
     ...overrides,
-  } as Transaction;
+  };
 }
 
 describe("TransactionItem", () => {

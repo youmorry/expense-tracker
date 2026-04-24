@@ -34,10 +34,10 @@ describe("TransactionsPage", () => {
   });
 
   it("requests transactions for the current month on initial render", async () => {
-    let capturedUrl: URL | null = null;
+    let capturedUrl = "";
     server.use(
       http.get("/api/v1/transactions", ({ request }) => {
-        capturedUrl = new URL(request.url);
+        capturedUrl = request.url;
         return HttpResponse.json({ items: [] });
       }),
     );
@@ -45,10 +45,10 @@ describe("TransactionsPage", () => {
     renderPage();
 
     await vi.waitFor(() => {
-      expect(capturedUrl).not.toBeNull();
+      expect(capturedUrl).not.toBe("");
     });
-    expect(capturedUrl?.searchParams.get("from")).toBe("2026-02-01");
-    expect(capturedUrl?.searchParams.get("to")).toBe("2026-02-28");
+    expect(capturedUrl).toContain("from=2026-02-01");
+    expect(capturedUrl).toContain("to=2026-02-28");
   });
 
   it("renders the loaded transactions", async () => {

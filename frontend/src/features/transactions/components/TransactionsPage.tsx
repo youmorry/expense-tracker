@@ -13,7 +13,7 @@ function toParams(period: Period) {
 
 export default function TransactionsPage() {
   const [period, setPeriod] = useState<Period | undefined>(undefined);
-  const { data, isLoading } = useTransactions(period === undefined ? {} : toParams(period), {
+  const { data } = useTransactions(period === undefined ? {} : toParams(period), {
     enabled: period !== undefined,
   });
 
@@ -22,7 +22,7 @@ export default function TransactionsPage() {
       <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-4 py-3">
         <PeriodSelector onChange={setPeriod} />
       </div>
-      {isLoading || data === undefined ? (
+      {data === undefined ? (
         <div className="flex justify-center py-12">
           <Spinner aria-label="Loading transactions" />
         </div>

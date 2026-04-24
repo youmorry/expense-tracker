@@ -44,20 +44,23 @@ describe("useTransactions", () => {
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
-    expect(result.current.data?.items).toHaveLength(1);
-    expect(result.current.data?.items[0]).toMatchObject({
-      id: 1,
-      categoryName: "Food",
-      needWantType: "NEED",
-      title: "Lunch",
+    expect(result.current.data).toEqual({
+      items: [
+        expect.objectContaining({
+          id: 1,
+          categoryName: "Food",
+          needWantType: "NEED",
+          title: "Lunch",
+        }),
+      ],
     });
   });
 
   it("sends from and to as query parameters when provided", async () => {
-    let capturedUrl: URL | null = null;
+    let capturedUrl = "";
     server.use(
       http.get("/api/v1/transactions", ({ request }) => {
-        capturedUrl = new URL(request.url);
+        capturedUrl = request.url;
         return HttpResponse.json({ items: [] });
       }),
     );
@@ -74,16 +77,15 @@ describe("useTransactions", () => {
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
-    expect(capturedUrl).not.toBeNull();
-    expect(capturedUrl?.searchParams.get("from")).toBe("2026-02-01");
-    expect(capturedUrl?.searchParams.get("to")).toBe("2026-02-28");
+    expect(capturedUrl).toContain("from=2026-02-01");
+    expect(capturedUrl).toContain("to=2026-02-28");
   });
 
   it("omits from and to from the query string when not provided", async () => {
-    let capturedUrl: URL | null = null;
+    let capturedUrl = "";
     server.use(
       http.get("/api/v1/transactions", ({ request }) => {
-        capturedUrl = new URL(request.url);
+        capturedUrl = request.url;
         return HttpResponse.json({ items: [] });
       }),
     );
@@ -93,15 +95,15 @@ describe("useTransactions", () => {
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
-    expect(capturedUrl?.searchParams.has("from")).toBe(false);
-    expect(capturedUrl?.searchParams.has("to")).toBe(false);
+    expect(capturedUrl).not.toContain("from=");
+    expect(capturedUrl).not.toContain("to=");
   });
 
   it("uses distinct cache keys for different period parameters", async () => {
-    const requestedQueries: string[] = [];
+    const requestedUrls: string[] = [];
     server.use(
       http.get("/api/v1/transactions", ({ request }) => {
-        requestedQueries.push(new URL(request.url).search);
+        requestedUrls.push(request.url);
         return HttpResponse.json({ items: [] });
       }),
     );
@@ -123,9 +125,9 @@ describe("useTransactions", () => {
     rerender({ from: toIsoDate(2026, 3, 1), to: toIsoDate(2026, 3, 31) });
 
     await waitFor(() => {
-      expect(requestedQueries).toHaveLength(2);
+      expect(requestedUrls).toHaveLength(2);
     });
-    expect(requestedQueries[0]).toContain("from=2026-02-01");
-    expect(requestedQueries[1]).toContain("from=2026-03-01");
+    expect(requestedUrls[0]).toContain("from=2026-02-01");
+    expect(requestedUrls[1]).toContain("from=2026-03-01");
   });
 });

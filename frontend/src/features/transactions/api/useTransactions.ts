@@ -7,13 +7,18 @@
  * @see docs/03-design/backend/api-design.md
  */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { z } from "zod";
 
 import { apiClient } from "../../../lib/api/client";
-import { TransactionSchema, listResponseSchema } from "../../../types/api";
-import type { TransactionListParams } from "../types";
+import { TransactionSchema } from "../../../types/api";
+import type { Transaction, TransactionListParams } from "../types";
 
-const TransactionsResponseSchema = listResponseSchema(TransactionSchema);
+const TransactionsResponseSchema = z.object({ items: z.array(TransactionSchema) });
+
+interface TransactionsResponse {
+  items: Transaction[];
+}
 
 function buildPath(params: TransactionListParams): string {
   const search = new URLSearchParams();
@@ -30,10 +35,10 @@ interface UseTransactionsOptions {
 export function useTransactions(
   params: TransactionListParams,
   options: UseTransactionsOptions = {},
-) {
+): UseQueryResult<TransactionsResponse> {
   return useQuery({
     queryKey: ["transactions", params],
-    queryFn: async () => {
+    queryFn: async (): Promise<TransactionsResponse> => {
       const data = await apiClient.get(buildPath(params));
       return TransactionsResponseSchema.parse(data);
     },
