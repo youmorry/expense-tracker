@@ -23,12 +23,20 @@ function buildPath(params: TransactionListParams): string {
   return query.length > 0 ? `/api/v1/transactions?${query}` : "/api/v1/transactions";
 }
 
-export function useTransactions(params: TransactionListParams) {
+interface UseTransactionsOptions {
+  enabled?: boolean;
+}
+
+export function useTransactions(
+  params: TransactionListParams,
+  options: UseTransactionsOptions = {},
+) {
   return useQuery({
     queryKey: ["transactions", params],
     queryFn: async () => {
       const data = await apiClient.get(buildPath(params));
       return TransactionsResponseSchema.parse(data);
     },
+    enabled: options.enabled,
   });
 }

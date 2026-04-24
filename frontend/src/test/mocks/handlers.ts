@@ -14,4 +14,7 @@ export const handlers: HttpHandler[] = [
       },
     });
   }),
+  http.get("/api/v1/transactions", () => {
+    return HttpResponse.json({ items: [] });
+  }),
 ];
