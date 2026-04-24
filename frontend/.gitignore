@@ -32,3 +32,6 @@ dist-ssr
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# 画面検証用スクリーンショット（PR添付用、Git管理外）
+/screenshots/
