@@ -110,8 +110,8 @@ describe("useTransactions", () => {
 
     const wrapper = createWrapper();
     const { rerender, result } = renderHook(
-      ({ from, to }: { from?: ReturnType<typeof toIsoDate>; to?: ReturnType<typeof toIsoDate> }) =>
-        useTransactions({ from, to }),
+      (params: { from: ReturnType<typeof toIsoDate>; to: ReturnType<typeof toIsoDate> }) =>
+        useTransactions(params),
       {
         wrapper,
         initialProps: { from: toIsoDate(2026, 2, 1), to: toIsoDate(2026, 2, 28) },

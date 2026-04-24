@@ -42,6 +42,6 @@ export function useTransactions(
       const data = await apiClient.get(buildPath(params));
       return TransactionsResponseSchema.parse(data);
     },
-    enabled: options.enabled,
+    enabled: options.enabled ?? true,
   });
 }
