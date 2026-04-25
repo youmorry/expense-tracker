@@ -50,6 +50,20 @@ src/
 - **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は @docs/03-design/common/auth-design.md
 - **UI プリミティブ**: shadcn/ui（Radix UI + Tailwind CSS ベース）を採用。コピー & ペースト型で、ソースコードをプロジェクト内に取り込む
 
+## 環境変数
+
+Vite の mode ベースで環境ごとに `.env.*` を分割する。Vite が `--mode <name>` 起動時に `.env`・`.env.<mode>`・`.env.local`・`.env.<mode>.local` の順で読み込み、後勝ちでマージする。
+
+| ファイル | git | 用途 |
+|---|---|---|
+| `.env.example` | コミット | 公開キーのテンプレート。新規セットアップ時に `.env.development.local` 等にコピーして実値を埋める |
+| `.env.e2e` | コミット | E2E (`npm run build:e2e` = `vite build --mode e2e`) 専用の値 |
+| `.env*.local` | 無視 | 個別開発者の実値・本番シークレット |
+
+- `VITE_` プレフィックスのキーのみ `import.meta.env` 経由でクライアントから参照できる。シークレットを誤って公開しないよう、機密値は `VITE_` を付けず BE 側で扱う
+- 本番ビルドは CI のシークレットから `VITE_*` を inject し、`.env.production` をリポジトリに置かない
+- E2E では実 GSI が origin 検証で hidden になるため、`MODE === "e2e"` のときに `GoogleSignInButton` をスタブに切り替える方式で逃がしている（`features/auth/components/GoogleSignInButton.tsx`）。新たに外部 SDK 依存のコンポーネントを足すときも同様の分岐を検討する
+
 ## UI コンポーネントライブラリ: shadcn/ui
 
 - プリミティブ（`Button`, `Dialog`, `Spinner` など）は `npx shadcn@latest add <component>` で `src/components/ui/` に追加する

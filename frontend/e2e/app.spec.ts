@@ -7,6 +7,10 @@ test("未認証でトップページにアクセスするとログインペー�
   await expect(page).toHaveURL(/\/login/);
   await expect(page.getByRole("heading", { name: "Expense Tracker" })).toBeVisible();
 
+  // E2E ビルドでは GoogleSignInButton が GSI iframe ではなくスタブボタンを描画する。
+  // ログイン手段が画面に存在することのリグレッション検知。
+  await expect(page.getByRole("button", { name: /sign in with google/i })).toBeVisible();
+
   await page.screenshot({ path: "screenshots/login-redirect.png", fullPage: true });
 });
 
