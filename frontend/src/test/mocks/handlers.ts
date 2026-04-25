@@ -1,10 +1,19 @@
-import { http, HttpResponse } from "msw";
+/**
+ * 共通 MSW ハンドラ。Vitest（msw/node）と Playwright/開発（msw/browser）の両方で利用する。
+ *
+ * `openapi-msw` の `createOpenApiHttp` で path / response を OpenAPI 由来の型に固定し、
+ * `backend/openapi.yaml` と乖離した雛形は TS エラーで弾く。
+ */
 
-import type { HttpHandler } from "msw";
+import { createOpenApiHttp } from "openapi-msw";
 
-export const handlers: HttpHandler[] = [
-  http.post("/api/v1/auth/google", () => {
-    return HttpResponse.json({
+import type { paths } from "../../types/api-generated";
+
+const http = createOpenApiHttp<paths>();
+
+export const handlers = [
+  http.post("/api/v1/auth/google", ({ response }) => {
+    return response(200).json({
       access_token: "mock-jwt-token",
       user: {
         id: 1,
@@ -14,7 +23,7 @@ export const handlers: HttpHandler[] = [
       },
     });
   }),
-  http.get("/api/v1/transactions", () => {
-    return HttpResponse.json({ items: [] });
+  http.get("/api/v1/transactions", ({ response }) => {
+    return response(200).json({ items: [] });
   }),
 ];
