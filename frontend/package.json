@@ -14,6 +14,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "build:msw": "VITE_ENABLE_MSW=true vite build",
+    "openapi:types": "openapi-typescript ../backend/openapi.yaml -o src/types/api-generated.ts",
     "check": "prettier --check . && eslint . && tsc -b && vitest run && playwright test && vite build"
   },
   "dependencies": {
@@ -37,6 +39,7 @@
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.2.2",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -52,6 +55,8 @@
     "globals": "^17.5.0",
     "jsdom": "^29.0.2",
     "msw": "^2.13.4",
+    "openapi-msw": "^2.0.0",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.2",
@@ -59,5 +64,10 @@
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.4",
     "vitest": "^4.1.4"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
