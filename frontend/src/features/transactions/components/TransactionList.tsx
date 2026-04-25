@@ -42,13 +42,15 @@ export function TransactionList({ transactions }: TransactionListProps) {
   const groups = groupByDate(transactions);
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="divide-border divide-y">
       {groups.map((group) => {
         const heading = formatDateHeader(group.date);
         return (
           <section key={group.date} role="group" aria-label={heading}>
-            <h2 className="bg-gray-50 px-4 py-2 text-xs font-medium text-gray-500">{heading}</h2>
-            <ul className="divide-y divide-gray-100">
+            <h2 className="bg-muted text-muted-foreground px-4 py-2 text-xs font-medium">
+              {heading}
+            </h2>
+            <ul className="divide-border divide-y">
               {group.items.map((item) => (
                 <li key={item.id}>
                   <TransactionItem transaction={item} />

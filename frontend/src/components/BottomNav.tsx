@@ -9,7 +9,7 @@ const tabs = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 border-t border-gray-200 bg-white">
+    <nav className="border-border bg-background fixed inset-x-0 bottom-0 border-t">
       <ul className="flex justify-around">
         {tabs.map(({ to, label, icon: Icon }) => (
           <li key={to}>
@@ -17,7 +17,7 @@ export function BottomNav() {
               to={to}
               className={({ isActive }) =>
                 `flex flex-col items-center px-3 py-2 text-xs ${
-                  isActive ? "text-blue-600" : "text-gray-500"
+                  isActive ? "text-primary" : "text-muted-foreground"
                 }`
               }
             >

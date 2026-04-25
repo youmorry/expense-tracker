@@ -1,6 +1,8 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+
 import { PeriodSelector, type Period } from "../../../components/PeriodSelector";
 import { Spinner } from "../../../components/ui/spinner";
 import { useTransactions } from "../api/useTransactions";
@@ -19,7 +21,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="relative min-h-screen">
-      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white px-4 py-3">
+      <div className="border-border bg-background sticky top-0 z-10 border-b px-4 py-3">
         <PeriodSelector onChange={setPeriod} />
       </div>
       {data === undefined ? (
@@ -29,13 +31,14 @@ export default function TransactionsPage() {
       ) : (
         <TransactionList transactions={data.items} />
       )}
-      <button
+      <Button
         type="button"
+        size="icon"
         aria-label="Add transaction"
-        className="fixed right-6 bottom-20 inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700"
+        className="fixed right-6 bottom-20 size-14 rounded-full shadow-lg [&_svg:not([class*='size-'])]:size-6"
       >
-        <Plus className="h-6 w-6" />
-      </button>
+        <Plus />
+      </Button>
     </div>
   );
 }
