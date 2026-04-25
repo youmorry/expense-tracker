@@ -69,7 +69,7 @@ describe("routes", () => {
 
     renderWithRouter("/transactions");
 
-    await screen.findByRole("heading", { name: "Transactions" });
+    await screen.findByRole("button", { name: /add transaction/i });
   });
 
   it("redirects root to transactions", async () => {
@@ -77,7 +77,7 @@ describe("routes", () => {
 
     const router = renderWithRouter("/");
 
-    await screen.findByRole("heading", { name: "Transactions" });
+    await screen.findByRole("button", { name: /add transaction/i });
     expect(router.state.location.pathname).toBe("/transactions");
   });
 

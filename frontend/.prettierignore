@@ -4,3 +4,5 @@ package-lock.json
 test-results/
 playwright-report/
 blob-report/
+src/types/api-generated.ts
+public/mockServiceWorker.js
