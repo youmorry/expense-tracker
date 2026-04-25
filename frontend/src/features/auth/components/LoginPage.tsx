@@ -2,6 +2,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Navigate } from "react-router";
 
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
 import { getToken } from "../../../lib/auth";
 import { useGoogleLogin } from "../api/useGoogleLogin";
 
@@ -14,11 +16,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm text-center">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">Expense Tracker</h1>
-
-        <div className="flex justify-center">
+    <div className="bg-muted flex min-h-screen items-center justify-center px-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <h1 className="font-heading text-2xl leading-snug font-medium">Expense Tracker</h1>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-4">
           <GoogleLogin
             onSuccess={(response) => {
               if (response.credential) {
@@ -34,20 +37,20 @@ export default function LoginPage() {
             shape="rectangular"
             width="300"
           />
-        </div>
 
-        {errorMessage && (
-          <p role="alert" className="mt-4 text-sm text-red-600">
-            {errorMessage}
-          </p>
-        )}
+          {errorMessage && (
+            <p role="alert" className="text-destructive text-sm">
+              {errorMessage}
+            </p>
+          )}
 
-        {googleLogin.isError && (
-          <p role="alert" className="mt-4 text-sm text-red-600">
-            ログインに失敗しました。もう一度お試しください。
-          </p>
-        )}
-      </div>
+          {googleLogin.isError && (
+            <p role="alert" className="text-destructive text-sm">
+              ログインに失敗しました。もう一度お試しください。
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
