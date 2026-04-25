@@ -1,5 +1,7 @@
-import { getCategoryEmoji } from "../../../lib/category-emoji";
+import { Badge } from "@/components/ui/badge";
+
 import { useCurrency } from "../../../hooks/useCurrency";
+import { getCategoryEmoji } from "../../../lib/category-emoji";
 import type { Transaction } from "../types";
 
 interface TransactionItemProps {
@@ -20,18 +22,12 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
       <span className="text-xl" aria-hidden="true">
         {emoji}
       </span>
-      <span className="flex-1 truncate text-sm text-gray-900">{displayTitle}</span>
-      <span className="text-sm font-medium text-gray-900">{formatAmount(amountNumber)}</span>
+      <span className="text-foreground flex-1 truncate text-sm">{displayTitle}</span>
+      <span className="text-foreground text-sm font-medium">{formatAmount(amountNumber)}</span>
       {transaction.needWantType !== "UNSET" && (
-        <span
-          className={`rounded px-2 py-0.5 text-xs font-medium ${
-            transaction.needWantType === "NEED"
-              ? "bg-blue-100 text-blue-700"
-              : "bg-amber-100 text-amber-700"
-          }`}
-        >
+        <Badge variant={transaction.needWantType === "NEED" ? "secondary" : "outline"}>
           {transaction.needWantType}
-        </span>
+        </Badge>
       )}
     </div>
   );
