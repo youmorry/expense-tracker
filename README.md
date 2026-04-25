@@ -71,7 +71,26 @@ src/
 
 ### 環境変数
 
-- 'CONTEXT7_API_KEY': Context7 MCPサーバー接続利用時に必要。
+#### Dev Container / ホスト共通
+
+- `CONTEXT7_API_KEY`: Context7 MCPサーバー接続利用時に必要。
+
+#### Frontend (`frontend/.env.*`)
+
+Vite の mode ベースで環境別に分割する。詳細は `.claude/rules/frontend.md` の「環境変数」を参照。
+
+| ファイル | git | 用途 |
+| --- | --- | --- |
+| `.env.example` | コミット | 公開キーのテンプレート |
+| `.env.e2e` | コミット | E2E (`npm run build:e2e`) 専用 |
+| `.env.development.local` 等 | 無視 | 開発者個別の実値（コピーして編集） |
+
+主なキー:
+
+- `VITE_GOOGLE_CLIENT_ID`: Google OAuth クライアント ID。空文字だと GSI 初期化失敗でログインボタンが描画されない
+- `VITE_ENABLE_MSW`: MSW (Mock Service Worker) を有効化。E2E ビルドで `true`、開発時は既定で無効
+
+ローカル開発を始める前に `cp frontend/.env.example frontend/.env.development.local` で雛形を複製し、自分の Client ID を記入する。
 
 ### Dev Container（推奨）
 
