@@ -14,7 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "build:msw": "VITE_ENABLE_MSW=true vite build",
+    "build:e2e": "vite build --mode e2e",
     "openapi:types": "openapi-typescript ../backend/openapi.yaml -o src/types/api-generated.ts",
     "check": "prettier --check . && eslint . && tsc -b && vitest run && playwright test && vite build"
   },
