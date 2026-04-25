@@ -1,4 +1,3 @@
-import { GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Navigate } from "react-router";
 
@@ -6,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import { getToken } from "../../../lib/auth";
 import { useGoogleLogin } from "../api/useGoogleLogin";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 
 export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function LoginPage() {
           <h1 className="font-heading text-2xl leading-snug font-medium">Expense Tracker</h1>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <GoogleLogin
+          <GoogleSignInButton
             onSuccess={(response) => {
               if (response.credential) {
                 setErrorMessage(null);
@@ -32,10 +32,6 @@ export default function LoginPage() {
             onError={() => {
               setErrorMessage("Google認証に失敗しました。もう一度お試しください。");
             }}
-            size="large"
-            text="signin_with"
-            shape="rectangular"
-            width="300"
           />
 
           {errorMessage && (
