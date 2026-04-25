@@ -29,6 +29,8 @@ export default tseslint.config(
     files: ["src/components/ui/**/*.{ts,tsx}"],
     rules: {
       "react-refresh/only-export-components": "off",
+      // shadcn CLI が生成するコードをそのまま保持するため、UI プリミティブのみ型アサーション禁止を緩める
+      "@typescript-eslint/consistent-type-assertions": "off",
     },
   },
   eslintConfigPrettier,

@@ -1,9 +1,16 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
 import { type IsoDate, toIsoDate } from "../lib/isoDate";
 
 type Unit = "month" | "year" | "all";
+
+function isUnit(value: string): value is Unit {
+  return value === "month" || value === "year" || value === "all";
+}
 
 export type Period = { from: IsoDate; to: IsoDate } | null;
 
@@ -60,8 +67,8 @@ export function PeriodSelector({ onChange }: PeriodSelectorProps) {
     onChangeRef.current(computePeriod(unit, anchor));
   }, [unit, anchor]);
 
-  const handleUnitChange = (nextUnit: Unit) => {
-    if (nextUnit === unit) return;
+  const handleUnitChange = (nextUnit: string) => {
+    if (!isUnit(nextUnit) || nextUnit === unit) return;
     setUnit(nextUnit);
     // 単位切替時は現在日時にリセット（「All → Month」で当月が戻るため）
     setAnchor(new Date());
@@ -73,50 +80,51 @@ export function PeriodSelector({ onChange }: PeriodSelectorProps) {
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-center gap-2">
         {showNav && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             aria-label="Previous period"
             onClick={() => {
               setAnchor((prev) => shiftAnchor(unit, prev, -1));
             }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded text-gray-600 hover:bg-gray-100"
           >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
+            <ChevronLeft />
+          </Button>
         )}
         <span className="min-w-40 text-center text-base font-medium">
           {formatLabel(unit, anchor)}
         </span>
         {showNav && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             aria-label="Next period"
             onClick={() => {
               setAnchor((prev) => shiftAnchor(unit, prev, 1));
             }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded text-gray-600 hover:bg-gray-100"
           >
-            <ChevronRight className="h-5 w-5" />
-          </button>
+            <ChevronRight />
+          </Button>
         )}
       </div>
-      <div role="group" className="flex justify-center gap-1 text-sm">
-        {(["month", "year", "all"] as const).map((u) => (
-          <button
-            key={u}
-            type="button"
-            aria-pressed={unit === u}
-            onClick={() => {
-              handleUnitChange(u);
-            }}
-            className={`rounded px-3 py-1 ${
-              unit === u ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {u === "month" ? "Month" : u === "year" ? "Year" : "All"}
-          </button>
-        ))}
-      </div>
+      <ToggleGroup
+        type="single"
+        value={unit}
+        onValueChange={handleUnitChange}
+        className="self-center"
+      >
+        <ToggleGroupItem value="month" aria-label="Month">
+          Month
+        </ToggleGroupItem>
+        <ToggleGroupItem value="year" aria-label="Year">
+          Year
+        </ToggleGroupItem>
+        <ToggleGroupItem value="all" aria-label="All">
+          All
+        </ToggleGroupItem>
+      </ToggleGroup>
     </div>
   );
 }

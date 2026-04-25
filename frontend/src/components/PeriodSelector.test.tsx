@@ -76,7 +76,7 @@ describe("PeriodSelector", () => {
     const onChange = vi.fn<(period: Period) => void>();
     render(<PeriodSelector onChange={onChange} />);
 
-    await user.click(screen.getByRole("button", { name: /^year$/i }));
+    await user.click(screen.getByRole("radio", { name: /^year$/i }));
 
     expect(screen.getByText("2026")).toBeInTheDocument();
     expect(onChange).toHaveBeenLastCalledWith({ from: "2026-01-01", to: "2026-12-31" });
@@ -87,7 +87,7 @@ describe("PeriodSelector", () => {
     const onChange = vi.fn<(period: Period) => void>();
     render(<PeriodSelector onChange={onChange} />);
 
-    await user.click(screen.getByRole("button", { name: /^year$/i }));
+    await user.click(screen.getByRole("radio", { name: /^year$/i }));
     await user.click(screen.getByRole("button", { name: /previous period/i }));
 
     expect(screen.getByText("2025")).toBeInTheDocument();
@@ -99,7 +99,7 @@ describe("PeriodSelector", () => {
     const onChange = vi.fn<(period: Period) => void>();
     render(<PeriodSelector onChange={onChange} />);
 
-    await user.click(screen.getByRole("button", { name: /^year$/i }));
+    await user.click(screen.getByRole("radio", { name: /^year$/i }));
     await user.click(screen.getByRole("button", { name: /next period/i }));
 
     expect(screen.getByText("2027")).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe("PeriodSelector", () => {
     const onChange = vi.fn<(period: Period) => void>();
     render(<PeriodSelector onChange={onChange} />);
 
-    await user.click(screen.getByRole("button", { name: /^all$/i }));
+    await user.click(screen.getByRole("radio", { name: /^all$/i }));
 
     expect(screen.getByText("All Transactions")).toBeInTheDocument();
     expect(onChange).toHaveBeenLastCalledWith(null);
@@ -121,7 +121,7 @@ describe("PeriodSelector", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<PeriodSelector onChange={vi.fn()} />);
 
-    await user.click(screen.getByRole("button", { name: /^all$/i }));
+    await user.click(screen.getByRole("radio", { name: /^all$/i }));
 
     expect(screen.queryByRole("button", { name: /previous period/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /next period/i })).not.toBeInTheDocument();
@@ -132,8 +132,8 @@ describe("PeriodSelector", () => {
     const onChange = vi.fn<(period: Period) => void>();
     render(<PeriodSelector onChange={onChange} />);
 
-    await user.click(screen.getByRole("button", { name: /^all$/i }));
-    await user.click(screen.getByRole("button", { name: /^month$/i }));
+    await user.click(screen.getByRole("radio", { name: /^all$/i }));
+    await user.click(screen.getByRole("radio", { name: /^month$/i }));
 
     expect(screen.getByText("February 2026")).toBeInTheDocument();
     expect(onChange).toHaveBeenLastCalledWith({ from: "2026-02-01", to: "2026-02-28" });
