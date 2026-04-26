@@ -52,17 +52,22 @@ export function detectCurrencyFromLocale(locale: string): string {
   }
 }
 
+const formatterCache = new Map<string, Intl.NumberFormat>();
+
+export function getCurrencyFormatter(currency: string, locale?: string): Intl.NumberFormat {
+  const key = `${locale ?? ""}|${currency}`;
+  let formatter = formatterCache.get(key);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(locale, { style: "currency", currency });
+    formatterCache.set(key, formatter);
+  }
+  return formatter;
+}
+
 export function getCurrencyDecimalDigits(currency: string): number {
-  const { maximumFractionDigits } = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency,
-  }).resolvedOptions();
-  return maximumFractionDigits ?? 2;
+  return getCurrencyFormatter(currency).resolvedOptions().maximumFractionDigits ?? 2;
 }
 
 export function formatCurrency(amount: number, currency: string, locale?: string): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(amount);
+  return getCurrencyFormatter(currency, locale).format(amount);
 }
