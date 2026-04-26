@@ -28,13 +28,8 @@ function buildPath(params: TransactionListParams): string {
   return query.length > 0 ? `/api/v1/transactions?${query}` : "/api/v1/transactions";
 }
 
-interface UseTransactionsOptions {
-  enabled?: boolean;
-}
-
 export function useTransactions(
   params: TransactionListParams,
-  options: UseTransactionsOptions = {},
 ): UseQueryResult<TransactionsResponse> {
   return useQuery({
     queryKey: ["transactions", params],
@@ -42,6 +37,5 @@ export function useTransactions(
       const data = await apiClient.get(buildPath(params));
       return TransactionsResponseSchema.parse(data);
     },
-    enabled: options.enabled ?? true,
   });
 }

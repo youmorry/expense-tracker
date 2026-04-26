@@ -3,12 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  defaultPeriodSelectorValue,
-  PeriodSelector,
-  periodFromValue,
-  type PeriodSelectorValue,
-} from "./PeriodSelector";
+import { defaultPeriodSelectorValue, periodFromValue, type PeriodSelectorValue } from "./period";
+import { PeriodSelector } from "./PeriodSelector";
 
 interface HarnessProps {
   initialValue?: PeriodSelectorValue;
