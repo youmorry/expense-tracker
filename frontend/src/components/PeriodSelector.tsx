@@ -1,46 +1,25 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-import { type IsoDate, toIsoDate } from "../lib/isoDate";
-
-type Unit = "month" | "year" | "all";
+import { type PeriodSelectorValue, type Unit } from "./period";
 
 function isUnit(value: string): value is Unit {
   return value === "month" || value === "year" || value === "all";
 }
 
-export type Period = { from: IsoDate; to: IsoDate } | null;
-
 interface PeriodSelectorProps {
-  onChange: (period: Period) => void;
+  value: PeriodSelectorValue;
+  onChange: (next: PeriodSelectorValue) => void;
 }
 
 const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" });
 
-function lastDayOfMonth(year: number, month: number): number {
-  return new Date(year, month, 0).getDate();
-}
-
-function computePeriod(unit: Unit, anchor: Date): Period {
-  if (unit === "all") return null;
-  const year = anchor.getFullYear();
-  if (unit === "year") {
-    return { from: toIsoDate(year, 1, 1), to: toIsoDate(year, 12, 31) };
-  }
-  const month = anchor.getMonth() + 1;
-  return {
-    from: toIsoDate(year, month, 1),
-    to: toIsoDate(year, month, lastDayOfMonth(year, month)),
-  };
-}
-
-function formatLabel(unit: Unit, anchor: Date): string {
-  if (unit === "all") return "All Transactions";
-  if (unit === "year") return anchor.getFullYear().toString();
-  return MONTH_FORMATTER.format(anchor);
+function formatLabel(value: PeriodSelectorValue): string {
+  if (value.unit === "all") return "All Transactions";
+  if (value.unit === "year") return value.anchor.getFullYear().toString();
+  return MONTH_FORMATTER.format(value.anchor);
 }
 
 function shiftAnchor(unit: Unit, anchor: Date, direction: -1 | 1): Date {
@@ -54,27 +33,18 @@ function shiftAnchor(unit: Unit, anchor: Date, direction: -1 | 1): Date {
   return next;
 }
 
-export function PeriodSelector({ onChange }: PeriodSelectorProps) {
-  const [unit, setUnit] = useState<Unit>("month");
-  const [anchor, setAnchor] = useState<Date>(() => new Date());
-
-  const onChangeRef = useRef(onChange);
-  useEffect(() => {
-    onChangeRef.current = onChange;
-  }, [onChange]);
-
-  useEffect(() => {
-    onChangeRef.current(computePeriod(unit, anchor));
-  }, [unit, anchor]);
-
+export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
   const handleUnitChange = (nextUnit: string) => {
-    if (!isUnit(nextUnit) || nextUnit === unit) return;
-    setUnit(nextUnit);
+    if (!isUnit(nextUnit) || nextUnit === value.unit) return;
     // 単位切替時は現在日時にリセット（「All → Month」で当月が戻るため）
-    setAnchor(new Date());
+    onChange({ unit: nextUnit, anchor: new Date() });
   };
 
-  const showNav = unit !== "all";
+  const handleShift = (direction: -1 | 1) => {
+    onChange({ unit: value.unit, anchor: shiftAnchor(value.unit, value.anchor, direction) });
+  };
+
+  const showNav = value.unit !== "all";
 
   return (
     <div className="flex flex-col gap-2">
@@ -86,15 +56,13 @@ export function PeriodSelector({ onChange }: PeriodSelectorProps) {
             size="icon"
             aria-label="Previous period"
             onClick={() => {
-              setAnchor((prev) => shiftAnchor(unit, prev, -1));
+              handleShift(-1);
             }}
           >
             <ChevronLeft />
           </Button>
         )}
-        <span className="min-w-40 text-center text-base font-medium">
-          {formatLabel(unit, anchor)}
-        </span>
+        <span className="min-w-40 text-center text-base font-medium">{formatLabel(value)}</span>
         {showNav && (
           <Button
             type="button"
@@ -102,7 +70,7 @@ export function PeriodSelector({ onChange }: PeriodSelectorProps) {
             size="icon"
             aria-label="Next period"
             onClick={() => {
-              setAnchor((prev) => shiftAnchor(unit, prev, 1));
+              handleShift(1);
             }}
           >
             <ChevronRight />
@@ -111,7 +79,7 @@ export function PeriodSelector({ onChange }: PeriodSelectorProps) {
       </div>
       <ToggleGroup
         type="single"
-        value={unit}
+        value={value.unit}
         onValueChange={handleUnitChange}
         className="self-center"
       >

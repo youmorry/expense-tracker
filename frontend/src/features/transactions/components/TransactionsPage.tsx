@@ -1,9 +1,15 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { PeriodSelector, type Period } from "../../../components/PeriodSelector";
+import {
+  defaultPeriodSelectorValue,
+  type Period,
+  periodFromValue,
+  type PeriodSelectorValue,
+} from "../../../components/period";
+import { PeriodSelector } from "../../../components/PeriodSelector";
 import { Spinner } from "../../../components/ui/spinner";
 import { useTransactions } from "../api/useTransactions";
 import { TransactionList } from "./TransactionList";
@@ -14,15 +20,14 @@ function toParams(period: Period) {
 }
 
 export default function TransactionsPage() {
-  const [period, setPeriod] = useState<Period | undefined>(undefined);
-  const { data } = useTransactions(period === undefined ? {} : toParams(period), {
-    enabled: period !== undefined,
-  });
+  const [periodValue, setPeriodValue] = useState<PeriodSelectorValue>(defaultPeriodSelectorValue);
+  const period = useMemo(() => periodFromValue(periodValue), [periodValue]);
+  const { data } = useTransactions(toParams(period));
 
   return (
     <div className="relative min-h-screen">
       <div className="border-border bg-background sticky top-0 z-10 border-b px-4 py-3">
-        <PeriodSelector onChange={setPeriod} />
+        <PeriodSelector value={periodValue} onChange={setPeriodValue} />
       </div>
       {data === undefined ? (
         <div className="flex justify-center py-12">
