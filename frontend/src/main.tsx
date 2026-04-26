@@ -53,7 +53,7 @@ void enableMocking().then(() => {
         <QueryClientProvider client={queryClient}>
           <ToastProvider>
             <RouterProvider router={router} />
-            <ReactQueryDevtools initialIsOpen={false} />
+            {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
           </ToastProvider>
         </QueryClientProvider>
       </GoogleOAuthProvider>

@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { EmptyState } from "../../../components/EmptyState";
 import type { Transaction } from "../types";
 import { TransactionItem } from "./TransactionItem";
@@ -35,11 +37,11 @@ function groupByDate(transactions: Transaction[]): { date: string; items: Transa
 }
 
 export function TransactionList({ transactions }: TransactionListProps) {
+  const groups = useMemo(() => groupByDate(transactions), [transactions]);
+
   if (transactions.length === 0) {
     return <EmptyState title="No transactions yet. Tap + to add your first one!" />;
   }
-
-  const groups = groupByDate(transactions);
 
   return (
     <div className="divide-border divide-y">

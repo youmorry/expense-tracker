@@ -1,22 +1,31 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 
-import { detectCurrencyFromLocale, formatCurrency, getCurrencyDecimalDigits } from "@/lib/currency";
+import {
+  detectCurrencyFromLocale,
+  getCurrencyDecimalDigits,
+  getCurrencyFormatter,
+} from "@/lib/currency";
 
 const STORAGE_KEY = "expense-tracker:currency";
 
 const listeners = new Set<() => void>();
 
+function notify(): void {
+  listeners.forEach((listener) => {
+    listener();
+  });
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key === STORAGE_KEY) notify();
+  });
+}
+
 function subscribe(listener: () => void): () => void {
   listeners.add(listener);
-  const handleStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) {
-      listener();
-    }
-  };
-  window.addEventListener("storage", handleStorage);
   return () => {
     listeners.delete(listener);
-    window.removeEventListener("storage", handleStorage);
   };
 }
 
@@ -40,16 +49,11 @@ export function useCurrency(): UseCurrencyReturn {
 
   const setCurrency = useCallback((code: string) => {
     localStorage.setItem(STORAGE_KEY, code);
-    listeners.forEach((listener) => {
-      listener();
-    });
+    notify();
   }, []);
 
-  const formatAmount = useCallback(
-    (amount: number) => formatCurrency(amount, currency),
-    [currency],
-  );
-
+  const formatter = useMemo(() => getCurrencyFormatter(currency), [currency]);
+  const formatAmount = useCallback((amount: number) => formatter.format(amount), [formatter]);
   const decimalDigits = useMemo(() => getCurrencyDecimalDigits(currency), [currency]);
 
   return { currency, setCurrency, formatAmount, decimalDigits };

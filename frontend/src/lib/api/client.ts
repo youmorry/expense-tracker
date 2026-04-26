@@ -26,7 +26,6 @@ interface RequestOptions {
   skipAuth?: boolean;
 }
 
-// TODO: feature 層実装時に戻り値型をジェネリクス化するか、呼び出し側で Zod parse するか方針を決定する
 async function request(
   method: string,
   path: string,
