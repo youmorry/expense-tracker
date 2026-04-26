@@ -22,13 +22,22 @@ export function ToastProvider({ children }: ToastProviderProps) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const showSuccess = useCallback((message: string) => {
-    setToasts((prev) => [...prev, { id: crypto.randomUUID(), variant: "success", message }]);
+  const push = useCallback((variant: ToastItem["variant"], message: string) => {
+    setToasts((prev) => [...prev, { id: crypto.randomUUID(), variant, message }]);
   }, []);
 
-  const showError = useCallback((message: string) => {
-    setToasts((prev) => [...prev, { id: crypto.randomUUID(), variant: "error", message }]);
-  }, []);
+  const showSuccess = useCallback(
+    (message: string) => {
+      push("success", message);
+    },
+    [push],
+  );
+  const showError = useCallback(
+    (message: string) => {
+      push("error", message);
+    },
+    [push],
+  );
 
   const value = useMemo<ToastContextValue>(
     () => ({ showSuccess, showError }),
