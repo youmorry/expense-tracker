@@ -76,8 +76,7 @@ function isDirty(state: FormState): boolean {
 function validateAmount(raw: string, decimalDigits: number): string | null {
   if (raw.trim().length === 0) return "Amount is required";
   const digitsString = decimalDigits.toString();
-  const pattern =
-    decimalDigits === 0 ? /^\d+$/ : new RegExp(`^\\d+(\\.\\d{1,${digitsString}})?$`);
+  const pattern = decimalDigits === 0 ? /^\d+$/ : new RegExp(`^\\d+(\\.\\d{1,${digitsString}})?$`);
   if (!pattern.test(raw)) {
     return decimalDigits === 0
       ? "Amount must be a whole number"
