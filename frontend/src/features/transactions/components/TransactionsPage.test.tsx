@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ToastProvider } from "../../../components/Toast";
 import { server } from "../../../test/mocks/server";
 import TransactionsPage from "./TransactionsPage";
 
@@ -19,7 +20,9 @@ function renderPage() {
   );
   return render(
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
     </QueryClientProvider>,
   );
 }
@@ -98,6 +101,18 @@ describe("TransactionsPage", () => {
     renderPage();
 
     expect(await screen.findByRole("button", { name: /add transaction/i })).toBeInTheDocument();
+  });
+
+  it("opens the transaction form modal when the FAB is clicked", async () => {
+    vi.useRealTimers();
+    server.use(http.get("/api/v1/transactions", () => HttpResponse.json({ items: [] })));
+
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(await screen.findByRole("button", { name: /add transaction/i }));
+
+    expect(await screen.findByRole("dialog", { name: /add transaction/i })).toBeInTheDocument();
   });
 
   it("includes the keyword in the API request when entered in the filter", async () => {
