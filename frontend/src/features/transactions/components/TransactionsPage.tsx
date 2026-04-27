@@ -20,6 +20,7 @@ import {
   type TransactionListParams,
 } from "../types";
 import { TransactionFilters } from "./TransactionFilterPanel";
+import { TransactionFormModal } from "./TransactionFormModal";
 import { TransactionList } from "./TransactionList";
 
 const FILTERED_EMPTY_MESSAGE = "No transactions match your filters.";
@@ -40,6 +41,7 @@ function buildParams(period: Period, filters: TransactionFiltersValue): Transact
 export default function TransactionsPage() {
   const [periodValue, setPeriodValue] = useState<PeriodSelectorValue>(defaultPeriodSelectorValue);
   const [filters, setFilters] = useState<TransactionFiltersValue>(emptyTransactionFiltersValue);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const period = useMemo(() => periodFromValue(periodValue), [periodValue]);
   const params = useMemo(() => buildParams(period, filters), [period, filters]);
   const { data } = useTransactions(params);
@@ -69,9 +71,18 @@ export default function TransactionsPage() {
         size="icon"
         aria-label="Add transaction"
         className="fixed right-6 bottom-20 size-14 rounded-full shadow-lg [&_svg:not([class*='size-'])]:size-6"
+        onClick={() => {
+          setIsFormOpen(true);
+        }}
       >
         <Plus />
       </Button>
+      <TransactionFormModal
+        open={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+        }}
+      />
     </div>
   );
 }

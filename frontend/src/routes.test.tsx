@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ToastProvider } from "./components/Toast";
 import { routes } from "./routes";
 
 vi.mock("./lib/auth", () => ({
@@ -32,7 +33,9 @@ function renderWithRouter(initialEntry: string) {
   const router = createMemoryRouter(routes, { initialEntries: [initialEntry] });
   render(
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
     </QueryClientProvider>,
   );
   return router;
