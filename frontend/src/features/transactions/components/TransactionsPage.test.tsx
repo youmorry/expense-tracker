@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import type { ReactNode } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router";
@@ -97,5 +98,41 @@ describe("TransactionsPage", () => {
     renderPage();
 
     expect(await screen.findByRole("button", { name: /add transaction/i })).toBeInTheDocument();
+  });
+
+  it("includes the keyword in the API request when entered in the filter", async () => {
+    vi.useRealTimers();
+    const requestedUrls: string[] = [];
+    server.use(
+      http.get("/api/v1/transactions", ({ request }) => {
+        requestedUrls.push(request.url);
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole("button", { name: /filters/i }));
+    await user.type(screen.getByLabelText(/keyword/i), "lunch");
+
+    await vi.waitFor(() => {
+      expect(requestedUrls.some((url) => url.includes("keyword=lunch"))).toBe(true);
+    });
+  });
+
+  it("shows the filter-specific empty message when filters are applied with no results", async () => {
+    server.use(http.get("/api/v1/transactions", () => HttpResponse.json({ items: [] })));
+
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole("button", { name: /filters/i }));
+    await user.type(screen.getByLabelText(/keyword/i), "nothing");
+
+    expect(await screen.findByText("No transactions match your filters.")).toBeInTheDocument();
+    expect(
+      screen.queryByText("No transactions yet. Tap + to add your first one!"),
+    ).not.toBeInTheDocument();
   });
 });

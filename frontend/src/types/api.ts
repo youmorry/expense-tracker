@@ -9,7 +9,7 @@
 
 import { z } from "zod";
 
-const NeedWantTypeSchema = z.enum(["NEED", "WANT", "UNSET"]);
+export const NeedWantTypeSchema = z.enum(["NEED", "WANT", "UNSET"]);
 export type NeedWantType = z.infer<typeof NeedWantTypeSchema>;
 
 // ------------------------------------------------------------

@@ -26,4 +26,20 @@ export const handlers = [
   http.get("/api/v1/transactions", ({ response }) => {
     return response(200).json({ items: [] });
   }),
+  http.get("/api/v1/categories", ({ response }) => {
+    return response(200).json({
+      items: [
+        { id: 1, name: "Food", display_order: 1 },
+        { id: 2, name: "Transport", display_order: 2 },
+        { id: 3, name: "Housing", display_order: 3 },
+        { id: 4, name: "Daily Goods", display_order: 4 },
+        { id: 5, name: "Medical", display_order: 5 },
+        { id: 6, name: "Entertainment", display_order: 6 },
+        { id: 7, name: "Clothing", display_order: 7 },
+        { id: 8, name: "Education", display_order: 8 },
+        { id: 9, name: "Social", display_order: 9 },
+        { id: 10, name: "Other", display_order: 10 },
+      ],
+    });
+  }),
 ];

@@ -20,12 +20,20 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
 }
 
 describe("TransactionList", () => {
-  it("renders the empty state when there are no transactions", () => {
+  it("renders the default empty state when there are no transactions", () => {
     render(<TransactionList transactions={[]} />);
 
     expect(
       screen.getByText("No transactions yet. Tap + to add your first one!"),
     ).toBeInTheDocument();
+  });
+
+  it("renders the provided emptyMessage when there are no transactions", () => {
+    render(
+      <TransactionList transactions={[]} emptyMessage="No transactions match your filters." />,
+    );
+
+    expect(screen.getByText("No transactions match your filters.")).toBeInTheDocument();
   });
 
   it("renders one date group per distinct date", () => {
