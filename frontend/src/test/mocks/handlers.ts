@@ -26,6 +26,22 @@ export const handlers = [
   http.get("/api/v1/transactions", ({ response }) => {
     return response(200).json({ items: [] });
   }),
+  http.post("/api/v1/transactions", async ({ request, response }) => {
+    const body = await request.json();
+    const now = new Date().toISOString();
+    return response(201).json({
+      id: Math.floor(Math.random() * 1_000_000) + 1,
+      date: body.date,
+      amount: body.amount,
+      category_id: body.category_id ?? 11,
+      category_name: body.category_id !== undefined ? "Food" : "Uncategorized",
+      need_want_type: body.need_want_type ?? "UNSET",
+      ...(body.title !== undefined ? { title: body.title } : {}),
+      ...(body.memo !== undefined ? { memo: body.memo } : {}),
+      created_at: now,
+      updated_at: now,
+    });
+  }),
   http.get("/api/v1/categories", ({ response }) => {
     return response(200).json({
       items: [
@@ -39,6 +55,7 @@ export const handlers = [
         { id: 8, name: "Education", display_order: 8 },
         { id: 9, name: "Social", display_order: 9 },
         { id: 10, name: "Other", display_order: 10 },
+        { id: 11, name: "Uncategorized", display_order: 11 },
       ],
     });
   }),
