@@ -9,19 +9,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { server } from "../../../test/mocks/server";
 import TransactionsPage from "./TransactionsPage";
 
-function stubCategories() {
-  server.use(
-    http.get("/api/v1/categories", () =>
-      HttpResponse.json({
-        items: [
-          { id: 1, name: "Food", display_order: 1 },
-          { id: 2, name: "Transport", display_order: 2 },
-        ],
-      }),
-    ),
-  );
-}
-
 function renderPage() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -41,7 +28,6 @@ describe("TransactionsPage", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-02-15T12:00:00Z"));
-    stubCategories();
   });
 
   afterEach(() => {
