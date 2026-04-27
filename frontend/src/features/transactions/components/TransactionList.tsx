@@ -6,7 +6,10 @@ import { TransactionItem } from "./TransactionItem";
 
 interface TransactionListProps {
   transactions: Transaction[];
+  emptyMessage?: string;
 }
+
+const DEFAULT_EMPTY_MESSAGE = "No transactions yet. Tap + to add your first one!";
 
 const MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -36,11 +39,11 @@ function groupByDate(transactions: Transaction[]): { date: string; items: Transa
   return groups;
 }
 
-export function TransactionList({ transactions }: TransactionListProps) {
+export function TransactionList({ transactions, emptyMessage }: TransactionListProps) {
   const groups = useMemo(() => groupByDate(transactions), [transactions]);
 
   if (transactions.length === 0) {
-    return <EmptyState title="No transactions yet. Tap + to add your first one!" />;
+    return <EmptyState title={emptyMessage ?? DEFAULT_EMPTY_MESSAGE} />;
   }
 
   return (
