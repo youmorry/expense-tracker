@@ -99,6 +99,102 @@ describe("useTransactions", () => {
     expect(capturedUrl).not.toContain("to=");
   });
 
+  it("sends keyword as a query parameter when provided", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/v1/transactions", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+
+    const { result } = renderHook(() => useTransactions({ keyword: "lunch" }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    expect(capturedUrl).toContain("keyword=lunch");
+  });
+
+  it("sends each categoryId as a repeated category_id query parameter", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/v1/transactions", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+
+    const { result } = renderHook(() => useTransactions({ categoryIds: [1, 3] }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll("category_id")).toEqual(["1", "3"]);
+  });
+
+  it("sends needWantType as the need_want_type query parameter when provided", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/v1/transactions", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+
+    const { result } = renderHook(() => useTransactions({ needWantType: "WANT" }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    expect(capturedUrl).toContain("need_want_type=WANT");
+  });
+
+  it("omits keyword when it is an empty string", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/v1/transactions", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+
+    const { result } = renderHook(() => useTransactions({ keyword: "" }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    expect(capturedUrl).not.toContain("keyword=");
+  });
+
+  it("omits categoryIds from the query when empty", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/v1/transactions", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+
+    const { result } = renderHook(() => useTransactions({ categoryIds: [] }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    expect(capturedUrl).not.toContain("category_id=");
+  });
+
   it("uses distinct cache keys for different period parameters", async () => {
     const requestedUrls: string[] = [];
     server.use(
