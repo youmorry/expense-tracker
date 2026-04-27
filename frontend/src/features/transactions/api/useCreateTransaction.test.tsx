@@ -163,7 +163,6 @@ describe("useCreateTransaction", () => {
   });
 
   it("does not invalidate the transactions query when the create fails", async () => {
-    const invalidateSpy = vi.fn();
     server.use(
       http.post("/api/v1/transactions", () => {
         return HttpResponse.json(
@@ -179,8 +178,7 @@ describe("useCreateTransaction", () => {
     );
 
     const { queryClient, Wrapper } = createWrapper();
-    queryClient.invalidateQueries =
-      invalidateSpy as unknown as typeof queryClient.invalidateQueries;
+    const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
     const { result } = renderHook(() => useCreateTransaction(), { wrapper: Wrapper });
 
     result.current.mutate({ date: "2026-04-27", amount: "1000" });
