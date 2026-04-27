@@ -1,11 +1,4 @@
-/**
- * 支出作成 mutation フック。
- *
- * `POST /api/v1/transactions` を呼び出し、成功時に支出一覧クエリを invalidate する。
- * トースト表示は呼び出し側 UI の責務。
- *
- * @see docs/03-design/backend/api-design.md
- */
+/** @see docs/03-design/backend/api-design.md */
 
 import { useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
 

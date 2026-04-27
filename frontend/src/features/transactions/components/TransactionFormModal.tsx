@@ -1,9 +1,4 @@
 /**
- * 支出登録モーダル。
- *
- * shadcn `Dialog` をベースに作成フォームをレンダリングする。
- * 入力済み状態でキャンセル / 背景タップ時は破棄確認を表示する。
- *
  * @see docs/03-design/frontend/screen-flow.md (2a 登録モーダル)
  */
 
@@ -27,8 +22,12 @@ import { ConfirmDialog } from "../../../components/ConfirmDialog";
 import { useCurrency } from "../../../hooks/useCurrency";
 import { useToast } from "../../../hooks/useToast";
 import { ApiException } from "../../../lib/api/errors";
-import { toIsoDate } from "../../../lib/isoDate";
-import type { CreateTransactionRequest, NeedWantType } from "../../../types/api";
+import { todayIsoDate } from "../../../lib/isoDate";
+import {
+  NeedWantTypeSchema,
+  type CreateTransactionRequest,
+  type NeedWantType,
+} from "../../../types/api";
 import { useCategories } from "../../categories/api/useCategories";
 import { useCreateTransaction } from "../api/useCreateTransaction";
 
@@ -46,11 +45,6 @@ interface FormState {
   memo: string;
 }
 
-function todayIsoDate(): string {
-  const now = new Date();
-  return toIsoDate(now.getFullYear(), now.getMonth() + 1, now.getDate());
-}
-
 function emptyFormState(): FormState {
   return {
     date: todayIsoDate(),
@@ -62,40 +56,47 @@ function emptyFormState(): FormState {
   };
 }
 
-function isDirty(state: FormState): boolean {
+function isDirty(state: FormState, initialDate: string): boolean {
   return (
     state.amount.length > 0 ||
     state.title.length > 0 ||
     state.memo.length > 0 ||
     state.categoryId !== null ||
     state.needWantType !== "UNSET" ||
-    state.date !== todayIsoDate()
+    state.date !== initialDate
   );
+}
+
+function amountValidationRule(decimalDigits: number): {
+  pattern: RegExp;
+  tooManyDecimalsMessage: string;
+} {
+  if (decimalDigits === 0) {
+    return { pattern: /^\d+$/, tooManyDecimalsMessage: "Amount must be a whole number" };
+  }
+  return {
+    pattern: new RegExp(`^\\d+(\\.\\d{1,${decimalDigits.toString()}})?$`),
+    tooManyDecimalsMessage: `Amount supports up to ${decimalDigits.toString()} decimal places`,
+  };
 }
 
 function validateAmount(raw: string, decimalDigits: number): string | null {
   if (raw.trim().length === 0) return "Amount is required";
-  const digitsString = decimalDigits.toString();
-  const pattern = decimalDigits === 0 ? /^\d+$/ : new RegExp(`^\\d+(\\.\\d{1,${digitsString}})?$`);
-  if (!pattern.test(raw)) {
-    return decimalDigits === 0
-      ? "Amount must be a whole number"
-      : `Amount supports up to ${digitsString} decimal places`;
-  }
+  const { pattern, tooManyDecimalsMessage } = amountValidationRule(decimalDigits);
+  if (!pattern.test(raw)) return tooManyDecimalsMessage;
   if (Number(raw) <= 0) return "Amount must be greater than 0";
   return null;
 }
 
 function buildRequest(state: FormState): CreateTransactionRequest {
-  const request: CreateTransactionRequest = {
+  return {
     date: state.date,
     amount: state.amount,
+    ...(state.categoryId !== null && { categoryId: state.categoryId }),
+    ...(state.needWantType !== "UNSET" && { needWantType: state.needWantType }),
+    ...(state.title.length > 0 && { title: state.title }),
+    ...(state.memo.length > 0 && { memo: state.memo }),
   };
-  if (state.categoryId !== null) request.categoryId = state.categoryId;
-  if (state.needWantType !== "UNSET") request.needWantType = state.needWantType;
-  if (state.title.length > 0) request.title = state.title;
-  if (state.memo.length > 0) request.memo = state.memo;
-  return request;
 }
 
 export function TransactionFormModal({ open, onClose }: TransactionFormModalProps) {
@@ -109,6 +110,7 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
   const [amountError, setAmountError] = useState<string | null>(null);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const amountRef = useRef<HTMLInputElement>(null);
+  const initialDateRef = useRef(state.date);
 
   const { decimalDigits } = useCurrency();
   const { showSuccess, showError } = useToast();
@@ -116,7 +118,9 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
   const createMutation = useCreateTransaction();
 
   const resetForm = () => {
-    setState(emptyFormState());
+    const next = emptyFormState();
+    initialDateRef.current = next.date;
+    setState(next);
     setAmountError(null);
     setShowDiscardConfirm(false);
   };
@@ -150,7 +154,7 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
   };
 
   const handleAttemptClose = () => {
-    if (isDirty(state)) {
+    if (isDirty(state, initialDateRef.current)) {
       setShowDiscardConfirm(true);
       return;
     }
@@ -243,22 +247,17 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
                 type="single"
                 value={state.needWantType}
                 onValueChange={(next) => {
-                  if (next === "NEED" || next === "WANT" || next === "UNSET") {
-                    updateField("needWantType", next);
-                  }
+                  const parsed = NeedWantTypeSchema.safeParse(next);
+                  if (parsed.success) updateField("needWantType", parsed.data);
                 }}
                 className="self-start"
                 rovingFocus={false}
               >
-                <ToggleGroupItem value="NEED" aria-label="NEED">
-                  NEED
-                </ToggleGroupItem>
-                <ToggleGroupItem value="WANT" aria-label="WANT">
-                  WANT
-                </ToggleGroupItem>
-                <ToggleGroupItem value="UNSET" aria-label="UNSET">
-                  UNSET
-                </ToggleGroupItem>
+                {NeedWantTypeSchema.options.map((value) => (
+                  <ToggleGroupItem key={value} value={value} aria-label={value}>
+                    {value}
+                  </ToggleGroupItem>
+                ))}
               </ToggleGroup>
             </div>
             <div className="flex flex-col gap-1.5">

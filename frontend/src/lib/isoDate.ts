@@ -37,3 +37,7 @@ export function toIsoDate(year: number, month: number, day: number): IsoDate {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return value as IsoDate;
 }
+
+export function todayIsoDate(now: Date = new Date()): IsoDate {
+  return toIsoDate(now.getFullYear(), now.getMonth() + 1, now.getDate());
+}
