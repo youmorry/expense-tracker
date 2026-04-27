@@ -17,6 +17,7 @@ export interface TransactionFiltersValue {
   needWantType: NeedWantType | null;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function emptyTransactionFiltersValue(): TransactionFiltersValue {
   return { keyword: "", categoryIds: [], needWantType: null };
 }
@@ -67,7 +68,9 @@ export function TransactionFilters({ value, onChange, categories }: TransactionF
   };
 
   const categoriesLabel =
-    value.categoryIds.length === 0 ? "Categories" : `Categories (${value.categoryIds.length})`;
+    value.categoryIds.length === 0
+      ? "Categories"
+      : `Categories (${String(value.categoryIds.length)})`;
 
   return (
     <div className="flex flex-col gap-2">

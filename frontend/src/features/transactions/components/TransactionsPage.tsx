@@ -18,7 +18,7 @@ import {
   emptyTransactionFiltersValue,
   TransactionFilters,
   type TransactionFiltersValue,
-} from "./TransactionFilters";
+} from "./TransactionFilterPanel";
 import { TransactionList } from "./TransactionList";
 
 const FILTERED_EMPTY_MESSAGE = "No transactions match your filters.";
