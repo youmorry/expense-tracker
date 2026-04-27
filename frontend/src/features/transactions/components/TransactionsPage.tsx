@@ -11,30 +11,66 @@ import {
 } from "../../../components/period";
 import { PeriodSelector } from "../../../components/PeriodSelector";
 import { Spinner } from "../../../components/ui/spinner";
+import { useCategories } from "../../categories/api/useCategories";
 import { useTransactions } from "../api/useTransactions";
+import type { TransactionListParams } from "../types";
+import {
+  emptyTransactionFiltersValue,
+  TransactionFilters,
+  type TransactionFiltersValue,
+} from "./TransactionFilters";
 import { TransactionList } from "./TransactionList";
 
-function toParams(period: Period) {
-  if (period === null) return {};
-  return { from: period.from, to: period.to };
+const FILTERED_EMPTY_MESSAGE = "No transactions match your filters.";
+
+function buildParams(period: Period, filters: TransactionFiltersValue): TransactionListParams {
+  const params: TransactionListParams = {};
+  if (period !== null) {
+    params.from = period.from;
+    params.to = period.to;
+  }
+  if (filters.categoryIds.length > 0) params.categoryIds = filters.categoryIds;
+  if (filters.needWantType !== null) params.needWantType = filters.needWantType;
+  const trimmedKeyword = filters.keyword.trim();
+  if (trimmedKeyword.length > 0) params.keyword = trimmedKeyword;
+  return params;
+}
+
+function isAnyFilterActive(filters: TransactionFiltersValue): boolean {
+  return (
+    filters.keyword.trim().length > 0 ||
+    filters.categoryIds.length > 0 ||
+    filters.needWantType !== null
+  );
 }
 
 export default function TransactionsPage() {
   const [periodValue, setPeriodValue] = useState<PeriodSelectorValue>(defaultPeriodSelectorValue);
+  const [filters, setFilters] = useState<TransactionFiltersValue>(emptyTransactionFiltersValue);
   const period = useMemo(() => periodFromValue(periodValue), [periodValue]);
-  const { data } = useTransactions(toParams(period));
+  const params = useMemo(() => buildParams(period, filters), [period, filters]);
+  const { data } = useTransactions(params);
+  const { data: categoriesData } = useCategories();
 
   return (
     <div className="relative min-h-screen">
-      <div className="border-border bg-background sticky top-0 z-10 border-b px-4 py-3">
+      <div className="border-border bg-background sticky top-0 z-10 flex flex-col gap-2 border-b px-4 py-3">
         <PeriodSelector value={periodValue} onChange={setPeriodValue} />
+        <TransactionFilters
+          value={filters}
+          onChange={setFilters}
+          categories={categoriesData?.items ?? []}
+        />
       </div>
       {data === undefined ? (
         <div className="flex justify-center py-12">
           <Spinner aria-label="Loading transactions" />
         </div>
       ) : (
-        <TransactionList transactions={data.items} />
+        <TransactionList
+          transactions={data.items}
+          emptyMessage={isAnyFilterActive(filters) ? FILTERED_EMPTY_MESSAGE : undefined}
+        />
       )}
       <Button
         type="button"
