@@ -3,11 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import type { Category } from "../../../types/api";
-import {
-  emptyTransactionFiltersValue,
-  TransactionFilters,
-  type TransactionFiltersValue,
-} from "./TransactionFilterPanel";
+import { emptyTransactionFiltersValue, type TransactionFiltersValue } from "../types";
+import { TransactionFilters } from "./TransactionFilterPanel";
 
 const CATEGORIES: Category[] = [
   { id: 1, name: "Food", displayOrder: 1 },

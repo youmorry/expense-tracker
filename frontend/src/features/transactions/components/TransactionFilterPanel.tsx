@@ -9,30 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-import type { Category, NeedWantType } from "../../../types/api";
-
-export interface TransactionFiltersValue {
-  keyword: string;
-  categoryIds: number[];
-  needWantType: NeedWantType | null;
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function emptyTransactionFiltersValue(): TransactionFiltersValue {
-  return { keyword: "", categoryIds: [], needWantType: null };
-}
-
-function countActiveFilters(value: TransactionFiltersValue): number {
-  let count = 0;
-  if (value.keyword.trim().length > 0) count += 1;
-  if (value.categoryIds.length > 0) count += 1;
-  if (value.needWantType !== null) count += 1;
-  return count;
-}
-
-function isNeedWantType(value: string): value is NeedWantType {
-  return value === "NEED" || value === "WANT" || value === "UNSET";
-}
+import { type Category, NeedWantTypeSchema } from "../../../types/api";
+import { countActiveFilters, type TransactionFiltersValue } from "../types";
 
 interface TransactionFiltersProps {
   value: TransactionFiltersValue;
@@ -55,8 +33,9 @@ export function TransactionFilters({ value, onChange, categories }: TransactionF
       onChange({ ...value, needWantType: null });
       return;
     }
-    if (!isNeedWantType(next)) return;
-    onChange({ ...value, needWantType: next });
+    const parsed = NeedWantTypeSchema.safeParse(next);
+    if (!parsed.success) return;
+    onChange({ ...value, needWantType: parsed.data });
   };
 
   const toggleCategory = (categoryId: number) => {

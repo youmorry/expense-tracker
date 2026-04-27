@@ -13,12 +13,13 @@ import { PeriodSelector } from "../../../components/PeriodSelector";
 import { Spinner } from "../../../components/ui/spinner";
 import { useCategories } from "../../categories/api/useCategories";
 import { useTransactions } from "../api/useTransactions";
-import type { TransactionListParams } from "../types";
 import {
+  countActiveFilters,
   emptyTransactionFiltersValue,
-  TransactionFilters,
   type TransactionFiltersValue,
-} from "./TransactionFilterPanel";
+  type TransactionListParams,
+} from "../types";
+import { TransactionFilters } from "./TransactionFilterPanel";
 import { TransactionList } from "./TransactionList";
 
 const FILTERED_EMPTY_MESSAGE = "No transactions match your filters.";
@@ -34,14 +35,6 @@ function buildParams(period: Period, filters: TransactionFiltersValue): Transact
   const trimmedKeyword = filters.keyword.trim();
   if (trimmedKeyword.length > 0) params.keyword = trimmedKeyword;
   return params;
-}
-
-function isAnyFilterActive(filters: TransactionFiltersValue): boolean {
-  return (
-    filters.keyword.trim().length > 0 ||
-    filters.categoryIds.length > 0 ||
-    filters.needWantType !== null
-  );
 }
 
 export default function TransactionsPage() {
@@ -66,7 +59,7 @@ export default function TransactionsPage() {
         <div className="flex justify-center py-12">
           <Spinner aria-label="Loading transactions" />
         </div>
-      ) : isAnyFilterActive(filters) ? (
+      ) : countActiveFilters(filters) > 0 ? (
         <TransactionList transactions={data.items} emptyMessage={FILTERED_EMPTY_MESSAGE} />
       ) : (
         <TransactionList transactions={data.items} />
