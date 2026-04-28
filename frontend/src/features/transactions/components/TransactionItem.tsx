@@ -6,9 +6,10 @@ import type { Transaction } from "../types";
 
 interface TransactionItemProps {
   transaction: Transaction;
+  onClick?: () => void;
 }
 
-export function TransactionItem({ transaction }: TransactionItemProps) {
+export function TransactionItem({ transaction, onClick }: TransactionItemProps) {
   const { formatAmount } = useCurrency();
   const emoji = getCategoryEmoji(transaction.categoryName);
   const displayTitle =
@@ -18,7 +19,11 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
   const amountNumber = Number(transaction.amount);
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <button
+      type="button"
+      className="flex w-full items-center gap-3 px-4 py-3 text-left"
+      onClick={onClick}
+    >
       <span className="text-xl" aria-hidden="true">
         {emoji}
       </span>
@@ -29,6 +34,6 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
           {transaction.needWantType}
         </Badge>
       )}
-    </div>
+    </button>
   );
 }

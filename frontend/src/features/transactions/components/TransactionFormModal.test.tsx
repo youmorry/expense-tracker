@@ -24,7 +24,9 @@ const EDIT_TRANSACTION: Transaction = {
   updatedAt: "2026-04-20T10:00:00Z",
 };
 
-function renderModal(props: { open?: boolean; onClose?: () => void; transaction?: Transaction } = {}) {
+function renderModal(
+  props: { open?: boolean; onClose?: () => void; transaction?: Transaction } = {},
+) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
@@ -38,10 +40,10 @@ function renderModal(props: { open?: boolean; onClose?: () => void; transaction?
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <TransactionFormModal
-          open={props.open ?? true}
-          onClose={onClose}
-          transaction={props.transaction}
-        />
+            open={props.open ?? true}
+            onClose={onClose}
+            {...(props.transaction !== undefined ? { transaction: props.transaction } : {})}
+          />
         </ToastProvider>
       </QueryClientProvider>,
     ),

@@ -42,6 +42,22 @@ export const handlers = [
       updated_at: now,
     });
   }),
+  http.put("/api/v1/transactions/{id}", async ({ request, params, response }) => {
+    const body = await request.json();
+    const now = new Date().toISOString();
+    return response(200).json({
+      id: Number(params.id),
+      date: body.date,
+      amount: body.amount,
+      category_id: body.category_id ?? 11,
+      category_name: body.category_id !== undefined ? "Food" : "Uncategorized",
+      need_want_type: body.need_want_type ?? "UNSET",
+      ...(body.title !== undefined ? { title: body.title } : {}),
+      ...(body.memo !== undefined ? { memo: body.memo } : {}),
+      created_at: now,
+      updated_at: now,
+    });
+  }),
   http.get("/api/v1/categories", ({ response }) => {
     return response(200).json({
       items: [
