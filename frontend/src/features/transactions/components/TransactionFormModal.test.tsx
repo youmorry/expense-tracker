@@ -5,12 +5,26 @@ import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ToastProvider } from "../../../components/Toast";
+import type { Transaction } from "../../../types/api";
 import { server } from "../../../test/mocks/server";
 import { TransactionFormModal } from "./TransactionFormModal";
 
 const CURRENCY_KEY = "expense-tracker:currency";
 
-function renderModal(props: { open?: boolean; onClose?: () => void } = {}) {
+const EDIT_TRANSACTION: Transaction = {
+  id: 99,
+  date: "2026-04-20",
+  amount: "500",
+  categoryId: 1,
+  categoryName: "Food",
+  needWantType: "NEED",
+  title: "Old Lunch",
+  memo: "with friends",
+  createdAt: "2026-04-20T10:00:00Z",
+  updatedAt: "2026-04-20T10:00:00Z",
+};
+
+function renderModal(props: { open?: boolean; onClose?: () => void; transaction?: Transaction } = {}) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
@@ -23,7 +37,11 @@ function renderModal(props: { open?: boolean; onClose?: () => void } = {}) {
     ...render(
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <TransactionFormModal open={props.open ?? true} onClose={onClose} />
+          <TransactionFormModal
+          open={props.open ?? true}
+          onClose={onClose}
+          transaction={props.transaction}
+        />
         </ToastProvider>
       </QueryClientProvider>,
     ),
@@ -228,5 +246,90 @@ describe("TransactionFormModal", () => {
     await user.click(await screen.findByRole("button", { name: /discard/i }));
 
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("does not show a Delete button in create mode", () => {
+    renderModal();
+
+    expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+  });
+
+  describe("edit mode", () => {
+    it("renders 'Edit Transaction' title when transaction prop is provided", () => {
+      renderModal({ transaction: EDIT_TRANSACTION });
+
+      expect(screen.getByRole("dialog", { name: /edit transaction/i })).toBeInTheDocument();
+    });
+
+    it("pre-populates form fields with the transaction data", () => {
+      renderModal({ transaction: EDIT_TRANSACTION });
+
+      expect(screen.getByLabelText(/date/i)).toHaveValue("2026-04-20");
+      expect(screen.getByLabelText(/amount/i)).toHaveValue("500");
+      expect(screen.getByLabelText(/title/i)).toHaveValue("Old Lunch");
+      expect(screen.getByLabelText(/memo/i)).toHaveValue("with friends");
+    });
+
+    it("calls PUT endpoint on save in edit mode", async () => {
+      let capturedBody: unknown;
+      server.use(
+        http.put("/api/v1/transactions/:id", async ({ request }) => {
+          capturedBody = await request.json();
+          return HttpResponse.json({
+            id: 99,
+            date: "2026-04-20",
+            amount: "750",
+            category_id: 1,
+            category_name: "Food",
+            need_want_type: "NEED",
+            title: "Old Lunch",
+            memo: "with friends",
+            created_at: "2026-04-20T10:00:00Z",
+            updated_at: "2026-04-20T10:00:00Z",
+          });
+        }),
+      );
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal({ transaction: EDIT_TRANSACTION });
+
+      await user.clear(screen.getByLabelText(/amount/i));
+      await user.type(screen.getByLabelText(/amount/i), "750");
+      await user.click(screen.getByRole("button", { name: /save/i }));
+
+      await waitFor(() => {
+        expect(capturedBody).toMatchObject({ amount: "750" });
+      });
+    });
+
+    it("shows 'Transaction updated' toast on success", async () => {
+      server.use(
+        http.put("/api/v1/transactions/:id", () => {
+          return HttpResponse.json({
+            id: 99,
+            date: "2026-04-20",
+            amount: "500",
+            category_id: 1,
+            category_name: "Food",
+            need_want_type: "NEED",
+            title: "Old Lunch",
+            memo: "with friends",
+            created_at: "2026-04-20T10:00:00Z",
+            updated_at: "2026-04-20T10:00:00Z",
+          });
+        }),
+      );
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal({ transaction: EDIT_TRANSACTION });
+
+      await user.click(screen.getByRole("button", { name: /save/i }));
+
+      expect(await screen.findByText(/transaction updated/i)).toBeInTheDocument();
+    });
+
+    it("shows a Delete button in edit mode", () => {
+      renderModal({ transaction: EDIT_TRANSACTION });
+
+      expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    });
   });
 });

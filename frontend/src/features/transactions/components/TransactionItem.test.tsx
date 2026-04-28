@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
 import type { Transaction } from "../types";
 import { TransactionItem } from "./TransactionItem";
@@ -72,5 +73,15 @@ describe("TransactionItem", () => {
     render(<TransactionItem transaction={createTransaction({ categoryName: "Mystery" })} />);
 
     expect(screen.getByText("➖")).toBeInTheDocument();
+  });
+
+  it("calls onClick when the item is clicked", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<TransactionItem transaction={createTransaction()} onClick={onClick} />);
+
+    await user.click(screen.getByRole("button"));
+
+    expect(onClick).toHaveBeenCalled();
   });
 });
