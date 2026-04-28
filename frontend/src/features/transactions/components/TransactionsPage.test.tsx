@@ -150,4 +150,34 @@ describe("TransactionsPage", () => {
       screen.queryByText("No transactions yet. Tap + to add your first one!"),
     ).not.toBeInTheDocument();
   });
+
+  it("opens the edit modal when a transaction row is clicked", async () => {
+    vi.useRealTimers();
+    server.use(
+      http.get("/api/v1/transactions", () => {
+        return HttpResponse.json({
+          items: [
+            {
+              id: 5,
+              date: "2026-02-23",
+              amount: "1200",
+              category_id: 1,
+              category_name: "Food",
+              need_want_type: "NEED",
+              title: "Lunch",
+              created_at: "2026-02-23T10:30:00Z",
+              updated_at: "2026-02-23T10:30:00Z",
+            },
+          ],
+        });
+      }),
+    );
+
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(await screen.findByRole("button", { name: /lunch/i }));
+
+    expect(await screen.findByRole("dialog", { name: /edit transaction/i })).toBeInTheDocument();
+  });
 });

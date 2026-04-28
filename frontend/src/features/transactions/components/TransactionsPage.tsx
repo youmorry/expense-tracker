@@ -13,6 +13,7 @@ import { PeriodSelector } from "../../../components/PeriodSelector";
 import { Spinner } from "../../../components/ui/spinner";
 import { useCategories } from "../../categories/api/useCategories";
 import { useTransactions } from "../api/useTransactions";
+import type { Transaction } from "../../../types/api";
 import {
   countActiveFilters,
   emptyTransactionFiltersValue,
@@ -42,6 +43,7 @@ export default function TransactionsPage() {
   const [periodValue, setPeriodValue] = useState<PeriodSelectorValue>(defaultPeriodSelectorValue);
   const [filters, setFilters] = useState<TransactionFiltersValue>(emptyTransactionFiltersValue);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const period = useMemo(() => periodFromValue(periodValue), [periodValue]);
   const params = useMemo(() => buildParams(period, filters), [period, filters]);
   const { data } = useTransactions(params);
@@ -61,10 +63,12 @@ export default function TransactionsPage() {
         <div className="flex justify-center py-12">
           <Spinner aria-label="Loading transactions" />
         </div>
-      ) : countActiveFilters(filters) > 0 ? (
-        <TransactionList transactions={data.items} emptyMessage={FILTERED_EMPTY_MESSAGE} />
       ) : (
-        <TransactionList transactions={data.items} />
+        <TransactionList
+          transactions={data.items}
+          onSelect={setSelectedTransaction}
+          {...(countActiveFilters(filters) > 0 ? { emptyMessage: FILTERED_EMPTY_MESSAGE } : {})}
+        />
       )}
       <Button
         type="button"
@@ -81,6 +85,14 @@ export default function TransactionsPage() {
         open={isFormOpen}
         onClose={() => {
           setIsFormOpen(false);
+        }}
+      />
+      <TransactionFormModal
+        key={selectedTransaction?.id}
+        open={selectedTransaction !== null}
+        {...(selectedTransaction !== null ? { transaction: selectedTransaction } : {})}
+        onClose={() => {
+          setSelectedTransaction(null);
         }}
       />
     </div>

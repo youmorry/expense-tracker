@@ -1,5 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
 import type { Transaction } from "../types";
 import { TransactionList } from "./TransactionList";
@@ -83,5 +84,17 @@ describe("TransactionList", () => {
     const headings = screen.getAllByRole("heading");
     expect(headings[0]).toHaveTextContent("Feb 23");
     expect(headings[1]).toHaveTextContent("Feb 22");
+  });
+
+  it("calls onSelect with the transaction when a row is clicked", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const transaction = createTransaction({ id: 1, title: "Lunch" });
+
+    render(<TransactionList transactions={[transaction]} onSelect={onSelect} />);
+
+    await user.click(screen.getByRole("button", { name: /lunch/i }));
+
+    expect(onSelect).toHaveBeenCalledWith(transaction);
   });
 });

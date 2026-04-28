@@ -27,13 +27,16 @@ import {
   NeedWantTypeSchema,
   type CreateTransactionRequest,
   type NeedWantType,
+  type Transaction,
 } from "../../../types/api";
 import { useCategories } from "../../categories/api/useCategories";
 import { useCreateTransaction } from "../api/useCreateTransaction";
+import { useUpdateTransaction } from "../api/useUpdateTransaction";
 
 interface TransactionFormModalProps {
   open: boolean;
   onClose: () => void;
+  transaction?: Transaction;
 }
 
 interface FormState {
@@ -56,14 +59,25 @@ function emptyFormState(): FormState {
   };
 }
 
-function isDirty(state: FormState, initialDate: string): boolean {
+function transactionToFormState(transaction: Transaction): FormState {
+  return {
+    date: transaction.date,
+    amount: transaction.amount,
+    categoryId: transaction.categoryId,
+    needWantType: transaction.needWantType,
+    title: transaction.title ?? "",
+    memo: transaction.memo ?? "",
+  };
+}
+
+function isDirty(current: FormState, initial: FormState): boolean {
   return (
-    state.amount.length > 0 ||
-    state.title.length > 0 ||
-    state.memo.length > 0 ||
-    state.categoryId !== null ||
-    state.needWantType !== "UNSET" ||
-    state.date !== initialDate
+    current.date !== initial.date ||
+    current.amount !== initial.amount ||
+    current.categoryId !== initial.categoryId ||
+    current.needWantType !== initial.needWantType ||
+    current.title !== initial.title ||
+    current.memo !== initial.memo
   );
 }
 
@@ -99,28 +113,30 @@ function buildRequest(state: FormState): CreateTransactionRequest {
   };
 }
 
-export function TransactionFormModal({ open, onClose }: TransactionFormModalProps) {
+export function TransactionFormModal({ open, onClose, transaction }: TransactionFormModalProps) {
+  const isEditMode = transaction !== undefined;
   const dateId = useId();
   const amountId = useId();
   const categoryId = useId();
   const titleId = useId();
   const memoId = useId();
 
-  const [state, setState] = useState<FormState>(emptyFormState);
+  const [state, setState] = useState<FormState>(() =>
+    isEditMode ? transactionToFormState(transaction) : emptyFormState(),
+  );
   const [amountError, setAmountError] = useState<string | null>(null);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const amountRef = useRef<HTMLInputElement>(null);
-  const initialDateRef = useRef(state.date);
+  const initialStateRef = useRef<FormState>(state);
 
   const { decimalDigits } = useCurrency();
   const { showSuccess, showError } = useToast();
   const { data: categoriesData } = useCategories();
   const createMutation = useCreateTransaction();
+  const updateMutation = useUpdateTransaction(transaction?.id ?? 0);
 
   const resetForm = () => {
-    const next = emptyFormState();
-    initialDateRef.current = next.date;
-    setState(next);
+    setState(emptyFormState());
     setAmountError(null);
     setShowDiscardConfirm(false);
   };
@@ -137,24 +153,36 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
       return;
     }
     setAmountError(null);
-    createMutation.mutate(buildRequest(state), {
-      onSuccess: () => {
-        showSuccess("Transaction saved");
-        resetForm();
-        onClose();
-      },
-      onError: (err) => {
-        const message =
-          err instanceof ApiException
-            ? err.apiError.detail
-            : "Failed to save transaction. Please try again.";
-        showError(message);
-      },
-    });
+    const onError = (err: Error) => {
+      const message =
+        err instanceof ApiException
+          ? err.apiError.detail
+          : "Failed to save transaction. Please try again.";
+      showError(message);
+    };
+    if (isEditMode) {
+      updateMutation.mutate(buildRequest(state), {
+        onSuccess: () => {
+          showSuccess("Transaction updated");
+          resetForm();
+          onClose();
+        },
+        onError,
+      });
+    } else {
+      createMutation.mutate(buildRequest(state), {
+        onSuccess: () => {
+          showSuccess("Transaction saved");
+          resetForm();
+          onClose();
+        },
+        onError,
+      });
+    }
   };
 
   const handleAttemptClose = () => {
-    if (isDirty(state, initialDateRef.current)) {
+    if (isDirty(state, initialStateRef.current)) {
       setShowDiscardConfirm(true);
       return;
     }
@@ -182,7 +210,7 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
           }}
         >
           <DialogHeader>
-            <DialogTitle>Add transaction</DialogTitle>
+            <DialogTitle>{isEditMode ? "Edit Transaction" : "Add transaction"}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
@@ -282,16 +310,21 @@ export function TransactionFormModal({ open, onClose }: TransactionFormModalProp
               />
             </div>
             <DialogFooter>
+              {isEditMode && (
+                <Button type="button" variant="destructive" disabled>
+                  Delete
+                </Button>
+              )}
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleAttemptClose}
-                disabled={createMutation.isPending}
+                disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createMutation.isPending}>
-                {createMutation.isPending ? <Spinner /> : null}
+              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                {createMutation.isPending || updateMutation.isPending ? <Spinner /> : null}
                 Save
               </Button>
             </DialogFooter>

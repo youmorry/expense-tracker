@@ -7,6 +7,7 @@ import { TransactionItem } from "./TransactionItem";
 interface TransactionListProps {
   transactions: Transaction[];
   emptyMessage?: string;
+  onSelect?: (transaction: Transaction) => void;
 }
 
 const DEFAULT_EMPTY_MESSAGE = "No transactions yet. Tap + to add your first one!";
@@ -39,7 +40,7 @@ function groupByDate(transactions: Transaction[]): { date: string; items: Transa
   return groups;
 }
 
-export function TransactionList({ transactions, emptyMessage }: TransactionListProps) {
+export function TransactionList({ transactions, emptyMessage, onSelect }: TransactionListProps) {
   const groups = useMemo(() => groupByDate(transactions), [transactions]);
 
   if (transactions.length === 0) {
@@ -58,7 +59,16 @@ export function TransactionList({ transactions, emptyMessage }: TransactionListP
             <ul className="divide-border divide-y">
               {group.items.map((item) => (
                 <li key={item.id}>
-                  <TransactionItem transaction={item} />
+                  <TransactionItem
+                    transaction={item}
+                    {...(onSelect !== undefined
+                      ? {
+                          onClick: () => {
+                            onSelect(item);
+                          },
+                        }
+                      : {})}
+                  />
                 </li>
               ))}
             </ul>
