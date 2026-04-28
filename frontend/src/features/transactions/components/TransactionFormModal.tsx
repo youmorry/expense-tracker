@@ -121,12 +121,13 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   const titleId = useId();
   const memoId = useId();
 
-  const initialState = isEditMode ? transactionToFormState(transaction) : emptyFormState();
-  const [state, setState] = useState<FormState>(initialState);
+  const [state, setState] = useState<FormState>(() =>
+    isEditMode ? transactionToFormState(transaction) : emptyFormState(),
+  );
   const [amountError, setAmountError] = useState<string | null>(null);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const amountRef = useRef<HTMLInputElement>(null);
-  const initialStateRef = useRef<FormState>(initialState);
+  const initialStateRef = useRef<FormState>(state);
 
   const { decimalDigits } = useCurrency();
   const { showSuccess, showError } = useToast();

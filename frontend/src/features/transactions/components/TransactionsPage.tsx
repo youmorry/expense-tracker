@@ -63,14 +63,12 @@ export default function TransactionsPage() {
         <div className="flex justify-center py-12">
           <Spinner aria-label="Loading transactions" />
         </div>
-      ) : countActiveFilters(filters) > 0 ? (
+      ) : (
         <TransactionList
           transactions={data.items}
-          emptyMessage={FILTERED_EMPTY_MESSAGE}
           onSelect={setSelectedTransaction}
+          {...(countActiveFilters(filters) > 0 ? { emptyMessage: FILTERED_EMPTY_MESSAGE } : {})}
         />
-      ) : (
-        <TransactionList transactions={data.items} onSelect={setSelectedTransaction} />
       )}
       <Button
         type="button"
