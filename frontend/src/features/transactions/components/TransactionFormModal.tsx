@@ -31,7 +31,9 @@ import {
 } from "../../../types/api";
 import { useCategories } from "../../categories/api/useCategories";
 import { useCreateTransaction } from "../api/useCreateTransaction";
+import { useDeleteTransaction } from "../api/useDeleteTransaction";
 import { useUpdateTransaction } from "../api/useUpdateTransaction";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 
 interface TransactionFormModalProps {
   open: boolean;
@@ -126,6 +128,7 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   );
   const [amountError, setAmountError] = useState<string | null>(null);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const amountRef = useRef<HTMLInputElement>(null);
   const initialStateRef = useRef<FormState>(state);
 
@@ -134,11 +137,15 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   const { data: categoriesData } = useCategories();
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction(transaction?.id ?? 0);
+  const deleteMutation = useDeleteTransaction();
+  const isMutating =
+    createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
   const resetForm = () => {
     setState(emptyFormState());
     setAmountError(null);
     setShowDiscardConfirm(false);
+    setShowDeleteConfirm(false);
   };
 
   const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -193,6 +200,25 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   const handleConfirmDiscard = () => {
     resetForm();
     onClose();
+  };
+
+  const handleConfirmDelete = () => {
+    if (!isEditMode) return;
+    deleteMutation.mutate(transaction.id, {
+      onSuccess: () => {
+        showSuccess("Transaction deleted");
+        resetForm();
+        onClose();
+      },
+      onError: (err) => {
+        const message =
+          err instanceof ApiException
+            ? err.apiError.detail
+            : "Failed to delete transaction. Please try again.";
+        showError(message);
+        setShowDeleteConfirm(false);
+      },
+    });
   };
 
   return (
@@ -311,7 +337,14 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
             </div>
             <DialogFooter>
               {isEditMode && (
-                <Button type="button" variant="destructive" disabled>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => {
+                    setShowDeleteConfirm(true);
+                  }}
+                  disabled={isMutating}
+                >
                   Delete
                 </Button>
               )}
@@ -319,11 +352,11 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                 type="button"
                 variant="outline"
                 onClick={handleAttemptClose}
-                disabled={createMutation.isPending || updateMutation.isPending}
+                disabled={isMutating}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button type="submit" disabled={isMutating}>
                 {createMutation.isPending || updateMutation.isPending ? <Spinner /> : null}
                 Save
               </Button>
@@ -343,6 +376,17 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
           setShowDiscardConfirm(false);
         }}
       />
+      {isEditMode && (
+        <DeleteConfirmDialog
+          open={showDeleteConfirm}
+          transaction={transaction}
+          isDeleting={deleteMutation.isPending}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => {
+            setShowDeleteConfirm(false);
+          }}
+        />
+      )}
     </>
   );
 }

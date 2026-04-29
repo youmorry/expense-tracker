@@ -58,6 +58,9 @@ export const handlers = [
       updated_at: now,
     });
   }),
+  http.delete("/api/v1/transactions/{id}", ({ response }) => {
+    return response(204).empty();
+  }),
   http.get("/api/v1/categories", ({ response }) => {
     return response(200).json({
       items: [

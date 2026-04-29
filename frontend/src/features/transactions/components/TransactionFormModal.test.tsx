@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -332,6 +332,84 @@ describe("TransactionFormModal", () => {
       renderModal({ transaction: EDIT_TRANSACTION });
 
       expect(screen.getByRole("button", { name: /delete/i })).toBeInTheDocument();
+    });
+
+    it("opens the delete confirm dialog when the Delete button is clicked", async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal({ transaction: EDIT_TRANSACTION });
+
+      await user.click(screen.getByRole("button", { name: /^delete$/i }));
+
+      expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+      expect(screen.getByText(/delete this transaction\?/i)).toBeInTheDocument();
+    });
+
+    it("calls DELETE endpoint and closes the modal when delete is confirmed", async () => {
+      let capturedUrl = "";
+      let capturedMethod = "";
+      server.use(
+        http.delete("/api/v1/transactions/:id", ({ request }) => {
+          capturedUrl = request.url;
+          capturedMethod = request.method;
+          return new HttpResponse(null, { status: 204 });
+        }),
+      );
+      const onClose = vi.fn();
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal({ transaction: EDIT_TRANSACTION, onClose });
+
+      await user.click(screen.getByRole("button", { name: /^delete$/i }));
+      const dialog = await screen.findByRole("alertdialog");
+      await user.click(within(dialog).getByRole("button", { name: /^delete$/i }));
+
+      await waitFor(() => {
+        expect(onClose).toHaveBeenCalled();
+      });
+      expect(capturedMethod).toBe("DELETE");
+      expect(capturedUrl).toContain("/api/v1/transactions/99");
+      expect(await screen.findByText(/transaction deleted/i)).toBeInTheDocument();
+    });
+
+    it("closes the confirm dialog only when delete is canceled", async () => {
+      const onClose = vi.fn();
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal({ transaction: EDIT_TRANSACTION, onClose });
+
+      await user.click(screen.getByRole("button", { name: /^delete$/i }));
+      const dialog = await screen.findByRole("alertdialog");
+      await user.click(within(dialog).getByRole("button", { name: /^cancel$/i }));
+
+      await waitFor(() => {
+        expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+      });
+      expect(onClose).not.toHaveBeenCalled();
+      expect(screen.getByRole("dialog", { name: /edit transaction/i })).toBeInTheDocument();
+    });
+
+    it("shows an error toast when the DELETE API responds with an error", async () => {
+      server.use(
+        http.delete("/api/v1/transactions/:id", () => {
+          return HttpResponse.json(
+            {
+              type: "about:blank",
+              title: "Not Found",
+              status: 404,
+              detail: "transaction not found",
+            },
+            { status: 404 },
+          );
+        }),
+      );
+      const onClose = vi.fn();
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal({ transaction: EDIT_TRANSACTION, onClose });
+
+      await user.click(screen.getByRole("button", { name: /^delete$/i }));
+      const dialog = await screen.findByRole("alertdialog");
+      await user.click(within(dialog).getByRole("button", { name: /^delete$/i }));
+
+      expect(await screen.findByText(/transaction not found/i)).toBeInTheDocument();
+      expect(onClose).not.toHaveBeenCalled();
     });
   });
 });
