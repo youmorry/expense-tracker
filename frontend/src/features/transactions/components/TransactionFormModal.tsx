@@ -138,6 +138,8 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction(transaction?.id ?? 0);
   const deleteMutation = useDeleteTransaction();
+  const isMutating =
+    createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
   const resetForm = () => {
     setState(emptyFormState());
@@ -341,9 +343,7 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                   onClick={() => {
                     setShowDeleteConfirm(true);
                   }}
-                  disabled={
-                    createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
-                  }
+                  disabled={isMutating}
                 >
                   Delete
                 </Button>
@@ -352,18 +352,11 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                 type="button"
                 variant="outline"
                 onClick={handleAttemptClose}
-                disabled={
-                  createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
-                }
+                disabled={isMutating}
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={
-                  createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
-                }
-              >
+              <Button type="submit" disabled={isMutating}>
                 {createMutation.isPending || updateMutation.isPending ? <Spinner /> : null}
                 Save
               </Button>
