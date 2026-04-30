@@ -96,9 +96,6 @@ describe("AnalyticsPage", () => {
   });
 
   it("re-requests analytics with a new period after navigating to the previous month", async () => {
-    vi.useRealTimers();
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    vi.setSystemTime(new Date("2026-02-15T12:00:00Z"));
     const requestedUrls: string[] = [];
     server.use(
       http.get("/api/v1/analytics/category", ({ request }) => {
