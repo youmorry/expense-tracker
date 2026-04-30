@@ -18,6 +18,9 @@ interface CategoryBreakdownProps {
   data: CategoryAnalytics;
 }
 
+// プリセットカテゴリの最大数（11）に合わせて色を用意する。
+// ドーナツの最初と最後のスライスは隣接するため、循環で色被りすると見分けにくい。
+// マジックナンバーのカラーコードを書かないルールに従い、デザイントークンを参照する。
 const CHART_COLOR_VARS = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -69,6 +72,7 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
               innerRadius="55%"
               outerRadius="85%"
               paddingAngle={2}
+              // 背景色と同じストロークを引き、スライス間にわずかな隙間を作る
               stroke="var(--background)"
             />
           </PieChart>
@@ -80,6 +84,7 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
           const amountNumber = Number(item.amount);
           return (
             <li key={item.categoryId} className="flex items-center gap-3 px-4 py-3 text-sm">
+              {/* チャートの各スライスと同じ色のドット。リストが凡例も兼ねる。 */}
               <span
                 className="size-3 shrink-0 rounded-full"
                 style={{ backgroundColor: item.color }}

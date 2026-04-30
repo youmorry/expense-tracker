@@ -73,6 +73,8 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  /* カテゴリ別分析向けの 11 色パレット。プリセットカテゴリ最大数に合わせる。
+     OKLCH の hue を均等分割し、L/C を固定して視覚的な飽和度を揃える。 */
   --chart-1: oklch(0.65 0.2 0);
   --chart-2: oklch(0.65 0.2 33);
   --chart-3: oklch(0.65 0.2 65);
@@ -114,6 +116,7 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+  /* dark 背景でのコントラストを確保するため light より L をやや高くする */
   --chart-1: oklch(0.7 0.2 0);
   --chart-2: oklch(0.7 0.2 33);
   --chart-3: oklch(0.7 0.2 65);
