@@ -61,6 +61,9 @@ export const handlers = [
   http.delete("/api/v1/transactions/{id}", ({ response }) => {
     return response(204).empty();
   }),
+  http.get("/api/v1/analytics/category", ({ response }) => {
+    return response(200).json({ total_amount: "0", categories: [] });
+  }),
   http.get("/api/v1/categories", ({ response }) => {
     return response(200).json({
       items: [
