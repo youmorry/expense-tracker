@@ -7,7 +7,7 @@
  * @see docs/03-design/frontend/screen-flow.md
  */
 
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Pie, PieChart, ResponsiveContainer } from "recharts";
 
 import { EmptyState } from "../../../components/EmptyState";
 import { useCurrency } from "../../../hooks/useCurrency";
@@ -38,9 +38,10 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
     return <EmptyState title="No data for this period." />;
   }
 
-  const chartData = data.categories.map((category) => ({
+  const chartData = data.categories.map((category, index) => ({
     name: category.categoryName,
     value: Number(category.amount),
+    fill: CHART_COLOR_VARS[index % CHART_COLOR_VARS.length],
   }));
 
   return (
@@ -58,11 +59,7 @@ export function CategoryBreakdown({ data }: CategoryBreakdownProps) {
               outerRadius="85%"
               paddingAngle={2}
               stroke="var(--background)"
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={entry.name} fill={CHART_COLOR_VARS[index % CHART_COLOR_VARS.length]} />
-              ))}
-            </Pie>
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
