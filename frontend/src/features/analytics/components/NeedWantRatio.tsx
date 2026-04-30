@@ -9,21 +9,14 @@
 
 import { EmptyState } from "../../../components/EmptyState";
 import { useCurrency } from "../../../hooks/useCurrency";
-import type { NeedWantAnalytics, NeedWantBreakdownItem } from "../types";
-
 import type { NeedWantType } from "../../../types/api";
+import type { NeedWantAnalytics, NeedWantBreakdownItem } from "../types";
 
 interface NeedWantRatioProps {
   data: NeedWantAnalytics;
 }
 
-const SEGMENT_ORDER: readonly NeedWantType[] = ["NEED", "WANT", "UNSET"] as const;
-
-const SEGMENT_LABELS: Record<NeedWantType, string> = {
-  NEED: "NEED",
-  WANT: "WANT",
-  UNSET: "UNSET",
-};
+const SEGMENT_ORDER: readonly NeedWantType[] = ["NEED", "WANT", "UNSET"];
 
 // 既存の Category Breakdown と異なる色相を採用し、両セクションの視覚的衝突を避ける。
 const SEGMENT_COLOR_VARS: Record<NeedWantType, string> = {
@@ -59,50 +52,42 @@ export function NeedWantRatio({ data }: NeedWantRatioProps) {
   }
 
   const segments = SEGMENT_ORDER.map((type) => findSegment(data.breakdown, type));
-  const unset = findSegment(data.breakdown, "UNSET");
-  const unsetCount = unset.transactionCount;
+  const unsetCount = segments.find((s) => s.type === "UNSET")?.transactionCount ?? 0;
 
   return (
     <div className="flex flex-col gap-3">
       <ul className="flex flex-col gap-2">
         {segments.map((segment) => {
-          const label = SEGMENT_LABELS[segment.type];
           const color = SEGMENT_COLOR_VARS[segment.type];
           const amountNumber = Number(segment.amount);
           return (
             <li
               key={segment.type}
-              aria-label={label}
-              className="flex flex-col gap-1 px-1 py-1 text-sm"
+              aria-label={segment.type}
+              className="flex items-center gap-3 px-1 py-1 text-sm"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-foreground w-14 font-medium">{label}</span>
+              <span className="text-foreground w-14 font-medium">{segment.type}</span>
+              <div className="bg-muted relative h-2 flex-1 overflow-hidden rounded-full">
                 <div
-                  className="bg-muted relative h-2 flex-1 overflow-hidden rounded-full"
-                  role="presentation"
-                >
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${segment.percentage.toString()}%`,
-                      backgroundColor: color,
-                    }}
-                  />
-                </div>
-                <span className="text-foreground w-20 text-right font-medium">
-                  {formatAmount(amountNumber)}
-                </span>
-                <span className="text-muted-foreground w-12 text-right">
-                  {PERCENT_FORMATTER.format(segment.percentage)}%
-                </span>
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${segment.percentage.toString()}%`,
+                    backgroundColor: color,
+                  }}
+                />
               </div>
+              <span className="text-foreground w-20 text-right font-medium">
+                {formatAmount(amountNumber)}
+              </span>
+              <span className="text-muted-foreground w-12 text-right">
+                {PERCENT_FORMATTER.format(segment.percentage)}%
+              </span>
             </li>
           );
         })}
       </ul>
       {unsetCount > 0 && (
         <p className="text-muted-foreground px-1 text-xs" role="note">
-          {/* 警告アイコンは絵文字で簡素に。タップ遷移は Issue #317 で対応 */}
           <span aria-hidden="true">⚠ </span>
           {unsetCount === 1
             ? "1 transaction unset — review needed"

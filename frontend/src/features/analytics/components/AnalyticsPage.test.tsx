@@ -99,7 +99,7 @@ describe("AnalyticsPage", () => {
 
     renderPage();
 
-    const section = await screen.findByRole("region", { name: /need ?\/ ?want/i });
+    const section = await screen.findByRole("region", { name: /need \/ want/i });
     expect(within(section).getByRole("listitem", { name: /need/i })).toBeInTheDocument();
     expect(within(section).getByText(/80,000/)).toBeInTheDocument();
     expect(within(section).getByText(/3 transactions unset/i)).toBeInTheDocument();
