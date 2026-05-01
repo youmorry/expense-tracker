@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import type { ReactNode } from "react";
@@ -52,7 +52,7 @@ describe("AnalyticsPage", () => {
     expect(capturedUrl).toContain("to=2026-02-28");
   });
 
-  it("renders the empty state when the period has no data", async () => {
+  it("renders the category empty state when the period has no category data", async () => {
     server.use(
       http.get("/api/v1/analytics/category", () => {
         return HttpResponse.json({ total_amount: "0", categories: [] });
@@ -61,7 +61,48 @@ describe("AnalyticsPage", () => {
 
     renderPage();
 
-    expect(await screen.findByText("No data for this period.")).toBeInTheDocument();
+    const section = await screen.findByRole("region", { name: /category breakdown/i });
+    expect(within(section).getByText("No data for this period.")).toBeInTheDocument();
+  });
+
+  it("requests need/want analytics for the current month on initial render", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/v1/analytics/need-want", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json({ total_amount: "0", breakdown: [] });
+      }),
+    );
+
+    renderPage();
+
+    await vi.waitFor(() => {
+      expect(capturedUrl).not.toBe("");
+    });
+    expect(capturedUrl).toContain("from=2026-02-01");
+    expect(capturedUrl).toContain("to=2026-02-28");
+  });
+
+  it("renders the need/want ratio segments from the API response", async () => {
+    server.use(
+      http.get("/api/v1/analytics/need-want", () => {
+        return HttpResponse.json({
+          total_amount: "130000",
+          breakdown: [
+            { type: "NEED", amount: "80000", percentage: 61.5, transaction_count: 20 },
+            { type: "WANT", amount: "35000", percentage: 26.9, transaction_count: 10 },
+            { type: "UNSET", amount: "15000", percentage: 11.5, transaction_count: 3 },
+          ],
+        });
+      }),
+    );
+
+    renderPage();
+
+    const section = await screen.findByRole("region", { name: /need \/ want/i });
+    expect(within(section).getByRole("listitem", { name: /need/i })).toBeInTheDocument();
+    expect(within(section).getByText(/80,000/)).toBeInTheDocument();
+    expect(within(section).getByText(/3 transactions unset/i)).toBeInTheDocument();
   });
 
   it("renders each category from the API response", async () => {

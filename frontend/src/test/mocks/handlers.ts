@@ -64,6 +64,16 @@ export const handlers = [
   http.get("/api/v1/analytics/category", ({ response }) => {
     return response(200).json({ total_amount: "0", categories: [] });
   }),
+  http.get("/api/v1/analytics/need-want", ({ response }) => {
+    return response(200).json({
+      total_amount: "0",
+      breakdown: [
+        { type: "NEED", amount: "0", percentage: 0, transaction_count: 0 },
+        { type: "WANT", amount: "0", percentage: 0, transaction_count: 0 },
+        { type: "UNSET", amount: "0", percentage: 0, transaction_count: 0 },
+      ],
+    });
+  }),
   http.get("/api/v1/categories", ({ response }) => {
     return response(200).json({
       items: [

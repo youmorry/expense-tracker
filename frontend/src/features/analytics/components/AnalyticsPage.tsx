@@ -8,12 +8,15 @@ import {
 import { PeriodSelector } from "../../../components/PeriodSelector";
 import { Spinner } from "../../../components/ui/spinner";
 import { useCategoryAnalytics } from "../api/useCategoryAnalytics";
+import { useNeedWantAnalytics } from "../api/useNeedWantAnalytics";
 import { CategoryBreakdown } from "./CategoryBreakdown";
+import { NeedWantRatio } from "./NeedWantRatio";
 
 export default function AnalyticsPage() {
   const [periodValue, setPeriodValue] = useState<PeriodSelectorValue>(defaultPeriodSelectorValue);
   const period = useMemo(() => periodFromValue(periodValue), [periodValue]);
-  const { data } = useCategoryAnalytics(period);
+  const { data: categoryData } = useCategoryAnalytics(period);
+  const { data: needWantData } = useNeedWantAnalytics(period);
 
   return (
     <div className="relative min-h-screen">
@@ -22,12 +25,22 @@ export default function AnalyticsPage() {
       </div>
       <section aria-label="Category Breakdown" className="px-4 py-4">
         <h2 className="text-foreground mb-3 text-base font-semibold">Category Breakdown</h2>
-        {data === undefined ? (
+        {categoryData === undefined ? (
           <div className="flex justify-center py-12">
             <Spinner aria-label="Loading category analytics" />
           </div>
         ) : (
-          <CategoryBreakdown data={data} />
+          <CategoryBreakdown data={categoryData} />
+        )}
+      </section>
+      <section aria-label="Need / Want Ratio" className="px-4 py-4">
+        <h2 className="text-foreground mb-3 text-base font-semibold">Need / Want Ratio</h2>
+        {needWantData === undefined ? (
+          <div className="flex justify-center py-12">
+            <Spinner aria-label="Loading need/want analytics" />
+          </div>
+        ) : (
+          <NeedWantRatio data={needWantData} />
         )}
       </section>
     </div>
