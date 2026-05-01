@@ -47,11 +47,13 @@ function findSegment(
 export function NeedWantRatio({ data }: NeedWantRatioProps) {
   const { formatAmount } = useCurrency();
 
-  if (Number(data.totalAmount) === 0) {
+  const segments = SEGMENT_ORDER.map((type) => findSegment(data.breakdown, type));
+  const hasTransactions = data.breakdown.some((item) => item.transactionCount > 0);
+
+  if (!hasTransactions) {
     return <EmptyState title="No data for this period." />;
   }
 
-  const segments = SEGMENT_ORDER.map((type) => findSegment(data.breakdown, type));
   const unsetCount = segments.find((s) => s.type === "UNSET")?.transactionCount ?? 0;
 
   return (
