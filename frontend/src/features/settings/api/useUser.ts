@@ -1,7 +1,9 @@
 /**
- * 認証済みユーザーの情報を取得するフック。
+ * 認証済みユーザー情報の取得フック。
  *
- * @see GET /api/v1/users/me
+ * プロフィール変更は稀だが反映遅延を許容しすぎないよう staleTime は 5 分に設定する。
+ *
+ * @see docs/03-design/backend/api-design.md
  */
 
 import { useQuery } from "@tanstack/react-query";
