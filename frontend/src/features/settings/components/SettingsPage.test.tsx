@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { http, HttpResponse } from "msw";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
-import { routes } from "../../../routes";
+import { server } from "../../../test/mocks/server";
+import SettingsPage from "./SettingsPage";
 
 vi.mock("../../../lib/auth", () => ({
   getToken: vi.fn(() => "existing-token"),
@@ -15,16 +17,25 @@ vi.mock("../../../lib/auth", () => ({
 const { clearToken } = await import("../../../lib/auth");
 const mockClearToken = vi.mocked(clearToken);
 
-function renderSettingsPage() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
-  const router = createMemoryRouter(routes, { initialEntries: ["/settings"] });
-  return render(
-    <QueryClientProvider client={queryClient}>
+function renderSettingsPage(queryClient?: QueryClient) {
+  const client =
+    queryClient ??
+    new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+  const router = createMemoryRouter(
+    [
+      { path: "/settings", Component: SettingsPage },
+      { path: "/login", element: <div>Login page</div> },
+    ],
+    { initialEntries: ["/settings"] },
+  );
+  render(
+    <QueryClientProvider client={client}>
       <RouterProvider router={router} />
     </QueryClientProvider>,
   );
+  return { queryClient: client, router };
 }
 
 describe("SettingsPage", () => {
@@ -39,7 +50,7 @@ describe("SettingsPage", () => {
     const user = userEvent.setup();
     mockClearToken.mockClear();
 
-    renderSettingsPage();
+    const { router } = renderSettingsPage();
     await screen.findByText("test@example.com");
 
     await user.click(screen.getByRole("button", { name: /log out/i }));
@@ -47,5 +58,47 @@ describe("SettingsPage", () => {
     await waitFor(() => {
       expect(mockClearToken).toHaveBeenCalledTimes(1);
     });
+    expect(router.state.location.pathname).toBe("/login");
+  });
+
+  it("clears query cache when log out is clicked", async () => {
+    const user = userEvent.setup();
+    mockClearToken.mockClear();
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    queryClient.setQueryData(["transactions", { from: "2026-01-01" }], { items: ["stale"] });
+    queryClient.setQueryData(["analytics"], { stale: true });
+
+    renderSettingsPage(queryClient);
+    await screen.findByText("test@example.com");
+
+    await user.click(screen.getByRole("button", { name: /log out/i }));
+
+    await waitFor(() => {
+      expect(queryClient.getQueryData(["transactions", { from: "2026-01-01" }])).toBeUndefined();
+      expect(queryClient.getQueryData(["analytics"])).toBeUndefined();
+      expect(queryClient.getQueryData(["users", "me"])).toBeUndefined();
+    });
+  });
+
+  it("redirects to login when user query fails", async () => {
+    server.use(
+      http.get("/api/v1/users/me", () =>
+        HttpResponse.json(
+          { type: "about:blank", title: "Internal Server Error", status: 500 },
+          { status: 500 },
+        ),
+      ),
+    );
+    mockClearToken.mockClear();
+
+    const { router } = renderSettingsPage();
+
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe("/login");
+    });
+    expect(mockClearToken).toHaveBeenCalled();
   });
 });
