@@ -1,3 +1,5 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -9,10 +11,23 @@ import { useUser } from "../api/useUser";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const { data: user, isLoading } = useUser();
+  const queryClient = useQueryClient();
+  const { data: user, isLoading, isError } = useUser();
+
+  // useUser が失敗するのは主にトークン期限切れ（401）。AuthGuard はマウント時にしか
+  // トークンを検査しないため、ここでクリアしてログイン画面へ送らないと
+  // スピナー表示のまま画面から抜けられなくなる。
+  useEffect(() => {
+    if (isError) {
+      clearToken();
+      queryClient.clear();
+      void navigate("/login", { replace: true });
+    }
+  }, [isError, navigate, queryClient]);
 
   const handleLogout = (): void => {
     clearToken();
+    queryClient.clear();
     void navigate("/login", { replace: true });
   };
 
