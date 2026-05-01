@@ -17,7 +17,7 @@ function createAnalytics(overrides: Partial<NeedWantAnalytics> = {}): NeedWantAn
 }
 
 describe("NeedWantRatio", () => {
-  it("renders the empty state when the total amount is zero", () => {
+  it("renders the empty state when there are no transactions in the breakdown", () => {
     render(
       <NeedWantRatio
         data={createAnalytics({
@@ -32,6 +32,25 @@ describe("NeedWantRatio", () => {
     );
 
     expect(screen.getByText("No data for this period.")).toBeInTheDocument();
+  });
+
+  it("renders the segments when transactions exist even if the total amount is zero", () => {
+    render(
+      <NeedWantRatio
+        data={createAnalytics({
+          totalAmount: "0",
+          breakdown: [
+            { type: "NEED", amount: "1000", percentage: 50, transactionCount: 1 },
+            { type: "WANT", amount: "-1000", percentage: 50, transactionCount: 1 },
+            { type: "UNSET", amount: "0", percentage: 0, transactionCount: 0 },
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.queryByText("No data for this period.")).not.toBeInTheDocument();
+    expect(screen.getByRole("listitem", { name: /need/i })).toBeInTheDocument();
+    expect(screen.getByRole("listitem", { name: /want/i })).toBeInTheDocument();
   });
 
   it("renders each segment with its label, formatted amount and percentage", () => {
