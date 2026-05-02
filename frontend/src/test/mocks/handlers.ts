@@ -23,6 +23,14 @@ export const handlers = [
       },
     });
   }),
+  http.get("/api/v1/users/me", ({ response }) => {
+    return response(200).json({
+      id: 1,
+      email: "test@example.com",
+      display_name: "Test User",
+      created_at: "2026-01-01T00:00:00Z",
+    });
+  }),
   http.get("/api/v1/transactions", ({ response }) => {
     return response(200).json({ items: [] });
   }),
