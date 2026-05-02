@@ -5,6 +5,7 @@ import {
   formatCurrency,
   getCurrencyDecimalDigits,
   getCurrencySymbol,
+  REGION_TO_CURRENCY,
   SUPPORTED_CURRENCIES,
 } from "./currency";
 
@@ -78,13 +79,11 @@ describe("getCurrencySymbol", () => {
 });
 
 describe("SUPPORTED_CURRENCIES", () => {
-  it("contains JPY, USD, EUR as common currencies", () => {
-    expect(SUPPORTED_CURRENCIES).toContain("JPY");
-    expect(SUPPORTED_CURRENCIES).toContain("USD");
-    expect(SUPPORTED_CURRENCIES).toContain("EUR");
-  });
+  it("includes every currency that detectCurrencyFromLocale can return", () => {
+    const detectable = new Set(Object.values(REGION_TO_CURRENCY));
+    const supported = new Set<string>(SUPPORTED_CURRENCIES);
+    const missing = [...detectable].filter((code) => !supported.has(code));
 
-  it("has unique currency codes", () => {
-    expect(new Set(SUPPORTED_CURRENCIES).size).toBe(SUPPORTED_CURRENCIES.length);
+    expect(missing).toEqual([]);
   });
 });

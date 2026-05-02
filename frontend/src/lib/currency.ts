@@ -5,7 +5,7 @@
  * @see docs/03-design/backend/domain-model.md
  */
 
-const REGION_TO_CURRENCY: Record<string, string> = {
+export const REGION_TO_CURRENCY: Record<string, string> = {
   JP: "JPY",
   US: "USD",
   GB: "GBP",
