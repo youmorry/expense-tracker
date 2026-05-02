@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { clearToken } from "../../../lib/auth";
 import { useUser } from "../api/useUser";
+import { CurrencySelector } from "./CurrencySelector";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -57,6 +58,17 @@ export default function SettingsPage() {
                 </div>
               </dl>
             )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section aria-label="Preferences" className="mb-4">
+        <Card>
+          <CardHeader>
+            <h2 className="text-base font-semibold">Preferences</h2>
+          </CardHeader>
+          <CardContent>
+            <CurrencySelector />
           </CardContent>
         </Card>
       </section>

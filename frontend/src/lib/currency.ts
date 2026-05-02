@@ -5,7 +5,7 @@
  * @see docs/03-design/backend/domain-model.md
  */
 
-const REGION_TO_CURRENCY: Record<string, string> = {
+export const REGION_TO_CURRENCY: Record<string, string> = {
   JP: "JPY",
   US: "USD",
   GB: "GBP",
@@ -40,6 +40,28 @@ const REGION_TO_CURRENCY: Record<string, string> = {
 
 const FALLBACK_CURRENCY = "USD";
 
+export const SUPPORTED_CURRENCIES = [
+  "JPY",
+  "USD",
+  "EUR",
+  "GBP",
+  "AUD",
+  "CAD",
+  "CHF",
+  "CNY",
+  "HKD",
+  "TWD",
+  "KRW",
+  "SGD",
+  "NZD",
+  "SEK",
+  "NOK",
+  "DKK",
+  "INR",
+  "BRL",
+  "MXN",
+] as const;
+
 export function detectCurrencyFromLocale(locale: string): string {
   try {
     const region = new Intl.Locale(locale).maximize().region;
@@ -66,6 +88,11 @@ export function getCurrencyFormatter(currency: string, locale?: string): Intl.Nu
 
 export function getCurrencyDecimalDigits(currency: string): number {
   return getCurrencyFormatter(currency).resolvedOptions().maximumFractionDigits ?? 2;
+}
+
+export function getCurrencySymbol(currency: string, locale?: string): string {
+  const parts = getCurrencyFormatter(currency, locale).formatToParts(0);
+  return parts.find((part) => part.type === "currency")?.value ?? currency;
 }
 
 export function formatCurrency(amount: number, currency: string, locale?: string): string {

@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { detectCurrencyFromLocale, formatCurrency, getCurrencyDecimalDigits } from "./currency";
+import {
+  detectCurrencyFromLocale,
+  formatCurrency,
+  getCurrencyDecimalDigits,
+  getCurrencySymbol,
+  REGION_TO_CURRENCY,
+  SUPPORTED_CURRENCIES,
+} from "./currency";
 
 describe("detectCurrencyFromLocale", () => {
   it.each([
@@ -57,5 +64,26 @@ describe("formatCurrency", () => {
 
   it("formats USD rounding to two decimal places", () => {
     expect(formatCurrency(12.5, "USD", "en-US")).toBe("$12.50");
+  });
+});
+
+describe("getCurrencySymbol", () => {
+  it.each([
+    ["JPY", "¥"],
+    ["USD", "$"],
+    ["EUR", "€"],
+    ["GBP", "£"],
+  ])("returns %s symbol for %s", (currency, expected) => {
+    expect(getCurrencySymbol(currency, "en-US")).toBe(expected);
+  });
+});
+
+describe("SUPPORTED_CURRENCIES", () => {
+  it("includes every currency that detectCurrencyFromLocale can return", () => {
+    const detectable = new Set(Object.values(REGION_TO_CURRENCY));
+    const supported = new Set<string>(SUPPORTED_CURRENCIES);
+    const missing = [...detectable].filter((code) => !supported.has(code));
+
+    expect(missing).toEqual([]);
   });
 });
