@@ -28,6 +28,9 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --user 1001
     defaults:
       run:
         working-directory: frontend
@@ -57,9 +60,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
 
       - name: E2E test (Playwright)
         run: npm run test:e2e
