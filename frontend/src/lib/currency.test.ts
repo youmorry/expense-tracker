@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { detectCurrencyFromLocale, formatCurrency, getCurrencyDecimalDigits } from "./currency";
+import {
+  detectCurrencyFromLocale,
+  formatCurrency,
+  getCurrencyDecimalDigits,
+  getCurrencySymbol,
+  SUPPORTED_CURRENCIES,
+} from "./currency";
 
 describe("detectCurrencyFromLocale", () => {
   it.each([
@@ -57,5 +63,28 @@ describe("formatCurrency", () => {
 
   it("formats USD rounding to two decimal places", () => {
     expect(formatCurrency(12.5, "USD", "en-US")).toBe("$12.50");
+  });
+});
+
+describe("getCurrencySymbol", () => {
+  it.each([
+    ["JPY", "¥"],
+    ["USD", "$"],
+    ["EUR", "€"],
+    ["GBP", "£"],
+  ])("returns %s symbol for %s", (currency, expected) => {
+    expect(getCurrencySymbol(currency, "en-US")).toBe(expected);
+  });
+});
+
+describe("SUPPORTED_CURRENCIES", () => {
+  it("contains JPY, USD, EUR as common currencies", () => {
+    expect(SUPPORTED_CURRENCIES).toContain("JPY");
+    expect(SUPPORTED_CURRENCIES).toContain("USD");
+    expect(SUPPORTED_CURRENCIES).toContain("EUR");
+  });
+
+  it("has unique currency codes", () => {
+    expect(new Set(SUPPORTED_CURRENCIES).size).toBe(SUPPORTED_CURRENCIES.length);
   });
 });
