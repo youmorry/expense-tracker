@@ -31,6 +31,9 @@ export const handlers = [
       created_at: "2026-01-01T00:00:00Z",
     });
   }),
+  http.delete("/api/v1/users/me", ({ response }) => {
+    return response(204).empty();
+  }),
   http.get("/api/v1/transactions", ({ response }) => {
     return response(200).json({ items: [] });
   }),
