@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { ConfirmDialog } from "@/components/ConfirmDialog";
@@ -19,30 +19,24 @@ export default function SettingsPage() {
   const deleteAccount = useDeleteAccount();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const clearSessionAndRedirectToLogin = useCallback((): void => {
+    clearToken();
+    queryClient.clear();
+    void navigate("/login", { replace: true });
+  }, [navigate, queryClient]);
+
   // useUser が失敗するのは主にトークン期限切れ（401）。AuthGuard はマウント時にしか
   // トークンを検査しないため、ここでクリアしてログイン画面へ送らないと
   // スピナー表示のまま画面から抜けられなくなる。
   useEffect(() => {
     if (isError) {
-      clearToken();
-      queryClient.clear();
-      void navigate("/login", { replace: true });
+      clearSessionAndRedirectToLogin();
     }
-  }, [isError, navigate, queryClient]);
-
-  const handleLogout = (): void => {
-    clearToken();
-    queryClient.clear();
-    void navigate("/login", { replace: true });
-  };
+  }, [isError, clearSessionAndRedirectToLogin]);
 
   const handleConfirmDelete = (): void => {
     deleteAccount.mutate(undefined, {
-      onSuccess: () => {
-        clearToken();
-        queryClient.clear();
-        void navigate("/login", { replace: true });
-      },
+      onSuccess: clearSessionAndRedirectToLogin,
     });
   };
 
@@ -93,7 +87,7 @@ export default function SettingsPage() {
             <h2 className="text-base font-semibold">Danger Zone</h2>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
-            <Button variant="outline" onClick={handleLogout}>
+            <Button variant="outline" onClick={clearSessionAndRedirectToLogin}>
               Log out
             </Button>
             <Button
