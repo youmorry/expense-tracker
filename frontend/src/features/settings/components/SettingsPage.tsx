@@ -1,12 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 import { clearToken } from "../../../lib/auth";
+import { useDeleteAccount } from "../api/useDeleteAccount";
 import { useUser } from "../api/useUser";
 import { CurrencySelector } from "./CurrencySelector";
 
@@ -14,22 +16,28 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: user, isLoading, isError } = useUser();
+  const deleteAccount = useDeleteAccount();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const clearSessionAndRedirectToLogin = useCallback((): void => {
+    clearToken();
+    queryClient.clear();
+    void navigate("/login", { replace: true });
+  }, [navigate, queryClient]);
 
   // useUser が失敗するのは主にトークン期限切れ（401）。AuthGuard はマウント時にしか
   // トークンを検査しないため、ここでクリアしてログイン画面へ送らないと
   // スピナー表示のまま画面から抜けられなくなる。
   useEffect(() => {
     if (isError) {
-      clearToken();
-      queryClient.clear();
-      void navigate("/login", { replace: true });
+      clearSessionAndRedirectToLogin();
     }
-  }, [isError, navigate, queryClient]);
+  }, [isError, clearSessionAndRedirectToLogin]);
 
-  const handleLogout = (): void => {
-    clearToken();
-    queryClient.clear();
-    void navigate("/login", { replace: true });
+  const handleConfirmDelete = (): void => {
+    deleteAccount.mutate(undefined, {
+      onSuccess: clearSessionAndRedirectToLogin,
+    });
   };
 
   return (
@@ -78,13 +86,35 @@ export default function SettingsPage() {
           <CardHeader>
             <h2 className="text-base font-semibold">Danger Zone</h2>
           </CardHeader>
-          <CardContent>
-            <Button variant="outline" onClick={handleLogout}>
+          <CardContent className="flex flex-col gap-2">
+            <Button variant="outline" onClick={clearSessionAndRedirectToLogin}>
               Log out
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setIsDeleteDialogOpen(true);
+              }}
+            >
+              Delete Account
             </Button>
           </CardContent>
         </Card>
       </section>
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        title="Delete account?"
+        message="This will permanently delete your account and all transactions. This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="destructive"
+        isPending={deleteAccount.isPending}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+        }}
+      />
     </div>
   );
 }

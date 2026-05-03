@@ -61,4 +61,11 @@ describe("ConfirmDialog", () => {
     const confirmButton = screen.getByRole("button", { name: "確認" });
     expect(confirmButton).toHaveAttribute("data-variant", "destructive");
   });
+
+  it("disables confirm and cancel buttons when isPending is true", () => {
+    render(<ConfirmDialog {...defaultProps} isPending />);
+
+    expect(screen.getByRole("button", { name: "確認" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "キャンセル" })).toBeDisabled();
+  });
 });
