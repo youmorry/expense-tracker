@@ -109,6 +109,7 @@ export default function SettingsPage() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variant="destructive"
+        isPending={deleteAccount.isPending}
         onConfirm={handleConfirmDelete}
         onCancel={() => {
           setIsDeleteDialogOpen(false);

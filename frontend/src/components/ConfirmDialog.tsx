@@ -18,6 +18,7 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: "default" | "destructive";
+  isPending?: boolean;
 }
 
 export function ConfirmDialog({
@@ -29,6 +30,7 @@ export function ConfirmDialog({
   confirmLabel = "確認",
   cancelLabel = "キャンセル",
   variant = "default",
+  isPending = false,
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open}>
@@ -38,8 +40,10 @@ export function ConfirmDialog({
           <AlertDialogDescription>{message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>{cancelLabel}</AlertDialogCancel>
-          <AlertDialogAction variant={variant} onClick={onConfirm}>
+          <AlertDialogCancel onClick={onCancel} disabled={isPending}>
+            {cancelLabel}
+          </AlertDialogCancel>
+          <AlertDialogAction variant={variant} onClick={onConfirm} disabled={isPending}>
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
