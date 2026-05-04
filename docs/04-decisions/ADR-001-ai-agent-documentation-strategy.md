@@ -2,7 +2,7 @@
 
 ## ステータス
 
-Proposed (2026-05-04)
+Accepted (2026-05-04)
 
 ## コンテキスト
 
@@ -56,14 +56,14 @@ Proposed (2026-05-04)
 
 ## 影響
 
-### 移行作業（別 Issue で実施）
+### 移行作業（本 PR で実施済み）
 
 1. `CLAUDE.md` → `AGENTS.md` リネームとシンボリックリンク作成
 2. `.claude/rules/{backend,frontend}.md` を各ディレクトリ `AGENTS.md` に移植
 3. `.claude/rules/{design-principles,context7}.md` の内容を `docs/00-constitution.md` および ルート `AGENTS.md` に統合
 4. `.claude/rules/` の削除
 5. `docs/00-constitution.md` の新設
-6. CLAUDE.md 内の `.claude/rules/` への参照を更新
+6. `README.md` と `start-issue` スキルの `.claude/rules/` 参照を AGENTS.md / Constitution に更新
 
 ### ポジティブ
 
