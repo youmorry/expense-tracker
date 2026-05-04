@@ -57,7 +57,7 @@ Vite の mode ベースで環境ごとに `.env.*` を分割する。Vite が `-
 | ファイル | git | 用途 |
 |---|---|---|
 | `.env.example` | コミット | 公開キーのテンプレート。新規セットアップ時に `.env.development.local` 等にコピーして実値を埋める |
-| `.env.e2e` | コミット | E2E (`npm run build:e2e` = `vite build --mode e2e`) 専用の値 |
+| `.env.e2e` | コミット | E2E ビルド (`npm run build:e2e` = `vite build --mode e2e`) と Playwright MCP 検証用 dev サーバ (`npm run dev:e2e` = `vite --mode e2e`) 専用の値 |
 | `.env*.local` | 無視 | 個別開発者の実値・本番シークレット |
 
 - `VITE_` プレフィックスのキーのみ `import.meta.env` 経由でクライアントから参照できる。シークレットを誤って公開しないよう、機密値は `VITE_` を付けず BE 側で扱う
