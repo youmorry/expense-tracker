@@ -1,10 +1,6 @@
----
-description: Frontend (React / TypeScript) コード実装時に適用
-paths:
-  - "frontend/**"
----
+# Frontend AGENTS.md
 
-# Frontend ルール
+Frontend (React / TypeScript) のコード実装時に適用するルール。プロジェクト全体の不変原則は `../docs/00-constitution.md` を参照する。
 
 ## アーキテクチャ: Feature-Sliced Design
 
@@ -47,7 +43,7 @@ src/
 
 - **TanStack Query**: サーバー状態管理に使用。グローバル状態管理ライブラリは不要
 - **JWT in memory**: localStorage/Cookie 不使用。XSS でのトークン窃取リスク最小化（CSRF も不要に）
-- **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は @docs/03-design/common/auth-design.md
+- **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は `docs/03-design/common/auth-design.md`
 - **UI プリミティブ**: shadcn/ui（Radix UI + Tailwind CSS ベース）を採用。コピー & ペースト型で、ソースコードをプロジェクト内に取り込む
 
 ## 環境変数
@@ -146,7 +142,7 @@ function TransactionForm() {
 - API エラーは `ApiException`（RFC 9457 Problem Details）として構造化
 - 422 → フォームのインラインエラー、その他 → トースト通知
 - 401 → JWT クリア＋ログイン画面リダイレクト（グローバル処理）
-- 詳細は @docs/03-design/common/error-handling.md
+- 詳細は `docs/03-design/common/error-handling.md`
 
 ## スタイリング
 
@@ -271,7 +267,7 @@ UI を実装・修正する際は、自動テストとは別に画面を実際�
 
 ## 参照ドキュメント
 
-必要時に参照（CLAUDE.md の参照ドキュメントも併せて確認）:
+必要時に参照（ルート `AGENTS.md` の参照ドキュメントも併せて確認）:
 
 - `docs/03-design/frontend/screen-flow.md` — 画面遷移・UI 仕様
 - `docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス

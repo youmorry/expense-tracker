@@ -77,7 +77,7 @@ src/
 
 #### Frontend (`frontend/.env.*`)
 
-Vite の mode ベースで環境別に分割する。詳細は `.claude/rules/frontend.md` の「環境変数」を参照。
+Vite の mode ベースで環境別に分割する。詳細は `frontend/AGENTS.md` の「環境変数」を参照。
 
 | ファイル | git | 用途 |
 | --- | --- | --- |
