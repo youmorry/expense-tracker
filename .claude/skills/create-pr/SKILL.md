@@ -52,7 +52,7 @@ argument-hint: "[base-branch]"
 <!-- テスト方法・確認事項 -->
 
 ---
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 ## 注意事項

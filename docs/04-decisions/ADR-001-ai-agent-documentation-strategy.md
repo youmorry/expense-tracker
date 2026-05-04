@@ -80,7 +80,7 @@ Accepted (2026-05-04)
 
 ### 中立
 
-- `README.md` は人間向けのため変更なし
+- `README.md` は `.claude/rules/` 参照を AGENTS.md / Constitution に更新済み
 - `docs/01-planning / 02-requirements / 03-design` の構造は維持
 
 ## 関連
