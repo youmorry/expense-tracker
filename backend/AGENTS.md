@@ -124,7 +124,7 @@ public ResponseEntity<TransactionResponse> create(
 - Controller で個別キャッチせず `@RestControllerAdvice`（`GlobalExceptionHandler`）で一元処理
 - ドメイン層・アプリケーション層では `AppException` のサブクラスのみスローする（生の `RuntimeException` は禁止）
 - 他ユーザーのリソースアクセスは `ResourceNotFoundException`（404）で存在を秘匿する
-- 詳細は @docs/03-design/common/error-handling.md
+- 詳細は `docs/03-design/common/error-handling.md`
 
 ## テスト方針
 
