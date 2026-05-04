@@ -224,7 +224,18 @@ it("sets hasError state to true", () => {
 
 UI を実装・修正する際は、自動テストとは別に画面を実際にレンダリングして見た目と挙動を確認する。
 
-- 開発サーバー（`npm run dev`）を起動し、Playwright MCP（`mcp__playwright__browser_*`）で対象画面を操作・キャプチャする
+### 開発サーバーの起動・停止
+
+検証用の開発サーバーは `npm run dev:e2e`（= `vite --mode e2e`）を使う。MSW でバックエンドをモックし、`.env.e2e` の dummy GSI client_id でログイン画面も描画できる。
+
+- **起動**: Bash を `run_in_background: true` で `cd frontend && npm run dev:e2e` 実行
+- **停止**: Claude 組み込みの **TaskStop**（バックグラウンドタスクを task_id で停止する組み込みツール）で停止する。Bash を経由しないので承認プロンプトが発生しない
+- env 値は `.env.e2e` に閉じている。`VITE_*` をコマンドラインで上書きしない（揺れの原因になる）
+- `pkill` / `kill` / `lsof` でプロセスを探して落とす運用は禁止。必ず TaskStop を使う
+
+### Playwright MCP での操作・キャプチャ
+
+- Playwright MCP（`mcp__playwright__browser_*`）で対象画面を操作・キャプチャする
 - スクリーンショットは `frontend/screenshots/` に保存する（このディレクトリは `.gitignore` 管理。Git にはコミットしない）
 - ファイル名は内容がわかる名前にする（例: `transaction-list-empty.png`, `login-error-422.png`）
 - 検証対象はゴールデンパス＋主要なエッジケース（空状態・エラー表示・ローディング・レスポンシブの主要ブレークポイント）
