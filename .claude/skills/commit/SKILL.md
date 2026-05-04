@@ -88,7 +88,12 @@ description: >
 
 ## Trailer
 
-Claude が作成したコミットには以下の trailer を付与する:
-```
-Co-authored-by: Claude <noreply@anthropic.com>
-```
+AI エージェントが作成したコミットには、実行主体に対応する trailer を付与する。
+実行主体と異なる trailer は使用しない。
+
+| 実行主体 | trailer |
+|---|---|
+| Claude Code | `Co-authored-by: Claude <noreply@anthropic.com>` |
+| Codex | `Co-authored-by: Codex <codex@openai.com>` |
+
+実行主体が上記以外、または判別できない場合は、ユーザーに確認してから trailer を付与する。
