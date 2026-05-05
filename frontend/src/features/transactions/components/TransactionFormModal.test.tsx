@@ -190,7 +190,7 @@ describe("TransactionFormModal", () => {
     });
   });
 
-  it("shows an error toast when the API responds with an error", async () => {
+  it("shows an error toast when the API returns 422 without a field errors array", async () => {
     server.use(
       http.post("/api/v1/transactions", () => {
         return HttpResponse.json(
@@ -213,6 +213,70 @@ describe("TransactionFormModal", () => {
 
     expect(await screen.findByText(/amount must be positive/i)).toBeInTheDocument();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  describe("422 with field errors", () => {
+    function setUpValidationErrorHandler(errors: { pointer: string; detail: string }[]) {
+      server.use(
+        http.post("/api/v1/transactions", () => {
+          return HttpResponse.json(
+            {
+              type: "/errors/validation-error",
+              title: "Your request is not valid.",
+              status: 422,
+              detail: "One or more fields have validation errors.",
+              errors,
+            },
+            { status: 422 },
+          );
+        }),
+      );
+    }
+
+    it("renders inline errors under the corresponding fields", async () => {
+      setUpValidationErrorHandler([
+        { pointer: "#/amount", detail: "must be greater than 0" },
+        { pointer: "#/category_id", detail: "category not found" },
+      ]);
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal();
+
+      await user.type(screen.getByLabelText(/amount/i), "10");
+      await user.click(screen.getByRole("button", { name: /save/i }));
+
+      expect(await screen.findByText(/must be greater than 0/i)).toBeInTheDocument();
+      expect(screen.getByText(/category not found/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/amount/i)).toHaveAttribute("aria-invalid", "true");
+    });
+
+    it("does not show a toast when inline field errors are present", async () => {
+      setUpValidationErrorHandler([{ pointer: "#/amount", detail: "must be greater than 0" }]);
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal();
+
+      await user.type(screen.getByLabelText(/amount/i), "10");
+      await user.click(screen.getByRole("button", { name: /save/i }));
+
+      const inlineMessages = await screen.findAllByText(/must be greater than 0/i);
+      expect(inlineMessages).toHaveLength(1);
+    });
+
+    it("clears the inline error for a field when its input changes", async () => {
+      setUpValidationErrorHandler([
+        { pointer: "#/title", detail: "must be at most 200 characters" },
+      ]);
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      renderModal();
+
+      await user.type(screen.getByLabelText(/amount/i), "10");
+      await user.click(screen.getByRole("button", { name: /save/i }));
+
+      expect(await screen.findByText(/must be at most 200 characters/i)).toBeInTheDocument();
+
+      await user.type(screen.getByLabelText(/title/i), "shorter");
+
+      expect(screen.queryByText(/must be at most 200 characters/i)).not.toBeInTheDocument();
+    });
   });
 
   it("closes immediately when cancel is clicked with no input changes", async () => {
