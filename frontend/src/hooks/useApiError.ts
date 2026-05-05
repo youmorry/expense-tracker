@@ -54,8 +54,7 @@ export function useApiError(): UseApiErrorReturn {
   const clearFieldError = useCallback((field: string) => {
     setFieldErrors((prev) => {
       if (!(field in prev)) return prev;
-      const { [field]: _removed, ...rest } = prev;
-      return rest;
+      return Object.fromEntries(Object.entries(prev).filter(([key]) => key !== field));
     });
   }, []);
 
