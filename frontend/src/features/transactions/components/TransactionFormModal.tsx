@@ -153,7 +153,7 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
 
   const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setState((prev) => ({ ...prev, [key]: value }));
-    if (key in fieldErrors) clearFieldError(key);
+    clearFieldError(key);
   };
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
