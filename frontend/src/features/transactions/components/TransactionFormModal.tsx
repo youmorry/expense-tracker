@@ -19,9 +19,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { ConfirmDialog } from "../../../components/ConfirmDialog";
+import { useApiError } from "../../../hooks/useApiError";
 import { useCurrency } from "../../../hooks/useCurrency";
 import { useToast } from "../../../hooks/useToast";
-import { ApiException } from "../../../lib/api/errors";
 import { todayIsoDate } from "../../../lib/isoDate";
 import {
   NeedWantTypeSchema,
@@ -119,7 +119,8 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   const isEditMode = transaction !== undefined;
   const dateId = useId();
   const amountId = useId();
-  const categoryId = useId();
+  const categoryFieldId = useId();
+  const needWantId = useId();
   const titleId = useId();
   const memoId = useId();
 
@@ -133,7 +134,8 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
   const initialStateRef = useRef<FormState>(state);
 
   const { decimalDigits } = useCurrency();
-  const { showSuccess, showError } = useToast();
+  const { showSuccess } = useToast();
+  const { fieldErrors, handleError, clearFieldError, clearAllFieldErrors } = useApiError();
   const { data: categoriesData } = useCategories();
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction(transaction?.id ?? 0);
@@ -146,10 +148,12 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
     setAmountError(null);
     setShowDiscardConfirm(false);
     setShowDeleteConfirm(false);
+    clearAllFieldErrors();
   };
 
   const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setState((prev) => ({ ...prev, [key]: value }));
+    if (key in fieldErrors) clearFieldError(key);
   };
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
@@ -160,13 +164,7 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
       return;
     }
     setAmountError(null);
-    const onError = (err: Error) => {
-      const message =
-        err instanceof ApiException
-          ? err.apiError.detail
-          : "Failed to save transaction. Please try again.";
-      showError(message);
-    };
+    clearAllFieldErrors();
     if (isEditMode) {
       updateMutation.mutate(buildRequest(state), {
         onSuccess: () => {
@@ -174,7 +172,7 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
           resetForm();
           onClose();
         },
-        onError,
+        onError: handleError,
       });
     } else {
       createMutation.mutate(buildRequest(state), {
@@ -183,7 +181,7 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
           resetForm();
           onClose();
         },
-        onError,
+        onError: handleError,
       });
     }
   };
@@ -211,15 +209,18 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
         onClose();
       },
       onError: (err) => {
-        const message =
-          err instanceof ApiException
-            ? err.apiError.detail
-            : "Failed to delete transaction. Please try again.";
-        showError(message);
+        handleError(err);
         setShowDeleteConfirm(false);
       },
     });
   };
+
+  const dateError = fieldErrors.date;
+  const amountInlineError = amountError ?? fieldErrors.amount ?? null;
+  const categoryError = fieldErrors.categoryId;
+  const needWantError = fieldErrors.needWantType;
+  const titleError = fieldErrors.title;
+  const memoError = fieldErrors.memo;
 
   return (
     <>
@@ -246,10 +247,17 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                 type="date"
                 value={state.date}
                 required
+                aria-invalid={dateError !== undefined}
+                aria-describedby={dateError !== undefined ? `${dateId}-error` : undefined}
                 onChange={(event) => {
                   updateField("date", event.target.value);
                 }}
               />
+              {dateError !== undefined && (
+                <p id={`${dateId}-error`} className="text-destructive text-xs">
+                  {dateError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor={amountId}>Amount</Label>
@@ -259,24 +267,28 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                 type="text"
                 inputMode="decimal"
                 value={state.amount}
-                aria-invalid={amountError !== null}
-                aria-describedby={amountError !== null ? `${amountId}-error` : undefined}
+                aria-invalid={amountInlineError !== null}
+                aria-describedby={amountInlineError !== null ? `${amountId}-error` : undefined}
                 onChange={(event) => {
                   updateField("amount", event.target.value);
                   if (amountError !== null) setAmountError(null);
                 }}
               />
-              {amountError !== null && (
+              {amountInlineError !== null && (
                 <p id={`${amountId}-error`} className="text-destructive text-xs">
-                  {amountError}
+                  {amountInlineError}
                 </p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor={categoryId}>Category</Label>
+              <Label htmlFor={categoryFieldId}>Category</Label>
               <select
-                id={categoryId}
+                id={categoryFieldId}
                 value={state.categoryId ?? ""}
+                aria-invalid={categoryError !== undefined}
+                aria-describedby={
+                  categoryError !== undefined ? `${categoryFieldId}-error` : undefined
+                }
                 className="border-input bg-background h-9 rounded-lg border px-2.5 text-sm"
                 onChange={(event) => {
                   updateField(
@@ -294,6 +306,11 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                     </option>
                   ))}
               </select>
+              {categoryError !== undefined && (
+                <p id={`${categoryFieldId}-error`} className="text-destructive text-xs">
+                  {categoryError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-sm leading-none font-medium">Need / Want</span>
@@ -313,6 +330,11 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
+              {needWantError !== undefined && (
+                <p id={`${needWantId}-error`} className="text-destructive text-xs">
+                  {needWantError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor={titleId}>Title</Label>
@@ -320,20 +342,34 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                 id={titleId}
                 type="text"
                 value={state.title}
+                aria-invalid={titleError !== undefined}
+                aria-describedby={titleError !== undefined ? `${titleId}-error` : undefined}
                 onChange={(event) => {
                   updateField("title", event.target.value);
                 }}
               />
+              {titleError !== undefined && (
+                <p id={`${titleId}-error`} className="text-destructive text-xs">
+                  {titleError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor={memoId}>Memo</Label>
               <Textarea
                 id={memoId}
                 value={state.memo}
+                aria-invalid={memoError !== undefined}
+                aria-describedby={memoError !== undefined ? `${memoId}-error` : undefined}
                 onChange={(event) => {
                   updateField("memo", event.target.value);
                 }}
               />
+              {memoError !== undefined && (
+                <p id={`${memoId}-error`} className="text-destructive text-xs">
+                  {memoError}
+                </p>
+              )}
             </div>
             <DialogFooter>
               {isEditMode && (
