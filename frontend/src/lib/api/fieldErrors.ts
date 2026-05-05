@@ -26,6 +26,7 @@ export function extractFieldErrors(errors: FieldError[] | undefined): Record<str
   for (const { pointer, detail } of errors) {
     const field = pointerToFieldName(pointer);
     if (field === null) continue;
+    // 同一フィールドに複数の制約違反がある場合は最初のメッセージのみ採用
     if (field in result) continue;
     result[field] = detail;
   }
