@@ -52,13 +52,13 @@ argument-hint: "[base-branch]"
 <!-- テスト方法・確認事項 -->
 
 ---
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 ## 注意事項
 
 - PR に含まれる**すべてのコミット**を分析してタイトルと本文を作成する（最新コミットだけを見ない）
 - ブランチ名や コミットメッセージから関連 Issue 番号を特定し、`Closes #<番号>` で自動クローズを設定する。特定できない場合はセクションを省略する
-- ブランチ命名が CLAUDE.md の Conventions に定義された規約に従っているか確認する
+- ブランチ命名が `docs/00-constitution.md` のブランチ命名規約に従っているか確認する
 - `main` ブランチから直接 PR を作成しようとしている場合は警告する
 - プッシュおよび PR 作成はユーザーの承認なしで実行してよい

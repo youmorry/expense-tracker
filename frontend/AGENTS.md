@@ -1,10 +1,6 @@
----
-description: Frontend (React / TypeScript) コード実装時に適用
-paths:
-  - "frontend/**"
----
+# Frontend AGENTS.md
 
-# Frontend ルール
+Frontend (React / TypeScript) のコード実装時に適用するルール。プロジェクト全体の不変原則は `../docs/00-constitution.md` を参照する。
 
 ## アーキテクチャ: Feature-Sliced Design
 
@@ -47,18 +43,18 @@ src/
 
 - **TanStack Query**: サーバー状態管理に使用。グローバル状態管理ライブラリは不要
 - **JWT in memory**: localStorage/Cookie 不使用。XSS でのトークン窃取リスク最小化（CSRF も不要に）
-- **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は @docs/03-design/common/auth-design.md
+- **認証フロー**: Google OAuth2 でクライアントサイド ID トークン取得 → `POST /api/v1/auth/google` → JWT 返却。詳細は `../docs/03-design/common/auth-design.md`
 - **UI プリミティブ**: shadcn/ui（Radix UI + Tailwind CSS ベース）を採用。コピー & ペースト型で、ソースコードをプロジェクト内に取り込む
 
 ## 環境変数
 
 Vite の mode ベースで環境ごとに `.env.*` を分割する。Vite が `--mode <name>` 起動時に `.env`・`.env.<mode>`・`.env.local`・`.env.<mode>.local` の順で読み込み、後勝ちでマージする。
 
-| ファイル | git | 用途 |
-|---|---|---|
-| `.env.example` | コミット | 公開キーのテンプレート。新規セットアップ時に `.env.development.local` 等にコピーして実値を埋める |
-| `.env.e2e` | コミット | E2E ビルド (`npm run build:e2e` = `vite build --mode e2e`) と Playwright MCP 検証用 dev サーバ (`npm run dev:e2e` = `vite --mode e2e`) 専用の値 |
-| `.env*.local` | 無視 | 個別開発者の実値・本番シークレット |
+| ファイル       | git      | 用途                                                                                                                                            |
+| -------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.env.example` | コミット | 公開キーのテンプレート。新規セットアップ時に `.env.development.local` 等にコピーして実値を埋める                                                |
+| `.env.e2e`     | コミット | E2E ビルド (`npm run build:e2e` = `vite build --mode e2e`) と Playwright MCP 検証用 dev サーバ (`npm run dev:e2e` = `vite --mode e2e`) 専用の値 |
+| `.env*.local`  | 無視     | 個別開発者の実値・本番シークレット                                                                                                              |
 
 - `VITE_` プレフィックスのキーのみ `import.meta.env` 経由でクライアントから参照できる。シークレットを誤って公開しないよう、機密値は `VITE_` を付けず BE 側で扱う
 - 本番ビルドは CI のシークレットから `VITE_*` を inject し、`.env.production` をリポジトリに置かない
@@ -102,7 +98,9 @@ export function useTransactions(params: TransactionSearchParams) {
 function TransactionList() {
   const [data, setData] = useState([]);
   useEffect(() => {
-    fetch("/api/v1/transactions").then(r => r.json()).then(setData);
+    fetch("/api/v1/transactions")
+      .then((r) => r.json())
+      .then(setData);
   }, []);
   // ...
 }
@@ -146,7 +144,7 @@ function TransactionForm() {
 - API エラーは `ApiException`（RFC 9457 Problem Details）として構造化
 - 422 → フォームのインラインエラー、その他 → トースト通知
 - 401 → JWT クリア＋ログイン画面リダイレクト（グローバル処理）
-- 詳細は @docs/03-design/common/error-handling.md
+- 詳細は `../docs/03-design/common/error-handling.md`
 
 ## スタイリング
 
@@ -166,13 +164,13 @@ function TransactionForm() {
 
 ### テスト種別
 
-| テスト対象 | テスト種別 | ツール | 説明 |
-|-----------|-----------|--------|------|
-| コンポーネント | 単体テスト | Vitest + React Testing Library | ユーザー操作ベースでテスト |
-| カスタムフック | 単体テスト | Vitest + `renderHook` | hooks のロジックを検証 |
-| API hooks | 統合テスト | Vitest + MSW | MSW でモックサーバーを立てて検証 |
-| ユーティリティ | 純粋な単体テスト | Vitest | 純関数のテスト |
-| E2E | E2E テスト | Playwright | ブラウザ上での画面遷移・操作を検証 |
+| テスト対象     | テスト種別       | ツール                         | 説明                               |
+| -------------- | ---------------- | ------------------------------ | ---------------------------------- |
+| コンポーネント | 単体テスト       | Vitest + React Testing Library | ユーザー操作ベースでテスト         |
+| カスタムフック | 単体テスト       | Vitest + `renderHook`          | hooks のロジックを検証             |
+| API hooks      | 統合テスト       | Vitest + MSW                   | MSW でモックサーバーを立てて検証   |
+| ユーティリティ | 純粋な単体テスト | Vitest                         | 純関数のテスト                     |
+| E2E            | E2E テスト       | Playwright                     | ブラウザ上での画面遷移・操作を検証 |
 
 ### テストクラスの配置
 
@@ -242,11 +240,11 @@ UI を実装・修正する際は、自動テストとは別に画面を実際�
 
 ### 撮影方式の選び方（目的ベース）
 
-| 検証目的 | 推奨方式 |
-|---|---|
-| 画面全体のレイアウト・余白・レスポンシブ確認 | ビューポート撮影。収まらない場合は `fullPage: true`（チャートを含む画面を除く） |
+| 検証目的                                          | 推奨方式                                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 画面全体のレイアウト・余白・レスポンシブ確認      | ビューポート撮影。収まらない場合は `fullPage: true`（チャートを含む画面を除く）           |
 | **特定コンポーネント・特定要素の見た目/状態検証** | **要素単位撮影（`element` 指定）** または対象を `scrollIntoView` してからビューポート撮影 |
-| 縦長コンテンツ全体の見渡し | `fullPage: true`（recharts 等を含む画面では避ける） |
+| 縦長コンテンツ全体の見渡し                        | `fullPage: true`（recharts 等を含む画面では避ける）                                       |
 
 - 「ボタンを追加した」「ダイアログの見た目を確認したい」のように検証対象が特定の要素である場合、ページ撮影は対象がビューポート外（fold 下・モバイル下部ナビの裏など）に切れるリスクがあるため、**要素単位撮影をデフォルトにする**
 - recharts など `ResponsiveContainer` を使うチャートを含む画面では `fullPage: true` を避ける。`fullPage` 撮影中の再レイアウトでチャートが空白で写ることがあるため、ビューポート内に収まる場合はビューポート撮影、収まらない場合は要素単位撮影を使う
@@ -259,21 +257,21 @@ UI を実装・修正する際は、自動テストとは別に画面を実際�
 
 ## 命名規約
 
-| 対象 | 規約 | 例 |
-|------|------|----|
-| コンポーネントファイル | PascalCase | `TransactionForm.tsx` |
-| hooks ファイル | camelCase + `use` prefix | `useTransactions.ts` |
-| 型定義 | PascalCase | `Transaction`, `CreateTransactionRequest` |
-| 定数 | UPPER_SNAKE_CASE | `API_BASE_URL`, `MAX_AMOUNT` |
-| ユーティリティ関数 | camelCase | `formatCurrency`, `parseDate` |
-| テストファイル | 対象ファイル名 + `.test` | `TransactionForm.test.tsx` |
-| API レスポンスの JSON キー | snake_case → camelCase に変換 | `created_at` → `createdAt` |
+| 対象                       | 規約                          | 例                                        |
+| -------------------------- | ----------------------------- | ----------------------------------------- |
+| コンポーネントファイル     | PascalCase                    | `TransactionForm.tsx`                     |
+| hooks ファイル             | camelCase + `use` prefix      | `useTransactions.ts`                      |
+| 型定義                     | PascalCase                    | `Transaction`, `CreateTransactionRequest` |
+| 定数                       | UPPER_SNAKE_CASE              | `API_BASE_URL`, `MAX_AMOUNT`              |
+| ユーティリティ関数         | camelCase                     | `formatCurrency`, `parseDate`             |
+| テストファイル             | 対象ファイル名 + `.test`      | `TransactionForm.test.tsx`                |
+| API レスポンスの JSON キー | snake_case → camelCase に変換 | `created_at` → `createdAt`                |
 
 ## 参照ドキュメント
 
-必要時に参照（CLAUDE.md の参照ドキュメントも併せて確認）:
+必要時に参照（ルート `AGENTS.md` の参照ドキュメントも併せて確認）:
 
-- `docs/03-design/frontend/screen-flow.md` — 画面遷移・UI 仕様
-- `docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
-- `docs/03-design/common/auth-design.md` — 認証フロー・JWT・セキュリティ
-- `docs/01-planning/tech-stack-frontend.md` — フロントエンド技術スタック詳細・選定理由
+- `../docs/03-design/frontend/screen-flow.md` — 画面遷移・UI 仕様
+- `../docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
+- `../docs/03-design/common/auth-design.md` — 認証フロー・JWT・セキュリティ
+- `../docs/01-planning/tech-stack-frontend.md` — フロントエンド技術スタック詳細・選定理由

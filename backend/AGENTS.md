@@ -1,10 +1,6 @@
----
-description: Backend (Spring Boot / Java) コード実装時に適用
-paths:
-  - "backend/**"
----
+# Backend AGENTS.md
 
-# Backend ルール
+Backend (Spring Boot / Java) のコード実装時に適用するルール。プロジェクト全体の不変原則は `../docs/00-constitution.md` を参照する。
 
 ## アーキテクチャ: DDD + Layered
 
@@ -128,7 +124,7 @@ public ResponseEntity<TransactionResponse> create(
 - Controller で個別キャッチせず `@RestControllerAdvice`（`GlobalExceptionHandler`）で一元処理
 - ドメイン層・アプリケーション層では `AppException` のサブクラスのみスローする（生の `RuntimeException` は禁止）
 - 他ユーザーのリソースアクセスは `ResourceNotFoundException`（404）で存在を秘匿する
-- 詳細は @docs/03-design/common/error-handling.md
+- 詳細は `../docs/03-design/common/error-handling.md`
 
 ## テスト方針
 
@@ -163,13 +159,13 @@ public ResponseEntity<TransactionResponse> create(
 
 ## 参照ドキュメント
 
-常時参照（コンテキストに自動ロード）:
+常時参照すべきドキュメント:
 
-- @docs/03-design/backend/java-coding-standards.md
+- `../docs/03-design/backend/java-coding-standards.md` — Java コーディング規約
 
-必要時に参照（CLAUDE.md の参照ドキュメントも併せて確認）:
+必要時に参照（ルート `AGENTS.md` の参照ドキュメントも併せて確認）:
 
-- `docs/03-design/backend/domain-model.md` — Entity / VO / Aggregate 設計
-- `docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
-- `docs/03-design/backend/validation-strategy.md` — バリデーション方針・層別の責務
-- `docs/03-design/backend/database-schema.md` — DDL・インデックス・Flyway
+- `../docs/03-design/backend/domain-model.md` — Entity / VO / Aggregate 設計
+- `../docs/03-design/common/error-handling.md` — 例外階層・RFC 9457 レスポンス
+- `../docs/03-design/backend/validation-strategy.md` — バリデーション方針・層別の責務
+- `../docs/03-design/backend/database-schema.md` — DDL・インデックス・Flyway

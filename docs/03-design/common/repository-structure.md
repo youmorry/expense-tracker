@@ -25,6 +25,7 @@ expense-tracker/
 │   │   │       ├── application.yml
 │   │   │       └── db/migration/   # Flyway マイグレーションファイル
 │   │   └── test/
+│   ├── AGENTS.md                   # Backend 向け AI エージェントルール（CLAUDE.md はシンボリックリンク）
 │   ├── build.gradle.kts
 │   └── Dockerfile                  # 本番デプロイ用（Render）
 │
@@ -37,16 +38,19 @@ expense-tracker/
 │   │   ├── hooks/                  # カスタムフック
 │   │   ├── lib/                    # API クライアント・ユーティリティ
 │   │   └── types/                  # 型定義
+│   ├── AGENTS.md                   # Frontend 向け AI エージェントルール（CLAUDE.md はシンボリックリンク）
 │   ├── package.json
 │   └── vite.config.ts
 │
 ├── docs/                           # プロジェクトドキュメント
+│   ├── 00-constitution.md          # プロジェクト不変原則
 │   ├── 01-planning/
 │   ├── 02-requirements/
-│   └── 03-design/
-│       ├── common/                 # 共通設計ドキュメント
-│       ├── backend/                # バックエンド設計ドキュメント
-│       └── frontend/               # フロントエンド設計ドキュメント
+│   ├── 03-design/
+│   │   ├── common/                 # 共通設計ドキュメント
+│   │   ├── backend/                # バックエンド設計ドキュメント
+│   │   └── frontend/               # フロントエンド設計ドキュメント
+│   └── 04-decisions/               # ADR（アーキテクチャ決定記録）
 │
 ├── .github/
 │   └── workflows/
@@ -54,7 +58,7 @@ expense-tracker/
 │       └── frontend-ci.yml         # FE のビルド・テスト（paths フィルター）
 │
 ├── docker-compose.yml              # ローカル開発用 PostgreSQL 起動
-├── CLAUDE.md                       # Claude Code 向けプロジェクト情報
+├── AGENTS.md                       # AI エージェント向けプロジェクト情報（CLAUDE.md はシンボリックリンク）
 └── README.md
 ```
 

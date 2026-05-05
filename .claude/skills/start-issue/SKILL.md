@@ -28,12 +28,12 @@ argument-hint: "[issue-number]"
 4. `main` ブランチの最新を取得する:
    - `git checkout main && git pull origin main`
 5. ブランチを作成する:
-   - CLAUDE.md の Conventions に定義されたブランチ命名規約に従い、承認された作業計画に基づいた名前でブランチを切る
+   - `docs/00-constitution.md` のブランチ命名規約に従い、承認された作業計画に基づいた名前でブランチを切る
    - `git checkout -b <ブランチ名>`
 6. Issue に作業計画をコメントする:
    - 承認された作業計画と作成したブランチ名を `gh issue comment` で Issue にコメントする
 7. TDD サイクルで実装する:
-   - CLAUDE.md の TDD ワークフローに従う
+   - `docs/00-constitution.md` の TDD ワークフローに従う
    - コミット時は `.claude/skills/commit/SKILL.md` の規約に従う
    - コミット前にソースコードの自動フォーマット・自動修正を行う（`npm run format` や `./gradlew spotlessApply` など）
 8. 実装が完了したらビルドできることを確認する:
