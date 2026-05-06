@@ -37,7 +37,8 @@
         "github.vscode-github-actions",
         "github.vscode-pull-request-github",
         "vmware.vscode-spring-boot",
-        "vscjava.vscode-java-pack"
+        "vscjava.vscode-java-pack",
+        "openai.chatgpt"
       ],
       "settings": {
         "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
