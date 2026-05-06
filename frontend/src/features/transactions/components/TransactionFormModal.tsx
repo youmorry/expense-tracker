@@ -323,6 +323,8 @@ export function TransactionFormModal({ open, onClose, transaction }: Transaction
                 }}
                 className="self-start"
                 rovingFocus={false}
+                aria-invalid={needWantError !== undefined}
+                aria-describedby={needWantError !== undefined ? `${needWantId}-error` : undefined}
               >
                 {NeedWantTypeSchema.options.map((value) => (
                   <ToggleGroupItem key={value} value={value} aria-label={value}>

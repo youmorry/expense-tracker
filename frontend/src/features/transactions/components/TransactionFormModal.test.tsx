@@ -237,6 +237,7 @@ describe("TransactionFormModal", () => {
       setUpValidationErrorHandler([
         { pointer: "#/amount", detail: "must be greater than 0" },
         { pointer: "#/category_id", detail: "category not found" },
+        { pointer: "#/need_want_type", detail: "need_want_type is required" },
       ]);
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       renderModal();
@@ -244,9 +245,13 @@ describe("TransactionFormModal", () => {
       await user.type(screen.getByLabelText(/amount/i), "10");
       await user.click(screen.getByRole("button", { name: /save/i }));
 
-      expect(await screen.findByText(/must be greater than 0/i)).toBeInTheDocument();
+      const needWantError = await screen.findByText(/need_want_type is required/i);
+      expect(screen.getByText(/must be greater than 0/i)).toBeInTheDocument();
       expect(screen.getByText(/category not found/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/amount/i)).toHaveAttribute("aria-invalid", "true");
+      const toggleGroup = screen.getByRole("group");
+      expect(toggleGroup).toHaveAttribute("aria-invalid", "true");
+      expect(toggleGroup.getAttribute("aria-describedby")).toBe(needWantError.id);
     });
 
     it("does not show a toast when inline field errors are present", async () => {
