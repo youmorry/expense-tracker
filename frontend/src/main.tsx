@@ -1,6 +1,7 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import type { http as mswHttp, HttpResponse as MswHttpResponse } from "msw";
 import type { SetupWorker } from "msw/browser";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -16,6 +17,8 @@ declare global {
     __seedAuthToken?: string;
     __setAuthToken?: (token: string) => void;
     __mswWorker?: SetupWorker;
+    __mswHttp?: typeof mswHttp;
+    __mswHttpResponse?: typeof MswHttpResponse;
   }
 }
 
@@ -34,16 +37,19 @@ async function enableMocking(): Promise<void> {
   if (!ENABLE_MSW) {
     return;
   }
-  const { worker } = await import("./test/mocks/browser");
+  const { worker, http, HttpResponse } = await import("./test/mocks/browser");
   await worker.start({ onUnhandledRequest: "bypass" });
   // VITE_ENABLE_MSW が立つビルドでのみ E2E 向けのフックを公開する。
   // __seedAuthToken: addInitScript で先置きしたトークンを React 起動前に適用する
   // __setAuthToken / __mswWorker: テスト中に動的に切り替えるための窓口
+  // __mswHttp / __mswHttpResponse: page.evaluate からハンドラを構築するための窓口
   if (typeof window.__seedAuthToken === "string") {
     setToken(window.__seedAuthToken);
   }
   window.__setAuthToken = setToken;
   window.__mswWorker = worker;
+  window.__mswHttp = http;
+  window.__mswHttpResponse = HttpResponse;
 }
 
 void enableMocking().then(() => {
