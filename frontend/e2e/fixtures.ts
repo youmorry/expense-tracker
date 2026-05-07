@@ -35,11 +35,8 @@ export async function seedAuthToken(page: Page, token = "mock-jwt-token"): Promi
 }
 
 /**
- * `GET /api/v1/transactions` のレスポンスを差し替える。
- *
- * デフォルトハンドラは常に空一覧を返すため、登録 → 一覧反映のような
- * 状態遷移を伴うシナリオではテストごとに `worker.use()` で挙動を上書きする必要がある。
- * `main.tsx` が VITE_ENABLE_MSW=true ビルドで window に公開する MSW ハンドルを使う。
+ * `GET /api/v1/transactions` のレスポンスを差し替える。デフォルトハンドラは常に
+ * 空一覧を返すため、登録 → 一覧反映のような状態遷移シナリオで使う。
  */
 export async function mockTransactionList(page: Page, items: TransactionResponse[]): Promise<void> {
   await page.evaluate((nextItems) => {
@@ -47,7 +44,9 @@ export async function mockTransactionList(page: Page, items: TransactionResponse
     const http = window.__mswHttp;
     const HttpResponse = window.__mswHttpResponse;
     if (!worker || !http || !HttpResponse) {
-      throw new Error("MSW worker is not initialized; ensure VITE_ENABLE_MSW=true build is used");
+      throw new Error(
+        "MSW E2E hooks are not exposed on window; run with VITE_ENABLE_MSW=true build (npm run dev:e2e / build:e2e)",
+      );
     }
     worker.use(http.get("/api/v1/transactions", () => HttpResponse.json({ items: nextItems })));
   }, items);

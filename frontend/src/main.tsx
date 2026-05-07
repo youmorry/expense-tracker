@@ -39,10 +39,9 @@ async function enableMocking(): Promise<void> {
   }
   const { worker, http, HttpResponse } = await import("./test/mocks/browser");
   await worker.start({ onUnhandledRequest: "bypass" });
-  // VITE_ENABLE_MSW が立つビルドでのみ E2E 向けのフックを公開する。
-  // __seedAuthToken: addInitScript で先置きしたトークンを React 起動前に適用する
-  // __setAuthToken / __mswWorker: テスト中に動的に切り替えるための窓口
-  // __mswHttp / __mswHttpResponse: page.evaluate からハンドラを構築するための窓口
+  // E2E から MSW を制御するために window へ橋渡しする（モジュール export では
+  // page.evaluate コンテキストから到達できないため）。本番ビルドではこのブロック
+  // ごと dead code として落ちる。
   if (typeof window.__seedAuthToken === "string") {
     setToken(window.__seedAuthToken);
   }
