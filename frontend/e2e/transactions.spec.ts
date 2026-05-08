@@ -99,3 +99,47 @@ test("既存の支出をクリックして編集すると一覧の表示が更�
 
   await page.screenshot({ path: "screenshots/transaction-edit-success.png" });
 });
+
+test("既存の支出を編集モーダルから削除すると一覧が空に戻る", async ({ page }) => {
+  await seedAuthToken(page);
+  await page.goto("/transactions");
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+
+  await mockTransactionList(page, [
+    {
+      id: 99,
+      date: "2026-05-07",
+      amount: "1500",
+      category_id: 6,
+      category_name: "Entertainment",
+      need_want_type: "WANT",
+      title: "映画",
+      created_at: "2026-05-07T19:00:00Z",
+      updated_at: "2026-05-07T19:00:00Z",
+    },
+  ]);
+  await refetchQueries(page);
+
+  await page.getByRole("button", { name: /映画/ }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { name: "Edit Transaction" })).toBeVisible();
+
+  await dialog.getByRole("button", { name: "Delete" }).click();
+
+  const confirm = page.getByRole("alertdialog");
+  await expect(confirm).toBeVisible();
+  await expect(confirm.getByRole("heading", { name: "Delete this transaction?" })).toBeVisible();
+
+  // 削除確定後の一覧 refetch で空が返るよう、Confirm 押下前にハンドラを差し替える。
+  await mockTransactionList(page, []);
+
+  await confirm.getByRole("button", { name: "Delete" }).click();
+
+  await expect(dialog).toBeHidden();
+  await expect(confirm).toBeHidden();
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+  await expect(page.getByText("映画")).toBeHidden();
+
+  await page.screenshot({ path: "screenshots/transaction-delete-success.png" });
+});
