@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { mockTransactionList, seedAuthToken } from "./fixtures";
+import { mockTransactionList, refetchQueries, seedAuthToken } from "./fixtures";
 
 test("支出を新規登録するとモーダルが閉じて一覧に反映される", async ({ page }) => {
   await seedAuthToken(page);
@@ -43,4 +43,59 @@ test("支出を新規登録するとモーダルが閉じて一覧に反映さ�
   await expect(page.getByText("NEED")).toBeVisible();
 
   await page.screenshot({ path: "screenshots/transaction-create-success.png" });
+});
+
+test("既存の支出をクリックして編集すると一覧の表示が更新される", async ({ page }) => {
+  await seedAuthToken(page);
+  await page.goto("/transactions");
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+
+  await mockTransactionList(page, [
+    {
+      id: 42,
+      date: "2026-05-07",
+      amount: "1200",
+      category_id: 1,
+      category_name: "Food",
+      need_want_type: "NEED",
+      title: "ランチ",
+      memo: "同僚と渋谷のイタリアンへ",
+      created_at: "2026-05-07T12:00:00Z",
+      updated_at: "2026-05-07T12:00:00Z",
+    },
+  ]);
+  await refetchQueries(page);
+
+  await page.getByRole("button", { name: /ランチ/ }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Edit Transaction" })).toBeVisible();
+  await expect(dialog.getByLabel("Title")).toHaveValue("ランチ");
+
+  await dialog.getByLabel("Title").fill("ディナー");
+
+  // 更新後の一覧 refetch で変更後のタイトルが返るよう、Save 押下前にハンドラを差し替える。
+  await mockTransactionList(page, [
+    {
+      id: 42,
+      date: "2026-05-07",
+      amount: "1200",
+      category_id: 1,
+      category_name: "Food",
+      need_want_type: "NEED",
+      title: "ディナー",
+      memo: "同僚と渋谷のイタリアンへ",
+      created_at: "2026-05-07T12:00:00Z",
+      updated_at: "2026-05-07T13:00:00Z",
+    },
+  ]);
+
+  await dialog.getByRole("button", { name: "Save" }).click();
+
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText("ディナー")).toBeVisible();
+  await expect(page.getByText("ランチ")).toBeHidden();
+
+  await page.screenshot({ path: "screenshots/transaction-edit-success.png" });
 });
