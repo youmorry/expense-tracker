@@ -46,24 +46,24 @@ test("支出を新規登録するとモーダルが閉じて一覧に反映さ�
 });
 
 test("既存の支出をクリックして編集すると一覧の表示が更新される", async ({ page }) => {
+  const lunch = {
+    id: 42,
+    date: "2026-05-07",
+    amount: "1200",
+    category_id: 1,
+    category_name: "Food",
+    need_want_type: "NEED" as const,
+    title: "ランチ",
+    memo: "同僚と渋谷のイタリアンへ",
+    created_at: "2026-05-07T12:00:00Z",
+    updated_at: "2026-05-07T12:00:00Z",
+  };
+
   await seedAuthToken(page);
   await page.goto("/transactions");
   await expect(page.getByText(/No transactions yet/i)).toBeVisible();
 
-  await mockTransactionList(page, [
-    {
-      id: 42,
-      date: "2026-05-07",
-      amount: "1200",
-      category_id: 1,
-      category_name: "Food",
-      need_want_type: "NEED",
-      title: "ランチ",
-      memo: "同僚と渋谷のイタリアンへ",
-      created_at: "2026-05-07T12:00:00Z",
-      updated_at: "2026-05-07T12:00:00Z",
-    },
-  ]);
+  await mockTransactionList(page, [lunch]);
   await refetchQueries(page);
 
   await page.getByRole("button", { name: /ランチ/ }).click();
@@ -77,18 +77,7 @@ test("既存の支出をクリックして編集すると一覧の表示が更�
 
   // 更新後の一覧 refetch で変更後のタイトルが返るよう、Save 押下前にハンドラを差し替える。
   await mockTransactionList(page, [
-    {
-      id: 42,
-      date: "2026-05-07",
-      amount: "1200",
-      category_id: 1,
-      category_name: "Food",
-      need_want_type: "NEED",
-      title: "ディナー",
-      memo: "同僚と渋谷のイタリアンへ",
-      created_at: "2026-05-07T12:00:00Z",
-      updated_at: "2026-05-07T13:00:00Z",
-    },
+    { ...lunch, title: "ディナー", updated_at: "2026-05-07T13:00:00Z" },
   ]);
 
   await dialog.getByRole("button", { name: "Save" }).click();

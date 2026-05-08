@@ -11,7 +11,8 @@ test("分析画面でカテゴリ内訳と Need/Want 比率が描画される", 
   await seedAuthToken(page);
   await page.goto("/analytics");
 
-  // 初期描画 (空状態) を待ってから MSW を差し替え、その後 refetch する。
+  // enableMocking が非同期で window フックを公開するため、初期描画を待ってから
+  // worker.use() を呼ばないと差し替えが間に合わない。
   await expect(page.getByRole("heading", { name: "Category Breakdown" })).toBeVisible();
 
   await mockCategoryAnalytics(page, {
