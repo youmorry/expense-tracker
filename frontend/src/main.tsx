@@ -1,5 +1,5 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { http as mswHttp, HttpResponse as MswHttpResponse } from "msw";
 import type { SetupWorker } from "msw/browser";
@@ -19,6 +19,7 @@ declare global {
     __mswWorker?: SetupWorker;
     __mswHttp?: typeof mswHttp;
     __mswHttpResponse?: typeof MswHttpResponse;
+    __queryClient?: QueryClient;
   }
 }
 
@@ -49,6 +50,8 @@ async function enableMocking(): Promise<void> {
   window.__mswWorker = worker;
   window.__mswHttp = http;
   window.__mswHttpResponse = HttpResponse;
+  // E2E から `worker.use()` 後に手動で再フェッチを起こすために QueryClient を公開する。
+  window.__queryClient = queryClient;
 }
 
 void enableMocking().then(() => {
