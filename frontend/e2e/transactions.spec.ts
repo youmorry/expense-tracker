@@ -89,6 +89,72 @@ test("既存の支出をクリックして編集すると一覧の表示が更�
   await page.screenshot({ path: "screenshots/transaction-edit-success.png" });
 });
 
+test("フィルタパネルでカテゴリ・Need/Want を指定するとリストが絞り込まれる", async ({ page }) => {
+  const lunch = {
+    id: 1,
+    date: "2026-05-07",
+    amount: "1200",
+    category_id: 1,
+    category_name: "Food",
+    need_want_type: "NEED" as const,
+    title: "ランチ",
+    created_at: "2026-05-07T12:00:00Z",
+    updated_at: "2026-05-07T12:00:00Z",
+  };
+  const train = {
+    id: 2,
+    date: "2026-05-07",
+    amount: "320",
+    category_id: 2,
+    category_name: "Transport",
+    need_want_type: "NEED" as const,
+    title: "電車",
+    created_at: "2026-05-07T09:00:00Z",
+    updated_at: "2026-05-07T09:00:00Z",
+  };
+  const movie = {
+    id: 3,
+    date: "2026-05-07",
+    amount: "1800",
+    category_id: 6,
+    category_name: "Entertainment",
+    need_want_type: "WANT" as const,
+    title: "映画",
+    created_at: "2026-05-07T19:00:00Z",
+    updated_at: "2026-05-07T19:00:00Z",
+  };
+
+  await seedAuthToken(page);
+  await page.goto("/transactions");
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+
+  await mockTransactionList(page, [lunch, train, movie]);
+  await refetchQueries(page);
+  await expect(page.getByText("ランチ")).toBeVisible();
+  await expect(page.getByText("電車")).toBeVisible();
+  await expect(page.getByText("映画")).toBeVisible();
+
+  await page.getByRole("button", { name: /^Filters/ }).click();
+
+  // カテゴリで Food を選ぶと、絞り込み後の API 応答（Food のみ）が返るよう差し替える。
+  await mockTransactionList(page, [lunch]);
+  await page.getByRole("button", { name: /^Categories/ }).click();
+  await page.getByRole("checkbox", { name: "Food" }).click();
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByText("ランチ")).toBeVisible();
+  await expect(page.getByText("電車")).toBeHidden();
+  await expect(page.getByText("映画")).toBeHidden();
+  await expect(page.getByLabel("Active filter count")).toHaveText("1");
+
+  // Need/Want を WANT に切り替えると Food + WANT で 0 件になる想定。
+  await mockTransactionList(page, []);
+  await page.getByRole("radio", { name: "WANT" }).click();
+
+  await expect(page.getByText(/No transactions match your filters/i)).toBeVisible();
+  await expect(page.getByLabel("Active filter count")).toHaveText("2");
+});
+
 test("既存の支出を編集モーダルから削除すると一覧が空に戻る", async ({ page }) => {
   await seedAuthToken(page);
   await page.goto("/transactions");
