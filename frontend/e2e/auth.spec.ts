@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { mockApiError, refetchQueries, seedAuthToken } from "./fixtures";
+
 test("未認証で /analytics に直接アクセスするとログインページにリダイレクトされる", async ({
   page,
 }) => {
@@ -13,6 +15,25 @@ test("未認証で /settings に直接アクセスするとログインページ
   page,
 }) => {
   await page.goto("/settings");
+
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.getByRole("heading", { name: "Expense Tracker" })).toBeVisible();
+});
+
+test("認証済み状態で API が 401 を返すとログインページにリダイレクトされる", async ({ page }) => {
+  await seedAuthToken(page);
+  await page.goto("/transactions");
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+
+  // BE がトークン期限切れで 401 を返したケースを模倣する。
+  // API クライアントがトークンを破棄し、グローバルハンドラが /login に飛ばす。
+  await mockApiError(page, "get", "/api/v1/transactions", 401, {
+    type: "/errors/unauthorized",
+    title: "Unauthorized",
+    status: 401,
+    detail: "Token expired",
+  });
+  await refetchQueries(page);
 
   await expect(page).toHaveURL(/\/login/);
   await expect(page.getByRole("heading", { name: "Expense Tracker" })).toBeVisible();
