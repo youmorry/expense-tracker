@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { mockTransactionList, refetchQueries, seedAuthToken } from "./fixtures";
+import { mockApiError, mockTransactionList, refetchQueries, seedAuthToken } from "./fixtures";
 
 test("支出を新規登録するとモーダルが閉じて一覧に反映される", async ({ page }) => {
   await seedAuthToken(page);
@@ -197,4 +197,42 @@ test("既存の支出を編集モーダルから削除すると一覧が空に�
   await expect(page.getByText("映画")).toBeHidden();
 
   await page.screenshot({ path: "screenshots/transaction-delete-success.png" });
+});
+
+test("登録モーダルで 422 が返ると該当フィールドにインラインエラーが表示される", async ({
+  page,
+}) => {
+  await seedAuthToken(page);
+  await page.goto("/transactions");
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+
+  await page.getByRole("button", { name: "Add transaction" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  await dialog.getByLabel("Date").fill("2026-05-07");
+  await dialog.getByLabel("Amount").fill("1200");
+  await dialog.getByLabel("Category").selectOption({ label: "Food" });
+  await dialog.getByLabel("Title").fill("ランチ");
+
+  // BE のフィールドバリデーションが返る 422 を擬似的に返し、FE の useApiError が
+  // pointer (snake_case) → camelCase に変換してインラインエラーを描画することを検証する。
+  await mockApiError(page, "post", "/api/v1/transactions", 422, {
+    type: "/errors/validation-error",
+    title: "Your request is not valid.",
+    status: 422,
+    detail: "One or more fields have validation errors.",
+    errors: [
+      { pointer: "#/amount", detail: "amount must be positive" },
+      { pointer: "#/title", detail: "title must be 100 characters or fewer" },
+    ],
+  });
+
+  await dialog.getByRole("button", { name: "Save" }).click();
+
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("amount must be positive")).toBeVisible();
+  await expect(dialog.getByText("title must be 100 characters or fewer")).toBeVisible();
+  await expect(dialog.getByLabel("Amount")).toHaveAttribute("aria-invalid", "true");
+  await expect(dialog.getByLabel("Title")).toHaveAttribute("aria-invalid", "true");
 });

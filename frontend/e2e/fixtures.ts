@@ -86,6 +86,34 @@ async function mockGet(page: Page, path: string, payload: JsonBodyType): Promise
   );
 }
 
+type HttpMethod = "get" | "post" | "put" | "delete";
+
+/**
+ * 任意の HTTP メソッド・パス・ステータス・ボディの応答を `worker.use()` で差し替える。
+ * 422 / 401 などの異常系シナリオで使う。
+ */
+export async function mockApiError(
+  page: Page,
+  method: HttpMethod,
+  path: string,
+  status: number,
+  body: JsonBodyType,
+): Promise<void> {
+  await waitForE2EHooks(page);
+  await page.evaluate(
+    ({ method, path, status, body, errorMessage }) => {
+      const worker = window.__mswWorker;
+      const http = window.__mswHttp;
+      const HttpResponse = window.__mswHttpResponse;
+      if (!worker || !http || !HttpResponse) {
+        throw new Error(errorMessage);
+      }
+      worker.use(http[method](path, () => HttpResponse.json(body, { status })));
+    },
+    { method, path, status, body, errorMessage: HOOKS_NOT_EXPOSED },
+  );
+}
+
 export function mockTransactionList(page: Page, items: TransactionResponse[]): Promise<void> {
   return mockGet(page, "/api/v1/transactions", { items });
 }
