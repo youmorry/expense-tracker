@@ -25,8 +25,8 @@ declare global {
 
 const router = createBrowserRouter(routes);
 
-// 401 を受け取ったら API クライアント側でトークンをクリアした上で /login に遷移する。
-// AuthGuard は子の query エラーでは再評価されないため、グローバルに navigate する必要がある。
+// AuthGuard は子の query エラーでは再評価されないため、401 はグローバルに拾って遷移させる。
+// トークンクリアは API クライアント側 (`lib/api/client.ts`) が責務を持つ。
 setOnUnauthorized(() => {
   void router.navigate("/login", { replace: true });
 });
