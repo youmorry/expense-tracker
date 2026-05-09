@@ -9,7 +9,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { ToastProvider } from "./components/Toast";
 import "./index.css";
 import { setToken } from "./lib/auth";
-import { queryClient } from "./lib/queryClient";
+import { queryClient, setOnUnauthorized } from "./lib/queryClient";
 import { routes } from "./routes";
 
 declare global {
@@ -24,6 +24,12 @@ declare global {
 }
 
 const router = createBrowserRouter(routes);
+
+// 401 を受け取ったら API クライアント側でトークンをクリアした上で /login に遷移する。
+// AuthGuard は子の query エラーでは再評価されないため、グローバルに navigate する必要がある。
+setOnUnauthorized(() => {
+  void router.navigate("/login", { replace: true });
+});
 
 const root = document.getElementById("root");
 if (!root) {
