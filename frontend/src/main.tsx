@@ -9,7 +9,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { ToastProvider } from "./components/Toast";
 import "./index.css";
 import { setToken } from "./lib/auth";
-import { queryClient } from "./lib/queryClient";
+import { queryClient, setOnUnauthorized } from "./lib/queryClient";
 import { routes } from "./routes";
 
 declare global {
@@ -24,6 +24,15 @@ declare global {
 }
 
 const router = createBrowserRouter(routes);
+
+// AuthGuard は子の query エラーでは再評価されないため、401 はグローバルに拾って遷移させる。
+// トークンクリアは API クライアント側 (`lib/api/client.ts`) が責務を持つ。
+// 別アカウントで再ログインしたときに前ユーザーのキャッシュ（users/me 等）が
+// staleTime の間表示されないよう、遷移前にキャッシュも破棄する。
+setOnUnauthorized(() => {
+  queryClient.clear();
+  void router.navigate("/login", { replace: true });
+});
 
 const root = document.getElementById("root");
 if (!root) {
