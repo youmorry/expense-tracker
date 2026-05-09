@@ -70,29 +70,9 @@ export async function refetchQueries(page: Page): Promise<void> {
   }, HOOKS_NOT_EXPOSED);
 }
 
-async function mockGet(page: Page, path: string, payload: JsonBodyType): Promise<void> {
-  await waitForE2EHooks(page);
-  await page.evaluate(
-    ({ path, payload, errorMessage }) => {
-      const worker = window.__mswWorker;
-      const http = window.__mswHttp;
-      const HttpResponse = window.__mswHttpResponse;
-      if (!worker || !http || !HttpResponse) {
-        throw new Error(errorMessage);
-      }
-      worker.use(http.get(path, () => HttpResponse.json(payload)));
-    },
-    { path, payload, errorMessage: HOOKS_NOT_EXPOSED },
-  );
-}
-
 type HttpMethod = "get" | "post" | "put" | "delete";
 
-/**
- * 任意の HTTP メソッド・パス・ステータス・ボディの応答を `worker.use()` で差し替える。
- * 422 / 401 などの異常系シナリオで使う。
- */
-export async function mockApiError(
+async function installHandler(
   page: Page,
   method: HttpMethod,
   path: string,
@@ -114,20 +94,33 @@ export async function mockApiError(
   );
 }
 
+/**
+ * 422 / 401 など、特定エンドポイントを異常系応答に差し替えたいときに使う。
+ */
+export function mockApiError(
+  page: Page,
+  method: HttpMethod,
+  path: string,
+  status: number,
+  body: JsonBodyType,
+): Promise<void> {
+  return installHandler(page, method, path, status, body);
+}
+
 export function mockTransactionList(page: Page, items: TransactionResponse[]): Promise<void> {
-  return mockGet(page, "/api/v1/transactions", { items });
+  return installHandler(page, "get", "/api/v1/transactions", 200, { items });
 }
 
 export function mockCategoryAnalytics(
   page: Page,
   payload: CategoryAnalyticsResponse,
 ): Promise<void> {
-  return mockGet(page, "/api/v1/analytics/category", payload);
+  return installHandler(page, "get", "/api/v1/analytics/category", 200, payload);
 }
 
 export function mockNeedWantAnalytics(
   page: Page,
   payload: NeedWantAnalyticsResponse,
 ): Promise<void> {
-  return mockGet(page, "/api/v1/analytics/need-want", payload);
+  return installHandler(page, "get", "/api/v1/analytics/need-want", 200, payload);
 }
