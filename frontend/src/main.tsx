@@ -27,7 +27,10 @@ const router = createBrowserRouter(routes);
 
 // AuthGuard は子の query エラーでは再評価されないため、401 はグローバルに拾って遷移させる。
 // トークンクリアは API クライアント側 (`lib/api/client.ts`) が責務を持つ。
+// 別アカウントで再ログインしたときに前ユーザーのキャッシュ（users/me 等）が
+// staleTime の間表示されないよう、遷移前にキャッシュも破棄する。
 setOnUnauthorized(() => {
+  queryClient.clear();
   void router.navigate("/login", { replace: true });
 });
 

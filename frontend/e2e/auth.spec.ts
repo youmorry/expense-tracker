@@ -39,6 +39,28 @@ test("認証済み状態で API が 401 を返すとログインページにリ�
   await expect(page.getByRole("heading", { name: "Expense Tracker" })).toBeVisible();
 });
 
+test("401 リダイレクト時に React Query のキャッシュが破棄される", async ({ page }) => {
+  // 別アカウントで再ログインしたときに前ユーザーのキャッシュが残らないことの回帰テスト。
+  await seedAuthToken(page);
+  await page.goto("/transactions");
+  await expect(page.getByText(/No transactions yet/i)).toBeVisible();
+
+  await mockApiError(page, "get", "/api/v1/transactions", 401, {
+    type: "/errors/unauthorized",
+    title: "Unauthorized",
+    status: 401,
+    detail: "Token expired",
+  });
+  await refetchQueries(page);
+
+  await expect(page).toHaveURL(/\/login/);
+
+  const queryCount = await page.evaluate(
+    () => window.__queryClient?.getQueryCache().getAll().length ?? -1,
+  );
+  expect(queryCount).toBe(0);
+});
+
 test("Sign in with Google ボタンを押すとログインに成功して /transactions に遷移する", async ({
   page,
 }) => {
