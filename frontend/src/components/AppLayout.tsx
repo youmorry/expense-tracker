@@ -4,8 +4,10 @@ import { BottomNav } from "./BottomNav";
 
 export function AppLayout() {
   return (
-    <div className="pb-16">
-      <Outlet />
+    <div className="flex h-dvh flex-col">
+      <main className="flex-1 overflow-y-auto">
+        <Outlet />
+      </main>
       <BottomNav />
     </div>
   );

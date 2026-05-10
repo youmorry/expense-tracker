@@ -35,8 +35,9 @@ test("PC 幅でも BottomNav が画面下部に表示される", async ({ page }
   await page.screenshot({ path: "screenshots/responsive-desktop-bottom-nav.png" });
 });
 
-// Issue #324: ページの `min-h-screen` が AppLayout の `pb-16` を打ち消して、
-// 短いビューポートで末尾コンテンツが BottomNav の裏に隠れる回帰を防ぐ。
+// Issue #324: 短いビューポートで末尾コンテンツが BottomNav の裏に隠れる回帰を防ぐ。
+// ページコンテンツを内側スクロール領域に閉じ込め、ナビと座標的に重ならないこと
+// （ボタンをスクロールしてビューに入れた時点でナビ上端より上に収まること）を検証する。
 test("短いビューポートで Settings の Delete Account ボタンが BottomNav の裏に隠れない", async ({
   page,
 }) => {
@@ -46,11 +47,13 @@ test("短いビューポートで Settings の Delete Account ボタンが Botto
   await page.goto("/settings");
 
   const deleteButton = page.getByRole("button", { name: "Delete Account" });
+  await deleteButton.scrollIntoViewIfNeeded();
   await expect(deleteButton).toBeVisible();
 
   const buttonBox = await deleteButton.boundingBox();
   const navBox = await page.getByRole("navigation").boundingBox();
-  expect(buttonBox).not.toBeNull();
-  expect(navBox).not.toBeNull();
-  expect(buttonBox!.y + buttonBox!.height).toBeLessThanOrEqual(navBox!.y);
+  if (buttonBox === null || navBox === null) {
+    throw new Error("boundingBox returned null; element is not rendered or not visible");
+  }
+  expect(buttonBox.y + buttonBox.height).toBeLessThanOrEqual(navBox.y);
 });

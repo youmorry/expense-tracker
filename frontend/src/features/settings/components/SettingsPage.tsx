@@ -41,7 +41,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-4">
+    <div className="px-4 py-4">
       <h1 className="font-heading mb-4 text-xl font-semibold">Settings</h1>
 
       <section aria-label="Account" className="mb-4">

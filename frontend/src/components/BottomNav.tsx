@@ -9,7 +9,7 @@ const tabs = [
 
 export function BottomNav() {
   return (
-    <nav className="border-border bg-background fixed inset-x-0 bottom-0 border-t">
+    <nav className="border-border bg-background border-t">
       <ul className="flex justify-around">
         {tabs.map(({ to, label, icon: Icon }) => (
           <li key={to}>
