@@ -35,9 +35,7 @@ test("PC 幅でも BottomNav が画面下部に表示される", async ({ page }
   await page.screenshot({ path: "screenshots/responsive-desktop-bottom-nav.png" });
 });
 
-// Issue #324: 短いビューポートで末尾コンテンツが BottomNav の裏に隠れる回帰を防ぐ。
-// ページコンテンツを内側スクロール領域に閉じ込め、ナビと座標的に重ならないこと
-// （ボタンをスクロールしてビューに入れた時点でナビ上端より上に収まること）を検証する。
+// Issue #324: 短いビューポートで BottomNav がページ末尾のコンテンツを覆う回帰を防ぐ。
 test("短いビューポートで Settings の Delete Account ボタンが BottomNav の裏に隠れない", async ({
   page,
 }) => {
