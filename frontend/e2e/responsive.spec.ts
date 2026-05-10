@@ -34,3 +34,24 @@ test("PC 幅でも BottomNav が画面下部に表示される", async ({ page }
 
   await page.screenshot({ path: "screenshots/responsive-desktop-bottom-nav.png" });
 });
+
+// Issue #324: 短いビューポートで BottomNav がページ末尾のコンテンツを覆う回帰を防ぐ。
+test("短いビューポートで Settings の Delete Account ボタンが BottomNav の裏に隠れない", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 493 });
+
+  await seedAuthToken(page);
+  await page.goto("/settings");
+
+  const deleteButton = page.getByRole("button", { name: "Delete Account" });
+  await deleteButton.scrollIntoViewIfNeeded();
+  await expect(deleteButton).toBeVisible();
+
+  const buttonBox = await deleteButton.boundingBox();
+  const navBox = await page.getByRole("navigation").boundingBox();
+  if (buttonBox === null || navBox === null) {
+    throw new Error("boundingBox returned null; element is not rendered or not visible");
+  }
+  expect(buttonBox.y + buttonBox.height).toBeLessThanOrEqual(navBox.y);
+});

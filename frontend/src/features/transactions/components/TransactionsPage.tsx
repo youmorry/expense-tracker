@@ -50,7 +50,7 @@ export default function TransactionsPage() {
   const { data: categoriesData } = useCategories();
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative">
       <div className="border-border bg-background sticky top-0 z-10 flex flex-col gap-2 border-b px-4 py-3">
         <PeriodSelector value={periodValue} onChange={setPeriodValue} />
         <TransactionFilters
