@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { AppLayout } from "./AppLayout";
 
@@ -22,6 +22,10 @@ function renderWithRouter(initialEntry: string) {
 }
 
 describe("AppLayout", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("renders child route content", async () => {
     renderWithRouter("/transactions");
 
@@ -34,5 +38,20 @@ describe("AppLayout", () => {
     expect(screen.getByRole("link", { name: /transactions/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /analytics/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /settings/i })).toBeInTheDocument();
+  });
+
+  it("scrolls main to top on route change", async () => {
+    const scrollToSpy = vi.spyOn(Element.prototype, "scrollTo");
+    const router = renderWithRouter("/transactions");
+    await screen.findByRole("heading", { name: "Transactions" });
+    scrollToSpy.mockClear();
+
+    await act(async () => {
+      await router.navigate("/analytics");
+    });
+
+    expect(scrollToSpy).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
+    const mainElement = screen.getByRole("main");
+    expect(scrollToSpy.mock.instances).toContain(mainElement);
   });
 });

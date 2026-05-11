@@ -7,6 +7,8 @@ import { server } from "./mocks/server";
 Element.prototype.hasPointerCapture = () => false;
 Element.prototype.setPointerCapture = () => {};
 Element.prototype.releasePointerCapture = () => {};
+// jsdom は Element#scrollTo を実装しないため no-op で埋める
+Element.prototype.scrollTo = () => {};
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: "error" });
