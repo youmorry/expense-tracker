@@ -6,7 +6,7 @@ plugins {
     checkstyle
     id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "8.8.0"
+    id("com.diffplug.spotless") version "8.9.0"
     id("net.ltgt.errorprone") version "5.1.0"
 }
 
@@ -38,7 +38,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("com.google.guava:guava:33.6.0-jre")
     implementation("com.google.api-client:google-api-client:2.9.0")
-    implementation("org.jspecify:jspecify:1.0.0")
+    implementation("org.jspecify:jspecify:1.0.1")
 
     errorprone("com.uber.nullaway:nullaway:0.13.8")
     errorprone("com.google.errorprone:error_prone_core:2.50.0")
