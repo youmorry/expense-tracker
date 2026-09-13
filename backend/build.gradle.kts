@@ -37,7 +37,7 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.postgresql:postgresql")
     implementation("com.google.guava:guava:33.7.1-jre")
-    implementation("com.google.api-client:google-api-client:2.9.0")
+    implementation("com.google.api-client:google-api-client:2.9.1")
     implementation("org.jspecify:jspecify:1.0.1")
 
     errorprone("com.uber.nullaway:nullaway:0.14.1")
