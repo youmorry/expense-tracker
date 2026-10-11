@@ -36,7 +36,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.flywaydb:flyway-database-postgresql")
     runtimeOnly("org.postgresql:postgresql")
-    implementation("com.google.guava:guava:33.7.1-jre")
+    implementation("com.google.guava:guava:33.7.2-jre")
     implementation("com.google.api-client:google-api-client:2.9.1")
     implementation("org.jspecify:jspecify:1.0.1")
 
