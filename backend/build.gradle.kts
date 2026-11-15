@@ -41,7 +41,7 @@ dependencies {
     implementation("org.jspecify:jspecify:1.0.1")
 
     errorprone("com.uber.nullaway:nullaway:0.14.3")
-    errorprone("com.google.errorprone:error_prone_core:2.51.0")
+    errorprone("com.google.errorprone:error_prone_core:2.52.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
